@@ -20,7 +20,15 @@ export function Header() {
           <NavLink to="/about" className={navLink}>About</NavLink>
         </div>
 
-        <BookCallButton size="sm" />
+        <div className="flex items-center gap-5">
+          <a
+            href="https://anf-crm.vercel.app/portal"
+            className="hidden md:inline-block text-sm font-medium text-silver-400 hover:text-silver-100 transition-colors"
+          >
+            Client Login
+          </a>
+          <BookCallButton size="sm" />
+        </div>
       </nav>
     </header>
   )
