@@ -50,7 +50,7 @@ export function Home() {
           <img src="/anf-logo.png" alt="ANF Consulting" className="h-24 md:h-32 w-auto" />
         </div>
         <p className="text-xs md:text-sm tracking-[0.3em] uppercase text-silver-400">
-          Strategy <span className="text-flame-500">·</span> Social <span className="text-flame-500">·</span> Story
+          Clarity <span className="text-flame-500">·</span> Structure <span className="text-flame-500">·</span> Confidence
         </p>
         <h1 className="mt-6 text-4xl md:text-6xl font-display font-medium text-silver-100 leading-[1.05] tracking-tight">
           Smart marketing.<br className="hidden sm:block" /> Modern infrastructure.<br className="hidden sm:block" /> Practical AI.
