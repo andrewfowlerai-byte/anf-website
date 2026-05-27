@@ -28,7 +28,7 @@ export function Footer() {
             <li><Link to="/services" className="text-silver-300 hover:text-flame-400">Services</Link></li>
             <li><Link to="/about" className="text-silver-300 hover:text-flame-400">About</Link></li>
             <li><Link to="/book" className="text-silver-300 hover:text-flame-400">Book a discovery call</Link></li>
-            <li><a href="https://anf-crm.vercel.app/portal" className="text-silver-300 hover:text-flame-400">Client login</a></li>
+            <li><a href="https://crm.anfconsult.com/portal" className="text-silver-300 hover:text-flame-400">Client login</a></li>
           </ul>
         </div>
       </div>
