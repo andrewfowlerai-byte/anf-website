@@ -7,7 +7,7 @@ import { submitLead } from '../lib/leads'
 // (Sign up free at https://cal.com, your booking URL will be cal.com/<username>.)
 // CAL_EVENT_SLUG is the event-type URL slug for the discovery call.
 const CAL_USERNAME: string = 'andrew-fowler-itjknl'
-const CAL_EVENT_SLUG = '30min'
+const CAL_EVENT_SLUG = 'discovery-call'
 // ─────────────────────────────────────────────────────────────────────────────
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
