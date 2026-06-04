@@ -6,7 +6,7 @@ import { submitLead } from '../lib/leads'
 // To enable inline booking, set CAL_USERNAME to your Cal.com username.
 // (Sign up free at https://cal.com, your booking URL will be cal.com/<username>.)
 // CAL_EVENT_SLUG is the event-type URL slug for the discovery call.
-const CAL_USERNAME: string = 'andrew-fowler-itjknl'
+const CAL_USERNAME: string = 'andrew-fowler'
 const CAL_EVENT_SLUG = 'discovery-call'
 // ─────────────────────────────────────────────────────────────────────────────
 
