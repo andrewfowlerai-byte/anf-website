@@ -17,6 +17,7 @@ export function Header() {
         <div className="hidden md:flex items-center gap-10">
           <NavLink to="/" end className={navLink}>Home</NavLink>
           <NavLink to="/services" className={navLink}>Services</NavLink>
+          <NavLink to="/events" className={navLink}>Events</NavLink>
           <NavLink to="/about" className={navLink}>About</NavLink>
         </div>
 
