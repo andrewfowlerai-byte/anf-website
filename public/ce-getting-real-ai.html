@@ -134,22 +134,24 @@
   }
 
   async function downloadPng() {
+    const SCALE = 2; // export at 2x for 4K-class resolution
     const w = 1080, h = HEIGHTS[format];
     const css = Array.from(document.styleSheets[0].cssRules).map((r) => r.cssText).join('\n');
     const clone = card.cloneNode(true);
     clone.style.transform = 'none';
     clone.style.boxShadow = 'none';
     const xml = new XMLSerializer().serializeToString(clone);
+    // viewBox keeps the 1080-space layout but rasterizes at 2x so text stays crisp.
     const svg =
-      `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">` +
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${w * SCALE}" height="${h * SCALE}" viewBox="0 0 ${w} ${h}">` +
       `<foreignObject x="0" y="0" width="${w}" height="${h}">` +
       `<div xmlns="http://www.w3.org/1999/xhtml"><style>${css}</style>${xml}</div>` +
       `</foreignObject></svg>`;
     const img = new Image();
     await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg); });
     const canvas = document.createElement('canvas');
-    canvas.width = w; canvas.height = h;
-    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    canvas.width = w * SCALE; canvas.height = h * SCALE;
+    canvas.getContext('2d').drawImage(img, 0, 0, w * SCALE, h * SCALE);
     await new Promise((res) => canvas.toBlob((blob) => {
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);

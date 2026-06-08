@@ -205,15 +205,18 @@
       : 'Story 9:16. Download all 5 and post as a story sequence.';
   }
   async function exportCard(cardEl, filename) {
+    const SCALE = 2; // export at 2x for 4K-class resolution (2160 wide)
     const w = 1080, h = imgFormat === 'square' ? 1080 : 1920;
     const clone = cardEl.cloneNode(true);
     clone.style.transform = 'none'; clone.style.position = 'static';
     const xml = new XMLSerializer().serializeToString(clone);
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><foreignObject x="0" y="0" width="${w}" height="${h}"><div xmlns="http://www.w3.org/1999/xhtml"><style>${CARD_CSS}</style>${xml}</div></foreignObject></svg>`;
+    // viewBox keeps the 1080-space layout, but the SVG rasterizes at 2x so text
+    // and vectors stay crisp (this is a true re-render, not an upscaled blur).
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w * SCALE}" height="${h * SCALE}" viewBox="0 0 ${w} ${h}"><foreignObject x="0" y="0" width="${w}" height="${h}"><div xmlns="http://www.w3.org/1999/xhtml"><style>${CARD_CSS}</style>${xml}</div></foreignObject></svg>`;
     const img = new Image();
     await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg); });
-    const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
-    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    const canvas = document.createElement('canvas'); canvas.width = w * SCALE; canvas.height = h * SCALE;
+    canvas.getContext('2d').drawImage(img, 0, 0, w * SCALE, h * SCALE);
     await new Promise((res) => canvas.toBlob((blob) => {
       const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; a.click();
       setTimeout(() => URL.revokeObjectURL(a.href), 1000); res();
@@ -352,6 +355,7 @@
     ctx.restore();
   }
   function renderAt(f, elapsed) {
+    ctx.setTransform(VID_SCALE, 0, 0, VID_SCALE, 0, 0); // draw in 1080-space onto a 2x (4K) canvas
     drawBg(f); drawCorners(f); drawBrand(f); drawFooter(f);
     const e = ((elapsed % LOOP_MS) + LOOP_MS) % LOOP_MS;
     const idx = Math.floor(e / SCENE_MS);
@@ -365,7 +369,8 @@
     renderAt(FMT[vidFormat], performance.now() - clockStart);
     raf = requestAnimationFrame(frame);
   }
-  function setupCanvas() { const f = FMT[vidFormat]; cv.width = f.w; cv.height = f.h; }
+  const VID_SCALE = 2; // render the video canvas at 2x for 4K-class output (2160 wide)
+  function setupCanvas() { const f = FMT[vidFormat]; cv.width = f.w * VID_SCALE; cv.height = f.h * VID_SCALE; }
   function startVideo() { if (videoRunning) return; videoRunning = true; setupCanvas(); clockStart = performance.now(); frame(); }
   function stopVideo() { videoRunning = false; if (raf) cancelAnimationFrame(raf); raf = 0; }
 
@@ -389,7 +394,7 @@
     const canRequest = track && typeof track.requestFrame === 'function';
     if (!canRequest) { stream = cv.captureStream(30); track = stream.getVideoTracks()[0]; }
     let rec;
-    try { rec = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 12000000 } : { videoBitsPerSecond: 12000000 }); }
+    try { rec = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 40000000 } : { videoBitsPerSecond: 40000000 }); }
     catch (e) { note.textContent = 'Recording failed to start: ' + e.message; clockStart = performance.now(); frame(); return; }
     const chunks = [];
     rec.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
