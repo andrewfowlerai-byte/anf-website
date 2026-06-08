@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Getting Real With AI — CE Graphic</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #07101F; color: #F4F7FB; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; }
+  .bar {
+    position: sticky; top: 0; z-index: 10; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: center;
+    padding: 16px; background: rgba(7,16,31,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(242,107,29,0.3);
+  }
+  .group { display: flex; gap: 6px; background: rgba(255,255,255,0.06); border-radius: 999px; padding: 4px; }
+  .bar button { border: 1px solid transparent; background: transparent; color: #F4F7FB; font-size: 14px; font-weight: 600; padding: 9px 16px; border-radius: 999px; cursor: pointer; transition: all .15s; }
+  .group button.active { background: #F26B1D; color: #07101F; }
+  .dl { border: 1px solid #F26B1D; color: #F26B1D; }
+  .dl:hover { background: #F26B1D; color: #07101F; }
+  .note { text-align: center; font-size: 12px; color: #9FB2C9; padding: 12px 16px 0; }
+  .stage-wrap { display: flex; justify-content: center; padding: 28px 16px 60px; }
+
+  /* ===== Graphic (exported as PNG). All formats are 1080 wide, so one set of
+     font sizes works; only the height changes and the body stays centered. ===== */
+  .card {
+    position: relative; width: 1080px; overflow: hidden; color: #F4F7FB;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: radial-gradient(130% 100% at 50% 0%, #1A3257 0%, #0B1A33 58%, #07101F 100%);
+  }
+  .card.f1x1 { height: 1080px; }
+  .card.f4x5 { height: 1350px; }
+  .card.f9x16 { height: 1920px; }
+
+  .frame { position: absolute; inset: 48px; pointer-events: none; }
+  .corner { position: absolute; width: 60px; height: 60px; border-color: #F26B1D; opacity: 0.85; }
+  .corner.tl { top: 0; left: 0; border-left: 3px solid; border-top: 3px solid; }
+  .corner.tr { top: 0; right: 0; border-right: 3px solid; border-top: 3px solid; }
+  .corner.bl { bottom: 0; left: 0; border-left: 3px solid; border-bottom: 3px solid; }
+  .corner.br { bottom: 0; right: 0; border-right: 3px solid; border-bottom: 3px solid; }
+
+  /* Brand lockup, pinned near the top */
+  .brand { position: absolute; top: 104px; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 16px; }
+  .brand .mark { background: #F26B1D; color: #07101F; font-weight: 800; font-size: 26px; letter-spacing: 1px; padding: 8px 14px; border-radius: 12px; }
+  .brand .wordmark { font-size: 26px; letter-spacing: 10px; color: #F4F7FB; text-transform: uppercase; font-weight: 600; }
+
+  /* Footer, pinned near the bottom */
+  .footer { position: absolute; bottom: 100px; left: 0; right: 0; text-align: center; }
+  .footer .by { font-size: 22px; color: #C7D4E3; }
+  .footer .site { font-size: 22px; color: #F26B1D; letter-spacing: 3px; text-transform: uppercase; margin-top: 8px; font-weight: 600; }
+
+  /* Centered content */
+  .body { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 110px; }
+  .kicker { font-size: 28px; letter-spacing: 7px; text-transform: uppercase; color: #F26B1D; font-weight: 700; }
+  .title { font-size: 124px; font-weight: 800; line-height: 1.02; letter-spacing: -1px; margin-top: 26px; color: #F4F7FB; }
+  .subtitle { font-size: 31px; line-height: 1.45; color: #C7D4E3; margin-top: 30px; max-width: 760px; }
+  .divider { width: 90px; height: 3px; background: #F26B1D; margin: 44px auto; }
+
+  .details { display: flex; flex-direction: column; gap: 22px; }
+  .detail .label { font-size: 17px; letter-spacing: 4px; text-transform: uppercase; color: #7E93AC; }
+  .detail .value { font-size: 42px; font-weight: 700; color: #F4F7FB; margin-top: 4px; }
+
+  /* The 1:1 format is the tightest (1080 tall): scale the hero down so the
+     centered content never collides with the brand lockup or the footer. */
+  .card.f1x1 .brand { top: 78px; }
+  .card.f1x1 .footer { bottom: 74px; }
+  .card.f1x1 .kicker { font-size: 24px; letter-spacing: 6px; }
+  .card.f1x1 .title { font-size: 90px; margin-top: 20px; }
+  .card.f1x1 .subtitle { font-size: 26px; margin-top: 22px; max-width: 680px; }
+  .card.f1x1 .divider { margin: 30px auto; }
+  .card.f1x1 .details { gap: 16px; }
+  .card.f1x1 .detail .value { font-size: 34px; }
+  .card.f1x1 .detail .label { font-size: 15px; }
+
+  #card { box-shadow: 0 24px 70px rgba(0,0,0,0.55); }
+</style>
+</head>
+<body>
+  <div class="bar">
+    <div class="group" id="fmt">
+      <button data-fmt="f4x5" class="active">Feed 4:5</button>
+      <button data-fmt="f1x1">Square 1:1</button>
+      <button data-fmt="f9x16">Story 9:16</button>
+    </div>
+    <button class="dl" id="dlBtn">⬇ Download PNG</button>
+  </div>
+  <p class="note" id="note"></p>
+
+  <div class="stage-wrap">
+    <div id="card" class="card f4x5">
+      <div class="frame"><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div></div>
+      <div class="brand"><span class="mark">ANF</span><span class="wordmark">Consulting</span></div>
+      <div class="body">
+        <div class="kicker">Real Estate Continuing Education</div>
+        <div class="title">Getting Real<br/>With AI</div>
+        <div class="subtitle">A practical, no-hype look at how AI actually helps your real estate business.</div>
+        <div class="divider"></div>
+        <div class="details">
+          <div class="detail"><div class="label">Date</div><div class="value">Tuesday, June 16</div></div>
+          <div class="detail"><div class="label">Time</div><div class="value">10:00 AM</div></div>
+          <div class="detail"><div class="label">Where</div><div class="value">Coldwell Banker, Westlake Office</div></div>
+        </div>
+      </div>
+      <div class="footer">
+        <div class="by">Presented by Andrew Fowler</div>
+        <div class="site">anfconsult.com</div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  let format = 'f4x5';
+  const HEIGHTS = { f1x1: 1080, f4x5: 1350, f9x16: 1920 };
+  const card = document.getElementById('card');
+
+  function fitPreview() {
+    const h = HEIGHTS[format];
+    const maxW = Math.min(420, window.innerWidth - 40);
+    const maxH = window.innerHeight - 220;
+    const scale = Math.min(maxW / 1080, maxH / h);
+    card.style.transformOrigin = 'top center';
+    card.style.transform = `scale(${scale})`;
+    // Reserve layout space for the scaled card so the page scrolls correctly.
+    document.querySelector('.stage-wrap').style.height = (h * scale + 40) + 'px';
+  }
+
+  function setFormat(f) {
+    format = f;
+    card.className = 'card ' + f;
+    document.querySelectorAll('#fmt button').forEach((b) => b.classList.toggle('active', b.dataset.fmt === f));
+    document.getElementById('note').textContent =
+      f === 'f9x16' ? 'Story / Reel 9:16. Post to Instagram or Facebook stories.'
+      : f === 'f1x1' ? 'Square 1:1. Clean for any feed.'
+      : 'Feed 4:5. Best size for an Instagram feed post.';
+    fitPreview();
+  }
+
+  async function downloadPng() {
+    const w = 1080, h = HEIGHTS[format];
+    const css = Array.from(document.styleSheets[0].cssRules).map((r) => r.cssText).join('\n');
+    const clone = card.cloneNode(true);
+    clone.style.transform = 'none';
+    clone.style.boxShadow = 'none';
+    const xml = new XMLSerializer().serializeToString(clone);
+    const svg =
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">` +
+      `<foreignObject x="0" y="0" width="${w}" height="${h}">` +
+      `<div xmlns="http://www.w3.org/1999/xhtml"><style>${css}</style>${xml}</div>` +
+      `</foreignObject></svg>`;
+    const img = new Image();
+    await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg); });
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    await new Promise((res) => canvas.toBlob((blob) => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `getting-real-with-ai-${format}.png`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+      res();
+    }, 'image/png'));
+  }
+
+  document.getElementById('fmt').addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (btn) setFormat(btn.dataset.fmt);
+  });
+  document.getElementById('dlBtn').onclick = downloadPng;
+  window.addEventListener('resize', fitPreview);
+  setFormat('f4x5');
+</script>
+</body>
+</html>
