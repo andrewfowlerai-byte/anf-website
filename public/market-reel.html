@@ -3,135 +3,123 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Elli Group — East Side Market Update Reel</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Elli Group — Market Update Cards</title>
 <style>
-  /* =========================================================================
-     Numbers live in the CONFIG block near the bottom. They are real figures
-     pulled from Redfin (spring 2026), but small luxury suburbs are noisy.
-     Confirm against Yes-MLS for a clean same-month set before posting.
-     ========================================================================= */
-  :root {
-    --navy: #0E1B2C; --navy-2: #16273D; --gold: #C8A862; --gold-soft: #E3CE9C;
-    --cream: #F4EFE6; --muted: #9FB0C4; --up: #6FCF97; --down: #C99A9A;
-  }
+  /* Page chrome (not exported) */
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { background: #000; height: 100%; overflow: hidden; }
-
-  .stage {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    width: 1080px; height: 1920px; transform-origin: center center;
-    background: radial-gradient(120% 80% at 50% 0%, var(--navy-2) 0%, var(--navy) 55%, #0A1422 100%);
-    color: var(--cream); font-family: 'Inter', sans-serif; overflow: hidden;
+  body { background: #0A1422; color: #F4EFE6; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; }
+  .topbar {
+    position: sticky; top: 0; z-index: 10; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: center;
+    padding: 16px; background: rgba(10,20,34,0.9); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(200,168,98,0.25);
   }
-  .bg-drift {
-    position: absolute; inset: -10%;
-    background:
-      radial-gradient(40% 30% at 20% 20%, rgba(200,168,98,0.10), transparent 60%),
-      radial-gradient(45% 35% at 80% 80%, rgba(200,168,98,0.08), transparent 60%);
-    animation: drift 24s ease-in-out infinite alternate;
+  .topbar .group { display: flex; gap: 6px; background: rgba(255,255,255,0.06); border-radius: 999px; padding: 4px; }
+  .topbar button {
+    border: 1px solid transparent; background: transparent; color: #F4EFE6; font-size: 14px; font-weight: 600;
+    padding: 9px 18px; border-radius: 999px; cursor: pointer; transition: all .15s;
   }
-  @keyframes drift { from { transform: translate(0,0) scale(1); } to { transform: translate(-3%, -2%) scale(1.08); } }
-
-  .frame { position: absolute; inset: 48px; pointer-events: none; }
-  .corner { position: absolute; width: 70px; height: 70px; border-color: var(--gold); opacity: 0.7; }
-  .corner.tl { top: 0; left: 0; border-left: 2px solid; border-top: 2px solid; }
-  .corner.tr { top: 0; right: 0; border-right: 2px solid; border-top: 2px solid; }
-  .corner.bl { bottom: 0; left: 0; border-left: 2px solid; border-bottom: 2px solid; }
-  .corner.br { bottom: 0; right: 0; border-right: 2px solid; border-bottom: 2px solid; }
-
-  .brand { position: absolute; top: 92px; left: 0; right: 0; text-align: center; z-index: 5; }
-  .brand .name { font-family: 'Cormorant Garamond', serif; font-size: 40px; letter-spacing: 10px; color: var(--cream); text-transform: uppercase; }
-  .brand .sub { font-size: 15px; letter-spacing: 6px; color: var(--gold); text-transform: uppercase; margin-top: 8px; }
-  .footer { position: absolute; bottom: 96px; left: 0; right: 0; text-align: center; z-index: 5; font-size: 16px; letter-spacing: 4px; color: var(--muted); text-transform: uppercase; }
-
-  .scene { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 110px; text-align: center; opacity: 0; }
-  .kicker { font-size: 20px; letter-spacing: 8px; text-transform: uppercase; color: var(--gold); margin-bottom: 26px; }
-  .headline { font-family: 'Cormorant Garamond', serif; font-weight: 600; line-height: 1.05; color: var(--cream); }
-
-  .hook .headline { font-size: 108px; }
-  .hook .areas { margin-top: 40px; font-size: 30px; letter-spacing: 2px; color: var(--gold-soft); line-height: 1.7; }
-
-  .area-name { font-family: 'Cormorant Garamond', serif; font-size: 84px; font-weight: 600; color: var(--cream); }
-  .area-line { width: 90px; height: 2px; background: var(--gold); margin: 26px auto 44px; }
-  .price { font-family: 'Cormorant Garamond', serif; font-size: 132px; font-weight: 700; color: var(--gold-soft); line-height: 1; }
-  .price-label { font-size: 20px; letter-spacing: 6px; text-transform: uppercase; color: var(--muted); margin-top: 14px; }
-  .substats { display: flex; gap: 70px; margin-top: 60px; justify-content: center; }
-  .substat .v { font-size: 52px; font-weight: 600; color: var(--cream); }
-  .substat .v.up { color: var(--up); }
-  .substat .v.down { color: var(--down); }
-  .substat .l { font-size: 17px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-top: 10px; }
-
-  .cta .headline { font-size: 92px; }
-  .cta .body { margin-top: 36px; font-size: 30px; color: var(--gold-soft); line-height: 1.5; max-width: 740px; }
-  .cta .pill { margin-top: 54px; border: 2px solid var(--gold); color: var(--cream); padding: 22px 46px; border-radius: 999px; font-size: 26px; letter-spacing: 3px; text-transform: uppercase; }
-
-  .progress { position: absolute; bottom: 0; left: 0; height: 6px; background: var(--gold); width: 0; animation: prog var(--total, 36s) linear infinite; z-index: 6; }
-  @keyframes prog { from { width: 0; } to { width: 100%; } }
-
-  .hook { animation: showHook 36s ease-in-out infinite; }
-  .s1   { animation: showS1 36s ease-in-out infinite; }
-  .s2   { animation: showS2 36s ease-in-out infinite; }
-  .s3   { animation: showS3 36s ease-in-out infinite; }
-  .cta  { animation: showCTA 36s ease-in-out infinite; }
-
-  @keyframes showHook { 0% {opacity:0; transform:scale(1.04)} 2% {opacity:1; transform:scale(1)} 10% {opacity:1} 12% {opacity:0} 100% {opacity:0} }
-  @keyframes showS1   { 0%,10% {opacity:0} 13% {opacity:1} 34% {opacity:1} 37% {opacity:0} 100% {opacity:0} }
-  @keyframes showS2   { 0%,35% {opacity:0} 38% {opacity:1} 59% {opacity:1} 62% {opacity:0} 100% {opacity:0} }
-  @keyframes showS3   { 0%,60% {opacity:0} 63% {opacity:1} 84% {opacity:1} 87% {opacity:0} 100% {opacity:0} }
-  @keyframes showCTA  { 0%,85% {opacity:0} 88% {opacity:1} 99% {opacity:1} 100% {opacity:0} }
-
-  /* Recording controls (auto-hide; not part of the reel) */
-  .controls {
-    position: fixed; top: 14px; left: 50%; transform: translateX(-50%); z-index: 50;
-    display: flex; gap: 10px; align-items: center;
-    background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
-    padding: 8px 12px; border-radius: 999px; transition: opacity .4s; font-family: 'Inter', sans-serif;
+  .topbar .group button.active { background: #C8A862; color: #0A1422; }
+  .topbar .dl { border: 1px solid #C8A862; color: #C8A862; }
+  .topbar .dl:hover { background: #C8A862; color: #0A1422; }
+  .note { text-align: center; font-size: 12px; color: #9FB0C4; padding: 12px 16px 0; }
+  .cards { display: flex; flex-direction: column; align-items: center; gap: 28px; padding: 28px 16px 60px; }
+  .card-wrap { position: relative; }
+  .card-wrap .dlone {
+    position: absolute; top: 10px; right: 10px; z-index: 5; font-size: 12px; font-weight: 600;
+    background: rgba(10,20,34,0.85); color: #C8A862; border: 1px solid #C8A862; border-radius: 999px; padding: 6px 14px; cursor: pointer;
   }
-  .controls.hidden { opacity: 0; pointer-events: none; }
-  .controls button { background: transparent; border: 1px solid rgba(255,255,255,0.3); color: #fff; font-size: 13px; padding: 7px 16px; border-radius: 999px; cursor: pointer; }
-  .controls button:hover { background: rgba(255,255,255,0.14); }
-  .hint { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.45); font: 11px 'Inter', sans-serif; z-index: 50; transition: opacity .4s; text-align: center; }
-  .hint.hidden { opacity: 0; }
+  .card-wrap .dlone:hover { background: #C8A862; color: #0A1422; }
+
+  /* =========================================================================
+     CARD STYLES (exported). Edit numbers in the CONFIG block at the bottom.
+     System fonts only, so PNG export renders correctly.
+     ========================================================================= */
+  .card {
+    position: relative; width: 1080px; background: radial-gradient(120% 80% at 50% 0%, #16273D 0%, #0E1B2C 55%, #0A1422 100%);
+    color: #F4EFE6; overflow: hidden; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  }
+  .card.vertical { height: 1920px; }
+  .card.square { height: 1080px; }
+
+  .card .frame { position: absolute; inset: 44px; pointer-events: none; }
+  .card .corner { position: absolute; width: 64px; height: 64px; border-color: #C8A862; opacity: 0.75; }
+  .card .corner.tl { top: 0; left: 0; border-left: 2px solid; border-top: 2px solid; }
+  .card .corner.tr { top: 0; right: 0; border-right: 2px solid; border-top: 2px solid; }
+  .card .corner.bl { bottom: 0; left: 0; border-left: 2px solid; border-bottom: 2px solid; }
+  .card .corner.br { bottom: 0; right: 0; border-right: 2px solid; border-bottom: 2px solid; }
+
+  .card .brand { position: absolute; left: 0; right: 0; text-align: center; }
+  .card.vertical .brand { top: 90px; }
+  .card.square .brand { top: 56px; }
+  .card .brand .name { font-family: Georgia, 'Times New Roman', serif; letter-spacing: 9px; color: #F4EFE6; text-transform: uppercase; }
+  .card.vertical .brand .name { font-size: 40px; }
+  .card.square .brand .name { font-size: 32px; }
+  .card .brand .sub { letter-spacing: 6px; color: #C8A862; text-transform: uppercase; margin-top: 8px; }
+  .card.vertical .brand .sub { font-size: 15px; }
+  .card.square .brand .sub { font-size: 13px; }
+
+  .card .footer { position: absolute; left: 0; right: 0; text-align: center; color: #9FB0C4; letter-spacing: 3px; text-transform: uppercase; }
+  .card.vertical .footer { bottom: 92px; font-size: 16px; }
+  .card.square .footer { bottom: 52px; font-size: 13px; }
+
+  .card .body { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 110px; }
+  .card.square .body { padding: 0 90px; }
+
+  .card .kicker { letter-spacing: 8px; text-transform: uppercase; color: #C8A862; }
+  .card.vertical .kicker { font-size: 20px; margin-bottom: 26px; }
+  .card.square .kicker { font-size: 16px; margin-bottom: 18px; }
+
+  .card .headline { font-family: Georgia, 'Times New Roman', serif; font-weight: 600; line-height: 1.06; color: #F4EFE6; }
+  .card.vertical .headline { font-size: 104px; }
+  .card.square .headline { font-size: 70px; }
+
+  .card .areas { color: #E3CE9C; line-height: 1.7; }
+  .card.vertical .areas { font-size: 30px; margin-top: 40px; }
+  .card.square .areas { font-size: 24px; margin-top: 26px; line-height: 1.6; }
+
+  .card .area-name { font-family: Georgia, 'Times New Roman', serif; font-weight: 600; color: #F4EFE6; }
+  .card.vertical .area-name { font-size: 82px; }
+  .card.square .area-name { font-size: 58px; }
+  .card .area-line { height: 2px; background: #C8A862; }
+  .card.vertical .area-line { width: 90px; margin: 26px auto 44px; }
+  .card.square .area-line { width: 76px; margin: 18px auto 30px; }
+
+  .card .price { font-family: Georgia, 'Times New Roman', serif; font-weight: 700; color: #E3CE9C; line-height: 1; }
+  .card.vertical .price { font-size: 128px; }
+  .card.square .price { font-size: 92px; }
+  .card .price-label { letter-spacing: 6px; text-transform: uppercase; color: #9FB0C4; }
+  .card.vertical .price-label { font-size: 20px; margin-top: 14px; }
+  .card.square .price-label { font-size: 16px; margin-top: 10px; }
+
+  .card .substats { display: flex; justify-content: center; }
+  .card.vertical .substats { gap: 70px; margin-top: 58px; }
+  .card.square .substats { gap: 50px; margin-top: 40px; }
+  .card .substat .v { font-weight: 600; color: #F4EFE6; }
+  .card.vertical .substat .v { font-size: 52px; }
+  .card.square .substat .v { font-size: 40px; }
+  .card .substat .v.up { color: #6FCF97; }
+  .card .substat .v.down { color: #C99A9A; }
+  .card .substat .l { letter-spacing: 3px; text-transform: uppercase; color: #9FB0C4; }
+  .card.vertical .substat .l { font-size: 17px; margin-top: 10px; }
+  .card.square .substat .l { font-size: 14px; margin-top: 8px; }
+
+  .card .cta-body { color: #E3CE9C; line-height: 1.5; }
+  .card.vertical .cta-body { font-size: 30px; margin-top: 36px; max-width: 740px; }
+  .card.square .cta-body { font-size: 22px; margin-top: 24px; max-width: 620px; }
+  .card .pill { border: 2px solid #C8A862; color: #F4EFE6; border-radius: 999px; letter-spacing: 3px; text-transform: uppercase; display: inline-block; }
+  .card.vertical .pill { font-size: 26px; padding: 22px 46px; margin-top: 52px; }
+  .card.square .pill { font-size: 20px; padding: 16px 34px; margin-top: 34px; }
 </style>
 </head>
 <body>
-  <div class="controls" id="controls">
-    <button id="dlBtn">⬇ Download this reel</button>
-    <button id="hideBtn">Hide for recording</button>
-  </div>
-  <div class="hint" id="hint">Controls auto-hide after a few seconds. Fullscreen + screen-record one loop (~36s).</div>
-
-  <div class="stage" id="stage">
-    <div class="bg-drift"></div>
-    <div class="frame"><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div></div>
-
-    <div class="brand">
-      <div class="name">The Elli Group</div>
-      <div class="sub">Sotheby's International Realty</div>
+  <div class="topbar">
+    <div class="group" id="fmtGroup">
+      <button data-fmt="square" class="active">Feed 1:1</button>
+      <button data-fmt="vertical">Story / Reel 9:16</button>
     </div>
-
-    <section class="scene hook">
-      <div class="kicker">East Side Market Update</div>
-      <h1 class="headline">Where the<br/>market stands.</h1>
-      <div class="areas" id="hookAreas"></div>
-    </section>
-
-    <section class="scene s1" id="scene1"></section>
-    <section class="scene s2" id="scene2"></section>
-    <section class="scene s3" id="scene3"></section>
-
-    <section class="scene cta">
-      <h1 class="headline">Your home<br/>is not the median.</h1>
-      <p class="body" id="ctaBody"></p>
-      <div class="pill" id="ctaPill"></div>
-    </section>
-
-    <div class="footer" id="footer"></div>
-    <div class="progress"></div>
+    <button class="dl" id="dlAll">⬇ Download all cards</button>
   </div>
+  <p class="note" id="note"></p>
+  <div class="cards" id="cards"></div>
 
 <script>
   /* =========================================================================
@@ -145,20 +133,33 @@
       pill: 'Comment "WORTH"',
     },
     areas: [
-      { name: 'Highland Heights', price: '$515,000', change: '+25.6%', changeDir: 'up',   days: '36' }, // Redfin, Feb 2026
-      { name: 'Pepper Pike',      price: '$835,000', change: '+4%',    changeDir: 'up',   days: '32' }, // Redfin Mar 2026 / 12-mo
-      { name: 'Willoughby',       price: '$277,000', change: '-2%',    changeDir: 'down', days: '32' }, // Redfin 2026
+      { name: 'Highland Heights', price: '$515,000', change: '+25.6%', changeDir: 'up',   days: '36' },
+      { name: 'Pepper Pike',      price: '$835,000', change: '+4%',    changeDir: 'up',   days: '32' },
+      { name: 'Willoughby',       price: '$277,000', change: '-2%',    changeDir: 'down', days: '32' },
     ],
   };
 
-  document.getElementById('footer').textContent = CONFIG.monthLabel + '  ·  Highland Heights · Pepper Pike · Willoughby';
-  document.getElementById('hookAreas').innerHTML = CONFIG.areas.map((a) => a.name).join('<br/>');
-  document.getElementById('ctaBody').textContent = CONFIG.cta.body;
-  document.getElementById('ctaPill').textContent = CONFIG.cta.pill;
+  let format = 'square'; // 'square' (1:1) or 'vertical' (9:16)
 
-  function statScene(a) {
-    return `
-      <div>
+  const brand = `
+    <div class="brand">
+      <div class="name">The Elli Group</div>
+      <div class="sub">Sotheby's International Realty</div>
+    </div>`;
+  const frame = `<div class="frame"><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div></div>`;
+  const footer = `<div class="footer">${CONFIG.monthLabel} · Highland Heights · Pepper Pike · Willoughby</div>`;
+
+  function hookCard() {
+    return `${frame}${brand}
+      <div class="body">
+        <div class="kicker">East Side Market Update</div>
+        <div class="headline">Where the<br/>market stands.</div>
+        <div class="areas">${CONFIG.areas.map((a) => a.name).join('<br/>')}</div>
+      </div>${footer}`;
+  }
+  function statCard(a) {
+    return `${frame}${brand}
+      <div class="body">
         <div class="kicker">${CONFIG.monthLabel}</div>
         <div class="area-name">${a.name}</div>
         <div class="area-line"></div>
@@ -168,52 +169,113 @@
           <div class="substat"><div class="v ${a.changeDir}">${a.change}</div><div class="l">vs last year</div></div>
           <div class="substat"><div class="v">${a.days}</div><div class="l">days on market</div></div>
         </div>
-      </div>`;
+      </div>${footer}`;
   }
-  document.getElementById('scene1').innerHTML = statScene(CONFIG.areas[0]);
-  document.getElementById('scene2').innerHTML = statScene(CONFIG.areas[1]);
-  document.getElementById('scene3').innerHTML = statScene(CONFIG.areas[2]);
-
-  document.documentElement.style.setProperty('--total', '36s');
-
-  function fit() {
-    const s = document.getElementById('stage');
-    const scale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920);
-    s.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  function ctaCard() {
+    return `${frame}${brand}
+      <div class="body">
+        <div class="headline">Your home<br/>is not the median.</div>
+        <div class="cta-body">${CONFIG.cta.body}</div>
+        <div class="pill">${CONFIG.cta.pill}</div>
+      </div>${footer}`;
   }
-  window.addEventListener('resize', fit);
-  fit();
 
-  // ---- Recording controls: auto-hide, download ----
-  const controls = document.getElementById('controls');
-  const hint = document.getElementById('hint');
-  let hideTimer;
-  function showControls() {
-    controls.classList.remove('hidden');
-    hint.classList.remove('hidden');
-    clearTimeout(hideTimer);
-    hideTimer = setTimeout(() => { controls.classList.add('hidden'); hint.classList.add('hidden'); }, 5000);
+  const SLIDES = [
+    { name: '1-hook', html: hookCard() },
+    { name: '2-highland-heights', html: statCard(CONFIG.areas[0]) },
+    { name: '3-pepper-pike', html: statCard(CONFIG.areas[1]) },
+    { name: '4-willoughby', html: statCard(CONFIG.areas[2]) },
+    { name: '5-cta', html: ctaCard() },
+  ];
+
+  // Grab the page's card CSS so the PNG export renders identically.
+  const CARD_CSS = Array.from(document.styleSheets[0].cssRules).map((r) => r.cssText).join('\n');
+
+  function render() {
+    const container = document.getElementById('cards');
+    container.innerHTML = '';
+    const previewW = Math.min(380, window.innerWidth - 40);
+    const scale = previewW / 1080;
+    const fullH = format === 'square' ? 1080 : 1920;
+
+    SLIDES.forEach((slide, i) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'card-wrap';
+      wrap.style.width = previewW + 'px';
+      wrap.style.height = (fullH * scale) + 'px';
+
+      const card = document.createElement('div');
+      card.className = 'card ' + format;
+      card.innerHTML = slide.html;
+      card.style.transformOrigin = 'top left';
+      card.style.transform = `scale(${scale})`;
+      card.style.position = 'absolute';
+      card.style.top = '0'; card.style.left = '0';
+
+      const dl = document.createElement('button');
+      dl.className = 'dlone';
+      dl.textContent = '⬇';
+      dl.title = 'Download this card';
+      dl.onclick = () => exportCard(card, `elli-${format}-${slide.name}.png`);
+
+      wrap.appendChild(card);
+      wrap.appendChild(dl);
+      container.appendChild(wrap);
+    });
+
+    document.getElementById('note').textContent = format === 'square'
+      ? 'Feed 1:1. Download all 5 and post as a carousel (swipe post).'
+      : 'Story / Reel 9:16. Download all 5 and post as a story sequence.';
   }
-  window.addEventListener('mousemove', showControls);
-  window.addEventListener('touchstart', showControls, { passive: true });
-  showControls();
 
-  document.getElementById('hideBtn').onclick = () => {
-    controls.classList.add('hidden'); hint.classList.add('hidden'); clearTimeout(hideTimer);
-  };
-  document.getElementById('dlBtn').onclick = async () => {
-    try {
-      const res = await fetch(location.href, { cache: 'no-store' });
-      const text = await res.text();
-      const blob = new Blob([text], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
+  async function exportCard(cardEl, filename) {
+    const w = 1080;
+    const h = format === 'square' ? 1080 : 1920;
+    const clone = cardEl.cloneNode(true);
+    clone.style.transform = 'none';
+    clone.style.position = 'static';
+    const xml = new XMLSerializer().serializeToString(clone);
+    const svg =
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">` +
+      `<foreignObject x="0" y="0" width="${w}" height="${h}">` +
+      `<div xmlns="http://www.w3.org/1999/xhtml"><style>${CARD_CSS}</style>${xml}</div>` +
+      `</foreignObject></svg>`;
+    const svgUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    const img = new Image();
+    await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; img.src = svgUrl; });
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, w, h);
+    await new Promise((resolve) => canvas.toBlob((blob) => {
       const a = document.createElement('a');
-      a.href = url; a.download = 'elli-market-update-reel.html'; a.click();
-      URL.revokeObjectURL(url);
-    } catch (e) {
-      alert('Download could not fetch the file. Use your browser Save Page (Ctrl/Cmd + S) instead.');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+      resolve();
+    }, 'image/png'));
+  }
+
+  async function downloadAll() {
+    const cards = document.querySelectorAll('#cards .card');
+    for (let i = 0; i < cards.length; i++) {
+      await exportCard(cards[i], `elli-${format}-${SLIDES[i].name}.png`);
+      await new Promise((r) => setTimeout(r, 400)); // space out downloads
     }
-  };
+  }
+
+  document.getElementById('fmtGroup').addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    format = btn.dataset.fmt;
+    document.querySelectorAll('#fmtGroup button').forEach((b) => b.classList.toggle('active', b === btn));
+    render();
+  });
+  document.getElementById('dlAll').onclick = downloadAll;
+
+  window.addEventListener('resize', render);
+  render();
 </script>
 </body>
 </html>
