@@ -19,56 +19,87 @@
   .note { text-align: center; font-size: 12px; color: #9FB2C9; padding: 12px 16px 0; }
   .stage-wrap { display: flex; justify-content: center; padding: 28px 16px 60px; }
 
-  /* ===== Graphic (exported as PNG). All formats are 1080 wide, so one set of
-     font sizes works; only the height changes and the body stays centered. ===== */
+  /* ===== Graphic (exported as PNG). All formats are 1080 wide; only the
+     height changes. A flex column keeps the content evenly spaced as the
+     height grows from square (1080) to story (1920). ===== */
   .card {
     position: relative; width: 1080px; overflow: hidden; color: #F4F7FB;
     font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
     background: radial-gradient(130% 100% at 50% 0%, #1A3257 0%, #0B1A33 58%, #07101F 100%);
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    padding: 104px 104px 88px;
   }
-  .card.f1x1 { height: 1080px; }
+  .card.f1x1 { height: 1080px; padding: 76px 92px 66px; }
   .card.f4x5 { height: 1350px; }
   .card.f9x16 { height: 1920px; }
 
-  .frame { position: absolute; inset: 48px; pointer-events: none; }
+  .frame { position: absolute; inset: 40px; pointer-events: none; }
   .corner { position: absolute; width: 60px; height: 60px; border-color: #F26B1D; opacity: 0.85; }
   .corner.tl { top: 0; left: 0; border-left: 3px solid; border-top: 3px solid; }
   .corner.tr { top: 0; right: 0; border-right: 3px solid; border-top: 3px solid; }
   .corner.bl { bottom: 0; left: 0; border-left: 3px solid; border-bottom: 3px solid; }
   .corner.br { bottom: 0; right: 0; border-right: 3px solid; border-bottom: 3px solid; }
 
-  /* Brand lockup, pinned near the top */
-  .brand { position: absolute; top: 104px; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 16px; }
+  /* Brand lockup */
+  .brand { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; gap: 16px; }
   .brand .mark { background: #F26B1D; color: #07101F; font-weight: 800; font-size: 26px; letter-spacing: 1px; padding: 8px 14px; border-radius: 12px; }
   .brand .wordmark { font-size: 26px; letter-spacing: 10px; color: #F4F7FB; text-transform: uppercase; font-weight: 600; }
 
-  /* Footer, pinned near the bottom */
-  .footer { position: absolute; bottom: 100px; left: 0; right: 0; text-align: center; }
-  .footer .by { font-size: 22px; color: #C7D4E3; }
-  .footer .site { font-size: 22px; color: #F26B1D; letter-spacing: 3px; text-transform: uppercase; margin-top: 8px; font-weight: 600; }
+  /* Center block grows to fill the space between brand and presenter */
+  .main { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
+  .kicker { font-size: 27px; letter-spacing: 7px; text-transform: uppercase; color: #F26B1D; font-weight: 700; }
+  .title { font-size: 104px; font-weight: 800; line-height: 1.02; letter-spacing: -1px; margin-top: 18px; color: #F4F7FB; }
+  .subtitle { font-size: 28px; line-height: 1.45; color: #C7D4E3; margin-top: 20px; max-width: 760px; }
+  .divider { width: 84px; height: 3px; background: #F26B1D; margin: 28px auto 26px; }
 
-  /* Centered content */
-  .body { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 110px; }
-  .kicker { font-size: 28px; letter-spacing: 7px; text-transform: uppercase; color: #F26B1D; font-weight: 700; }
-  .title { font-size: 124px; font-weight: 800; line-height: 1.02; letter-spacing: -1px; margin-top: 26px; color: #F4F7FB; }
-  .subtitle { font-size: 31px; line-height: 1.45; color: #C7D4E3; margin-top: 30px; max-width: 760px; }
-  .divider { width: 90px; height: 3px; background: #F26B1D; margin: 44px auto; }
+  /* "What we'll cover" — a short numbered agenda */
+  .cover-label { font-size: 19px; letter-spacing: 5px; text-transform: uppercase; color: #7E93AC; font-weight: 700; margin-bottom: 22px; }
+  .cover { list-style: none; display: flex; flex-direction: column; gap: 19px; text-align: left; }
+  .cover li { display: flex; align-items: center; gap: 22px; }
+  .cover .num { flex: 0 0 auto; min-width: 46px; font-size: 30px; font-weight: 800; color: #F26B1D; line-height: 1; font-variant-numeric: tabular-nums; border-bottom: 3px solid rgba(242,107,29,0.4); padding-bottom: 4px; }
+  .cover .txt { font-size: 32px; font-weight: 600; line-height: 1.2; color: #F4F7FB; }
 
-  .details { display: flex; flex-direction: column; gap: 22px; }
-  .detail .label { font-size: 17px; letter-spacing: 4px; text-transform: uppercase; color: #7E93AC; }
-  .detail .value { font-size: 42px; font-weight: 700; color: #F4F7FB; margin-top: 4px; }
+  /* Details (date / time / where) in a subtle glass pill */
+  .details { display: inline-flex; justify-content: center; align-items: stretch; margin-top: 40px; padding: 16px 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(242,107,29,0.3); border-radius: 18px; }
+  .detail { padding: 0 28px; border-right: 1px solid rgba(255,255,255,0.12); }
+  .detail:last-child { border-right: none; }
+  .detail .label { font-size: 15px; letter-spacing: 3px; text-transform: uppercase; color: #F26B1D; font-weight: 700; }
+  .detail .value { font-size: 26px; font-weight: 700; color: #F4F7FB; margin-top: 7px; white-space: nowrap; }
 
-  /* The 1:1 format is the tightest (1080 tall): scale the hero down so the
-     centered content never collides with the brand lockup or the footer. */
-  .card.f1x1 .brand { top: 78px; }
-  .card.f1x1 .footer { bottom: 74px; }
-  .card.f1x1 .kicker { font-size: 24px; letter-spacing: 6px; }
-  .card.f1x1 .title { font-size: 90px; margin-top: 20px; }
-  .card.f1x1 .subtitle { font-size: 26px; margin-top: 22px; max-width: 680px; }
-  .card.f1x1 .divider { margin: 30px auto; }
-  .card.f1x1 .details { gap: 16px; }
-  .card.f1x1 .detail .value { font-size: 34px; }
-  .card.f1x1 .detail .label { font-size: 15px; }
+  /* Presenter (large photo on the left, name + site to the right) */
+  .presenter { flex: 0 0 auto; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 30px; }
+  .presenter .photo { width: 186px; height: 186px; border-radius: 50%; object-fit: cover; object-position: 50% 50%; border: 4px solid #F26B1D; box-shadow: 0 0 0 10px rgba(242,107,29,0.10), 0 22px 55px rgba(0,0,0,0.5); background: #1A3257; }
+  .presenter .who { display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
+  .presenter .who .by { font-size: 18px; letter-spacing: 1px; color: #9FB2C9; }
+  .presenter .who .name { font-size: 36px; font-weight: 700; color: #F4F7FB; margin-top: 3px; line-height: 1.1; }
+  .presenter .who .site { font-size: 20px; color: #F26B1D; letter-spacing: 3px; text-transform: uppercase; font-weight: 600; margin-top: 12px; }
+
+  /* Square 1:1 is the tightest: shrink everything so nothing collides. */
+  .card.f1x1 .kicker { font-size: 22px; letter-spacing: 6px; }
+  .card.f1x1 .title { font-size: 74px; margin-top: 14px; }
+  .card.f1x1 .subtitle { font-size: 23px; margin-top: 15px; max-width: 660px; }
+  .card.f1x1 .divider { margin: 22px auto 20px; }
+  .card.f1x1 .cover-label { font-size: 16px; letter-spacing: 4px; margin-bottom: 18px; }
+  .card.f1x1 .cover { gap: 16px; }
+  .card.f1x1 .cover .num { font-size: 24px; min-width: 38px; }
+  .card.f1x1 .cover .txt { font-size: 27px; }
+  .card.f1x1 .details { margin-top: 28px; padding: 14px 5px; }
+  .card.f1x1 .detail { padding: 0 20px; }
+  .card.f1x1 .detail .value { font-size: 22px; }
+  .card.f1x1 .detail .label { font-size: 13px; }
+  .card.f1x1 .presenter { gap: 24px; }
+  .card.f1x1 .presenter .photo { width: 150px; height: 150px; border-width: 3px; box-shadow: 0 0 0 8px rgba(242,107,29,0.10), 0 16px 40px rgba(0,0,0,0.5); }
+  .card.f1x1 .presenter .who .name { font-size: 30px; }
+  .card.f1x1 .presenter .who .site { font-size: 18px; margin-top: 9px; }
+
+  /* Story 9:16 has the most room: let the hero and photo breathe. */
+  .card.f9x16 .title { font-size: 124px; }
+  .card.f9x16 .cover .txt { font-size: 37px; }
+  .card.f9x16 .cover .num { font-size: 33px; }
+  .card.f9x16 .details { margin-top: 60px; }
+  .card.f9x16 .presenter .photo { width: 224px; height: 224px; }
+  .card.f9x16 .presenter .who .name { font-size: 42px; }
+  .card.f9x16 .presenter .who .site { font-size: 22px; }
 
   #card { box-shadow: 0 24px 70px rgba(0,0,0,0.55); }
 </style>
@@ -88,28 +119,44 @@
     <div id="card" class="card f4x5">
       <div class="frame"><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div></div>
       <div class="brand"><span class="mark">ANF</span><span class="wordmark">Consulting</span></div>
-      <div class="body">
+      <div class="main">
         <div class="kicker">Real Estate Continuing Education</div>
         <div class="title">Getting Real<br/>With AI</div>
         <div class="subtitle">A practical, no-hype look at how AI actually helps your real estate business.</div>
         <div class="divider"></div>
+        <div class="cover-label">What we'll cover</div>
+        <ul class="cover">
+          <li><span class="num">01</span><span class="txt">How to talk to AI</span></li>
+          <li><span class="num">02</span><span class="txt">Which AI tools to use</span></li>
+          <li><span class="num">03</span><span class="txt">How to show up in AI search</span></li>
+        </ul>
         <div class="details">
           <div class="detail"><div class="label">Date</div><div class="value">Tuesday, June 16</div></div>
           <div class="detail"><div class="label">Time</div><div class="value">10:00 AM</div></div>
-          <div class="detail"><div class="label">Where</div><div class="value">Coldwell Banker, Westlake Office</div></div>
+          <div class="detail"><div class="label">Where</div><div class="value">Coldwell Banker, Westlake</div></div>
         </div>
       </div>
-      <div class="footer">
-        <div class="by">Presented by Andrew Fowler</div>
-        <div class="site">anfconsult.com</div>
+      <div class="presenter">
+        <img class="photo" id="photo" alt="Andrew Fowler" />
+        <div class="who">
+          <div class="by">Presented by</div>
+          <div class="name">Andrew Fowler</div>
+          <div class="site">anfconsult.com</div>
+        </div>
       </div>
     </div>
   </div>
 
+<script src="presenter-andrew.js"></script>
 <script>
   let format = 'f4x5';
   const HEIGHTS = { f1x1: 1080, f4x5: 1350, f9x16: 1920 };
   const card = document.getElementById('card');
+
+  // Drop the embedded presenter headshot into the graphic (data URI, so it
+  // travels with the file and rasterizes cleanly into the exported PNG).
+  const photoEl = document.getElementById('photo');
+  if (window.__PRESENTER_PHOTO) photoEl.src = window.__PRESENTER_PHOTO;
 
   function fitPreview() {
     const h = HEIGHTS[format];
@@ -136,6 +183,8 @@
   async function downloadPng() {
     const SCALE = 2; // export at 2x for 4K-class resolution
     const w = 1080, h = HEIGHTS[format];
+    // Ensure the embedded headshot is decoded so it rasterizes into the PNG.
+    try { if (photoEl && photoEl.decode) await photoEl.decode(); } catch (e) {}
     const css = Array.from(document.styleSheets[0].cssRules).map((r) => r.cssText).join('\n');
     const clone = card.cloneNode(true);
     clone.style.transform = 'none';
