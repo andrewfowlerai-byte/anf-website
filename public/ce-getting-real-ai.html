@@ -40,10 +40,12 @@
   .corner.bl { bottom: 0; left: 0; border-left: 3px solid; border-bottom: 3px solid; }
   .corner.br { bottom: 0; right: 0; border-right: 3px solid; border-bottom: 3px solid; }
 
-  /* Brand lockup */
-  .brand { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; gap: 16px; }
-  .brand .mark { background: #F26B1D; color: #07101F; font-weight: 800; font-size: 26px; letter-spacing: 1px; padding: 8px 14px; border-radius: 12px; }
-  .brand .wordmark { font-size: 26px; letter-spacing: 10px; color: #F4F7FB; text-transform: uppercase; font-weight: 600; }
+  /* Top lockup: Coldwell Banker Schmidt Realty logo + "presented by our own" */
+  .brand { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .brand .cb-logo { background: #FFFFFF; border-radius: 14px; padding: 15px 22px; box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+  .brand .cb-logo img { display: block; height: 104px; width: auto; }
+  .brand .present { font-size: 21px; letter-spacing: 1px; color: #C7D4E3; }
+  .brand .present b { color: #F26B1D; font-weight: 700; }
 
   /* Center block grows to fill the space between brand and presenter */
   .main { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
@@ -70,11 +72,15 @@
   .presenter { flex: 0 0 auto; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 30px; }
   .presenter .photo { width: 186px; height: 186px; border-radius: 50%; object-fit: cover; object-position: 50% 50%; border: 4px solid #F26B1D; box-shadow: 0 0 0 10px rgba(242,107,29,0.10), 0 22px 55px rgba(0,0,0,0.5); background: #1A3257; }
   .presenter .who { display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
-  .presenter .who .by { font-size: 18px; letter-spacing: 1px; color: #9FB2C9; }
-  .presenter .who .name { font-size: 36px; font-weight: 700; color: #F4F7FB; margin-top: 3px; line-height: 1.1; }
-  .presenter .who .site { font-size: 20px; color: #F26B1D; letter-spacing: 3px; text-transform: uppercase; font-weight: 600; margin-top: 12px; }
+  .presenter .who .name { font-size: 36px; font-weight: 700; color: #F4F7FB; line-height: 1.1; }
+  .presenter .who .affil { font-size: 19px; color: #9FB2C9; letter-spacing: 0.5px; margin-top: 5px; }
+  .presenter .who .site { font-size: 20px; color: #F26B1D; letter-spacing: 3px; text-transform: uppercase; font-weight: 600; margin-top: 11px; }
 
   /* Square 1:1 is the tightest: shrink everything so nothing collides. */
+  .card.f1x1 .brand { gap: 12px; }
+  .card.f1x1 .brand .cb-logo { padding: 12px 18px; border-radius: 12px; }
+  .card.f1x1 .brand .cb-logo img { height: 76px; }
+  .card.f1x1 .brand .present { font-size: 19px; }
   .card.f1x1 .kicker { font-size: 22px; letter-spacing: 6px; }
   .card.f1x1 .title { font-size: 74px; margin-top: 14px; }
   .card.f1x1 .subtitle { font-size: 23px; margin-top: 15px; max-width: 660px; }
@@ -90,15 +96,18 @@
   .card.f1x1 .presenter { gap: 24px; }
   .card.f1x1 .presenter .photo { width: 150px; height: 150px; border-width: 3px; box-shadow: 0 0 0 8px rgba(242,107,29,0.10), 0 16px 40px rgba(0,0,0,0.5); }
   .card.f1x1 .presenter .who .name { font-size: 30px; }
+  .card.f1x1 .presenter .who .affil { font-size: 17px; }
   .card.f1x1 .presenter .who .site { font-size: 18px; margin-top: 9px; }
 
   /* Story 9:16 has the most room: let the hero and photo breathe. */
+  .card.f9x16 .brand .cb-logo img { height: 122px; }
   .card.f9x16 .title { font-size: 124px; }
   .card.f9x16 .cover .txt { font-size: 37px; }
   .card.f9x16 .cover .num { font-size: 33px; }
   .card.f9x16 .details { margin-top: 60px; }
   .card.f9x16 .presenter .photo { width: 224px; height: 224px; }
   .card.f9x16 .presenter .who .name { font-size: 42px; }
+  .card.f9x16 .presenter .who .affil { font-size: 21px; }
   .card.f9x16 .presenter .who .site { font-size: 22px; }
 
   #card { box-shadow: 0 24px 70px rgba(0,0,0,0.55); }
@@ -118,7 +127,10 @@
   <div class="stage-wrap">
     <div id="card" class="card f4x5">
       <div class="frame"><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div></div>
-      <div class="brand"><span class="mark">ANF</span><span class="wordmark">Consulting</span></div>
+      <div class="brand">
+        <div class="cb-logo"><img id="cbLogo" alt="Coldwell Banker Schmidt Realty" /></div>
+        <div class="present">Presented by our own, <b>Andrew Fowler</b></div>
+      </div>
       <div class="main">
         <div class="kicker">Real Estate Continuing Education</div>
         <div class="title">Getting Real<br/>With AI</div>
@@ -139,8 +151,8 @@
       <div class="presenter">
         <img class="photo" id="photo" alt="Andrew Fowler" />
         <div class="who">
-          <div class="by">Presented by</div>
           <div class="name">Andrew Fowler</div>
+          <div class="affil">Coldwell Banker Agent</div>
           <div class="site">anfconsult.com</div>
         </div>
       </div>
@@ -148,15 +160,18 @@
   </div>
 
 <script src="presenter-andrew.js"></script>
+<script src="coldwell-logo.js"></script>
 <script>
   let format = 'f4x5';
   const HEIGHTS = { f1x1: 1080, f4x5: 1350, f9x16: 1920 };
   const card = document.getElementById('card');
 
-  // Drop the embedded presenter headshot into the graphic (data URI, so it
-  // travels with the file and rasterizes cleanly into the exported PNG).
+  // Drop the embedded images (headshot + brokerage logo) into the graphic as
+  // data URIs, so they travel with the file and rasterize into the export.
   const photoEl = document.getElementById('photo');
   if (window.__PRESENTER_PHOTO) photoEl.src = window.__PRESENTER_PHOTO;
+  const cbLogoEl = document.getElementById('cbLogo');
+  if (window.__CB_LOGO) cbLogoEl.src = window.__CB_LOGO;
 
   function fitPreview() {
     const h = HEIGHTS[format];
@@ -183,8 +198,8 @@
   async function downloadPng() {
     const SCALE = 2; // export at 2x for 4K-class resolution
     const w = 1080, h = HEIGHTS[format];
-    // Ensure the embedded headshot is decoded so it rasterizes into the PNG.
-    try { if (photoEl && photoEl.decode) await photoEl.decode(); } catch (e) {}
+    // Ensure the embedded images are decoded so they rasterize into the PNG.
+    try { await Promise.all([photoEl, cbLogoEl].filter(Boolean).map((el) => el.decode ? el.decode().catch(() => {}) : null)); } catch (e) {}
     const css = Array.from(document.styleSheets[0].cssRules).map((r) => r.cssText).join('\n');
     const clone = card.cloneNode(true);
     clone.style.transform = 'none';
