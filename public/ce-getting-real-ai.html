@@ -42,8 +42,8 @@
 
   /* Top lockup: Coldwell Banker Schmidt Realty logo + "presented by our own" */
   .brand { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 16px; }
-  .brand .cb-logo { background: #FFFFFF; border-radius: 14px; padding: 15px 22px; box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
-  .brand .cb-logo img { display: block; height: 104px; width: auto; }
+  .brand .cb-logo { display: flex; }
+  .brand .cb-logo img { display: block; height: 120px; width: auto; }
   .brand .present { font-size: 21px; letter-spacing: 1px; color: #C7D4E3; }
   .brand .present b { color: #F26B1D; font-weight: 700; }
 
@@ -78,8 +78,7 @@
 
   /* Square 1:1 is the tightest: shrink everything so nothing collides. */
   .card.f1x1 .brand { gap: 12px; }
-  .card.f1x1 .brand .cb-logo { padding: 12px 18px; border-radius: 12px; }
-  .card.f1x1 .brand .cb-logo img { height: 76px; }
+  .card.f1x1 .brand .cb-logo img { height: 86px; }
   .card.f1x1 .brand .present { font-size: 19px; }
   .card.f1x1 .kicker { font-size: 22px; letter-spacing: 6px; }
   .card.f1x1 .title { font-size: 74px; margin-top: 14px; }
@@ -100,7 +99,7 @@
   .card.f1x1 .presenter .who .site { font-size: 18px; margin-top: 9px; }
 
   /* Story 9:16 has the most room: let the hero and photo breathe. */
-  .card.f9x16 .brand .cb-logo img { height: 122px; }
+  .card.f9x16 .brand .cb-logo img { height: 138px; }
   .card.f9x16 .title { font-size: 124px; }
   .card.f9x16 .cover .txt { font-size: 37px; }
   .card.f9x16 .cover .num { font-size: 33px; }
