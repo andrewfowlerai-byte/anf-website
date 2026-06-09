@@ -23,9 +23,9 @@
      height changes. A flex column keeps the content evenly spaced as the
      height grows from square (1080) to story (1920). ===== */
   .card {
-    position: relative; width: 1080px; overflow: hidden; color: #F4F7FB;
+    position: relative; width: 1080px; overflow: hidden; color: #0B1A33;
     font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    background: radial-gradient(130% 100% at 50% 0%, #1A3257 0%, #0B1A33 58%, #07101F 100%);
+    background: radial-gradient(130% 100% at 50% 0%, #FFFFFF 0%, #F2F6FA 55%, #E6EDF4 100%);
     display: flex; flex-direction: column; align-items: center; text-align: center;
     padding: 104px 104px 88px;
   }
@@ -44,36 +44,36 @@
   .brand { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 16px; }
   .brand .cb-logo { display: flex; }
   .brand .cb-logo img { display: block; height: 120px; width: auto; }
-  .brand .present { font-size: 21px; letter-spacing: 1px; color: #C7D4E3; }
+  .brand .present { font-size: 21px; letter-spacing: 1px; color: #51637A; }
   .brand .present b { color: #F26B1D; font-weight: 700; }
 
   /* Center block grows to fill the space between brand and presenter */
   .main { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
   .kicker { font-size: 27px; letter-spacing: 7px; text-transform: uppercase; color: #F26B1D; font-weight: 700; }
-  .title { font-size: 104px; font-weight: 800; line-height: 1.02; letter-spacing: -1px; margin-top: 18px; color: #F4F7FB; }
-  .subtitle { font-size: 28px; line-height: 1.45; color: #C7D4E3; margin-top: 20px; max-width: 760px; }
+  .title { font-size: 104px; font-weight: 800; line-height: 1.02; letter-spacing: -1px; margin-top: 18px; color: #0B1A33; }
+  .subtitle { font-size: 28px; line-height: 1.45; color: #51637A; margin-top: 20px; max-width: 760px; }
   .divider { width: 84px; height: 3px; background: #F26B1D; margin: 28px auto 26px; }
 
   /* "What we'll cover" — a short numbered agenda */
-  .cover-label { font-size: 19px; letter-spacing: 5px; text-transform: uppercase; color: #7E93AC; font-weight: 700; margin-bottom: 22px; }
+  .cover-label { font-size: 19px; letter-spacing: 5px; text-transform: uppercase; color: #64748B; font-weight: 700; margin-bottom: 22px; }
   .cover { list-style: none; display: flex; flex-direction: column; gap: 19px; text-align: left; }
   .cover li { display: flex; align-items: center; gap: 22px; }
   .cover .num { flex: 0 0 auto; min-width: 46px; font-size: 30px; font-weight: 800; color: #F26B1D; line-height: 1; font-variant-numeric: tabular-nums; border-bottom: 3px solid rgba(242,107,29,0.4); padding-bottom: 4px; }
-  .cover .txt { font-size: 32px; font-weight: 600; line-height: 1.2; color: #F4F7FB; }
+  .cover .txt { font-size: 32px; font-weight: 600; line-height: 1.2; color: #0B1A33; }
 
   /* Details (date / time / where) in a subtle glass pill */
-  .details { display: inline-flex; justify-content: center; align-items: stretch; margin-top: 40px; padding: 16px 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(242,107,29,0.3); border-radius: 18px; }
-  .detail { padding: 0 28px; border-right: 1px solid rgba(255,255,255,0.12); }
+  .details { display: inline-flex; justify-content: center; align-items: stretch; margin-top: 40px; padding: 16px 8px; background: rgba(11,26,51,0.035); border: 1px solid rgba(242,107,29,0.35); border-radius: 18px; }
+  .detail { padding: 0 28px; border-right: 1px solid rgba(11,26,51,0.12); }
   .detail:last-child { border-right: none; }
   .detail .label { font-size: 15px; letter-spacing: 3px; text-transform: uppercase; color: #F26B1D; font-weight: 700; }
-  .detail .value { font-size: 26px; font-weight: 700; color: #F4F7FB; margin-top: 7px; white-space: nowrap; }
+  .detail .value { font-size: 26px; font-weight: 700; color: #0B1A33; margin-top: 7px; white-space: nowrap; }
 
   /* Presenter (large photo on the left, name + site to the right) */
   .presenter { flex: 0 0 auto; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 30px; }
-  .presenter .photo { width: 186px; height: 186px; border-radius: 50%; object-fit: cover; object-position: 50% 50%; border: 4px solid #F26B1D; box-shadow: 0 0 0 10px rgba(242,107,29,0.10), 0 22px 55px rgba(0,0,0,0.5); background: #1A3257; }
+  .presenter .photo { width: 186px; height: 186px; border-radius: 50%; object-fit: cover; object-position: 50% 50%; border: 4px solid #F26B1D; box-shadow: 0 0 0 10px rgba(242,107,29,0.12), 0 18px 45px rgba(11,26,51,0.20); background: #E6EDF4; }
   .presenter .who { display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
-  .presenter .who .name { font-size: 36px; font-weight: 700; color: #F4F7FB; line-height: 1.1; }
-  .presenter .who .affil { font-size: 19px; color: #9FB2C9; letter-spacing: 0.5px; margin-top: 5px; }
+  .presenter .who .name { font-size: 36px; font-weight: 700; color: #0B1A33; line-height: 1.1; }
+  .presenter .who .affil { font-size: 19px; color: #64748B; letter-spacing: 0.5px; margin-top: 5px; }
   .presenter .who .site { font-size: 20px; color: #F26B1D; letter-spacing: 3px; text-transform: uppercase; font-weight: 600; margin-top: 11px; }
 
   /* Square 1:1 is the tightest: shrink everything so nothing collides. */
@@ -93,7 +93,7 @@
   .card.f1x1 .detail .value { font-size: 22px; }
   .card.f1x1 .detail .label { font-size: 13px; }
   .card.f1x1 .presenter { gap: 24px; }
-  .card.f1x1 .presenter .photo { width: 150px; height: 150px; border-width: 3px; box-shadow: 0 0 0 8px rgba(242,107,29,0.10), 0 16px 40px rgba(0,0,0,0.5); }
+  .card.f1x1 .presenter .photo { width: 150px; height: 150px; border-width: 3px; box-shadow: 0 0 0 8px rgba(242,107,29,0.12), 0 14px 34px rgba(11,26,51,0.20); }
   .card.f1x1 .presenter .who .name { font-size: 30px; }
   .card.f1x1 .presenter .who .affil { font-size: 17px; }
   .card.f1x1 .presenter .who .site { font-size: 18px; margin-top: 9px; }
@@ -109,7 +109,7 @@
   .card.f9x16 .presenter .who .affil { font-size: 21px; }
   .card.f9x16 .presenter .who .site { font-size: 22px; }
 
-  #card { box-shadow: 0 24px 70px rgba(0,0,0,0.55); }
+  #card { box-shadow: 0 24px 70px rgba(11,26,51,0.18); }
 </style>
 </head>
 <body>
