@@ -6,6 +6,7 @@ import { About } from './pages/About'
 import { Book } from './pages/Book'
 import { Events } from './pages/Events'
 import { Signature } from './pages/Signature'
+import ClassMaterial from './pages/ClassMaterial'
 
 function App() {
   return (
@@ -21,6 +22,8 @@ function App() {
         {/* Standalone route (no marketing layout) — select-all copy on the
             signature shouldn't pull in the site header / footer. */}
         <Route path="/signature" element={<Signature />} />
+        {/* Code-locked class worksheet (scan a QR, enter the code). */}
+        <Route path="/class" element={<ClassMaterial />} />
       </Routes>
     </BrowserRouter>
   )
