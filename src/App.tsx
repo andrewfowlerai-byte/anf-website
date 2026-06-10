@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Layout } from './components/Layout'
 import { Home } from './pages/Home'
 import { Services } from './pages/Services'
@@ -24,6 +24,8 @@ function App() {
         <Route path="/signature" element={<Signature />} />
         {/* Code-locked class worksheet (scan a QR, enter the code). */}
         <Route path="/class" element={<ClassMaterial />} />
+        {/* Anything else lands on the home page instead of a blank screen. */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )
