@@ -36,14 +36,22 @@ export default function ClassReviewGate({
       setError('Please tap a star rating.')
       return
     }
+    if (takeaway.trim().length < 2) {
+      setError('Please share your biggest takeaway.')
+      return
+    }
+    if (thoughts.trim().length < 2) {
+      setError('Please tell us what you thought of the class.')
+      return
+    }
     setSubmitting(true)
     try {
       await submitClassReview({
         clientName: name.trim(),
         businessName: business.trim() || undefined,
         rating,
-        outcome: takeaway.trim() || undefined,
-        highlight: thoughts.trim() || undefined,
+        outcome: takeaway.trim(),
+        highlight: thoughts.trim(),
         allowPublic,
         service: CLASS_SERVICE_LABEL,
         website,
@@ -116,13 +124,13 @@ export default function ClassReviewGate({
           />
 
           <TextArea
-            label="Your biggest takeaway (optional)"
+            label="Your biggest takeaway"
             value={takeaway}
             onChange={setTakeaway}
             placeholder="The one thing you'll use first..."
           />
           <TextArea
-            label="What did you think of the class? (optional)"
+            label="What did you think of the class?"
             value={thoughts}
             onChange={setThoughts}
             placeholder="What stood out..."
