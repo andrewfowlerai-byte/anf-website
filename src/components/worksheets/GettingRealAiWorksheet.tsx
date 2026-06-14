@@ -1,5 +1,5 @@
-import { type ReactNode } from 'react'
-import { Check } from 'lucide-react'
+import { useState, type ReactNode } from 'react'
+import { Check, Copy } from 'lucide-react'
 
 // Pre-filled takeaway guide for the "Getting Real With AI" CE class.
 // Light on detail by design: it is a teaser that points to ANF services
@@ -28,6 +28,41 @@ function TieIn({ children }: { children: ReactNode }) {
     </div>
   )
 }
+
+function PromptCard({ label, prompt }: { label: string; prompt: string }) {
+  const [copied, setCopied] = useState(false)
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(prompt)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1500)
+    } catch {
+      /* clipboard blocked, ignore */
+    }
+  }
+  return (
+    <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+      <div className="mb-1.5 flex items-center justify-between gap-3">
+        <p className="text-xs font-semibold uppercase tracking-wider text-flame-600">{label}</p>
+        <button
+          onClick={copy}
+          className="no-print inline-flex flex-shrink-0 items-center gap-1 rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 transition-colors hover:border-flame-400 hover:text-flame-600"
+        >
+          {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+          {copied ? 'Copied' : 'Copy'}
+        </button>
+      </div>
+      <p className="text-[14px] leading-relaxed text-slate-700">{prompt}</p>
+    </div>
+  )
+}
+
+const PROMPTS: [string, string][] = [
+  ['Listing description', 'Act as an expert real estate copywriter. Write a listing description for [address] with [beds, baths, standout features, lot, price] for [ideal buyer]. Three short paragraphs, warm and confident, ending with an invitation to book a showing.'],
+  ['Just-listed social post', 'Write an Instagram caption for a just-listed [home type] in [neighborhood]. Highlight [two or three features]. Friendly and confident, three short lines, five relevant hashtags, and one clear call to action.'],
+  ['Price-reduction email', 'Draft a 120-word email to my buyer leads about a price reduction on [address], now [price]. Build a little urgency without pressure, and end with a clear next step.'],
+  ['Open-house follow-up text', 'Write a short, friendly follow-up text to someone I met at an open house for [address]. Reference [a detail they mentioned], keep it under four sentences, and end with an easy question they can reply to.'],
+]
 
 const PROMPT_PARTS: [string, string, string][] = [
   ['Role', 'Tell it who to be.', 'Act as an expert listing copywriter.'],
@@ -126,13 +161,29 @@ export default function GettingRealAiWorksheet({ title }: { title?: string }) {
               </div>
             </div>
             <TieIn>
-              A set of prompts built around your listings, your area, and your voice is what an AI coaching session
-              sets up in an hour.
+              Most agents never get past a lazy ask. Briefing AI well is the whole skill, and it is the first thing
+              we build with you in an AI coaching session.
             </TieIn>
           </Section>
 
           <Section
             n="02"
+            title="Prompts worth stealing"
+            lead="A few you can use today. Copy one, fill in the brackets, and paste it into ChatGPT or Claude."
+          >
+            <div className="space-y-3">
+              {PROMPTS.map(([label, prompt]) => (
+                <PromptCard key={label} label={label} prompt={prompt} />
+              ))}
+            </div>
+            <TieIn>
+              These are a starter set. The real edge is a full library tuned to your listings, your market, and your
+              voice, so every draft sounds like you. That is what we build together.
+            </TieIn>
+          </Section>
+
+          <Section
+            n="03"
             title="Which AI tools to use"
             lead="You do not need ten apps. Pick one tool per job and actually use it. Here is a simple starting map."
           >
@@ -161,7 +212,7 @@ export default function GettingRealAiWorksheet({ title }: { title?: string }) {
           </Section>
 
           <Section
-            n="03"
+            n="04"
             title="How to show up in AI search"
             lead="Buyers and sellers now ask AI, who is a good agent near me? AI answers from your online footprint. Make yourself easy to find and easy to recommend."
           >
