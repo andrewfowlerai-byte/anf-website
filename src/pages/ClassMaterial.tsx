@@ -2,12 +2,14 @@ import { useState, type FormEvent } from 'react'
 import { Lock, Loader2 } from 'lucide-react'
 import { unlockClass, type ClassMaterial as ClassMat } from '../lib/classMaterials'
 import GettingRealAiWorksheet from '../components/worksheets/GettingRealAiWorksheet'
+import ClassReviewGate from '../components/ClassReviewGate'
 
 export default function ClassMaterial() {
   const [code, setCode] = useState('')
   const [unlocking, setUnlocking] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [material, setMaterial] = useState<ClassMat | null>(null)
+  const [reviewed, setReviewed] = useState(false)
 
   const handleUnlock = async (e: FormEvent) => {
     e.preventDefault()
@@ -16,14 +18,28 @@ export default function ClassMaterial() {
     setError(null)
     try {
       const m = await unlockClass(code)
-      if (!m) setError("That code didn't match. Double-check the code from class.")
-      else setMaterial(m)
+      if (!m) {
+        setError("That code didn't match. Double-check the code from class.")
+      } else {
+        setMaterial(m)
+        // Returning attendees who already reviewed on this device skip the form.
+        try {
+          setReviewed(localStorage.getItem(`anf-class-reviewed-${m.slug}`) === '1')
+        } catch {
+          setReviewed(false)
+        }
+      }
     } finally {
       setUnlocking(false)
     }
   }
 
   if (material) {
+    // Gate the workbook behind a short class review. The class code already
+    // proved they attended; the review flows to the CRM Reviews tab for socials.
+    if (!reviewed) {
+      return <ClassReviewGate slug={material.slug} onDone={() => setReviewed(true)} />
+    }
     if (material.slug === 'getting-real-ai') return <GettingRealAiWorksheet title={material.title} />
     return (
       <div className="grid min-h-screen place-items-center bg-slate-100 px-6 text-center">
