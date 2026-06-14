@@ -93,8 +93,16 @@ const VISIBILITY: string[] = [
 
 const SERVICES: [string, string][] = [
   ['AI coaching & setup', 'Prompts, tools, and workflows built around your day.'],
+  ['Custom CRM builds', 'One system for leads, follow-ups, and content, shaped around your business.'],
   ['Website design', 'A site that ranks, converts, and reads like you.'],
   ['Social media management', 'Daily content that keeps you visible.'],
+]
+
+const CRM_POINTS: string[] = [
+  'Your leads, clients, and follow-ups in one place, not scattered across apps and sticky notes.',
+  'AI built in: it drafts your emails, reminds you who to follow up with, and keeps your notes organized.',
+  'Your content, listings, and calendar together, so nothing slips through.',
+  'Built around how you work, not a generic one-size template.',
 ]
 
 // ---- the guide -------------------------------------------------------------
@@ -236,6 +244,28 @@ export default function GettingRealAiWorksheet({ title }: { title?: string }) {
             </TieIn>
           </Section>
 
+          <Section
+            n="05"
+            title="Run your business from one place"
+            lead="The tools above are powerful, but they live in different tabs. The real shift is one system that runs your business, with AI built in and shaped around how you actually work."
+          >
+            <div className="space-y-2.5">
+              {CRM_POINTS.map((item) => (
+                <div key={item} className="flex items-start gap-3 text-[15px] leading-relaxed text-slate-800">
+                  <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-flame-500 text-white">
+                    <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                  </span>
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+            <TieIn>
+              This is the part most people do not know is possible. ANF builds custom CRMs around your business, for
+              realtors and professionals in any field (lawyers, accountants, coaches, and more), with AI where it
+              saves you time.
+            </TieIn>
+          </Section>
+
           {/* Call to action */}
           <section className="break-inside-avoid rounded-xl bg-midnight-900 px-6 py-6 text-white print:bg-slate-100 print:text-midnight-900">
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-flame-400 print:text-flame-600">Your next step</p>
@@ -244,7 +274,7 @@ export default function GettingRealAiWorksheet({ title }: { title?: string }) {
               This guide is the starting line. The results come from doing it consistently, set up right, and built
               around your business. That is the part we handle.
             </p>
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {SERVICES.map(([t, b]) => (
                 <div key={t} className="rounded-lg border border-white/15 bg-white/5 px-4 py-3 print:border-slate-300 print:bg-white">
                   <p className="text-[15px] font-semibold text-white print:text-midnight-900">{t}</p>
