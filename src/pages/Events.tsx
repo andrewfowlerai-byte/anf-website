@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { Calendar, MapPin, Lock, Ticket, Loader2 } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Calendar, MapPin, Lock, Ticket, Loader2, BookOpen } from 'lucide-react'
 import { listUpcomingPublicEvents, lookupPrivateEvent, type AnfEvent } from '../lib/events'
 
 export function Events() {
@@ -228,6 +229,16 @@ function EventCard({ event, highlight = false }: { event: AnfEvent; highlight?: 
             {ctaLabel}
           </a>
         </div>
+
+        {event.has_class_workbook && (
+          <Link
+            to="/class"
+            className="mt-4 flex items-center justify-center gap-2 rounded-md border border-flame-500/40 bg-flame-500/10 px-5 py-2.5 text-sm font-medium text-flame-300 transition-colors hover:bg-flame-500/20"
+          >
+            <BookOpen className="h-4 w-4" />
+            Access class workbook
+          </Link>
+        )}
       </div>
     </article>
   )

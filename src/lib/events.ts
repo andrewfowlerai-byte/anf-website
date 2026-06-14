@@ -19,6 +19,7 @@ export interface AnfEvent {
   payment_link_url: string | null
   rsvp_url: string | null
   status: EventStatus
+  has_class_workbook: boolean
   created_at: string
   updated_at: string
 }
