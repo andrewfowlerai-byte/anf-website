@@ -10,6 +10,9 @@ export interface ClassReviewInput {
   rating: number;
   outcome?: string; // biggest takeaway
   highlight?: string; // what they thought of the class
+  recommend?: string; // "Yes" / "No" — would recommend the class to others
+  email?: string;
+  notifyEvents?: boolean; // opt in to hear about future ANF events
   allowPublic: boolean;
   service: string; // e.g. "Getting Real With AI class"
   website?: string; // honeypot, must stay empty
@@ -25,6 +28,9 @@ export async function submitClassReview(input: ClassReviewInput): Promise<void> 
       rating: input.rating,
       outcome: input.outcome,
       highlight: input.highlight,
+      recommend: input.recommend,
+      email: input.email,
+      notifyEvents: input.notifyEvents,
       allowPublic: input.allowPublic,
       service: input.service,
       website: input.website,

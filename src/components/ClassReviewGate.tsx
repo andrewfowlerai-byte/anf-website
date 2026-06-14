@@ -7,6 +7,8 @@ import { submitClassReview } from '../lib/reviews'
 // socials. The workbook unlocks whether or not they consent to public sharing.
 const CLASS_SERVICE_LABEL = 'Getting Real With AI class'
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 export default function ClassReviewGate({
   slug,
   onDone,
@@ -20,7 +22,10 @@ export default function ClassReviewGate({
   const [hover, setHover] = useState(0)
   const [takeaway, setTakeaway] = useState('')
   const [thoughts, setThoughts] = useState('')
+  const [recommend, setRecommend] = useState<'' | 'Yes' | 'No'>('')
   const [allowPublic, setAllowPublic] = useState(true)
+  const [notify, setNotify] = useState(false)
+  const [email, setEmail] = useState('')
   const [website, setWebsite] = useState('') // honeypot
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -44,6 +49,14 @@ export default function ClassReviewGate({
       setError('Please tell us what you thought of the class.')
       return
     }
+    if (!recommend) {
+      setError('Please let us know if you would recommend the class.')
+      return
+    }
+    if (notify && !EMAIL_RE.test(email.trim())) {
+      setError('Please add a valid email so we can notify you about events.')
+      return
+    }
     setSubmitting(true)
     try {
       await submitClassReview({
@@ -52,6 +65,9 @@ export default function ClassReviewGate({
         rating,
         outcome: takeaway.trim(),
         highlight: thoughts.trim(),
+        recommend,
+        email: email.trim() || undefined,
+        notifyEvents: notify,
         allowPublic,
         service: CLASS_SERVICE_LABEL,
         website,
@@ -136,6 +152,28 @@ export default function ClassReviewGate({
             placeholder="What stood out..."
           />
 
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-midnight-900">
+              Would you recommend this class to others?
+            </label>
+            <div className="flex gap-2">
+              {(['Yes', 'No'] as const).map((opt) => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => setRecommend(opt)}
+                  className={`flex-1 rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors ${
+                    recommend === opt
+                      ? 'border-flame-500 bg-flame-500/10 text-flame-700'
+                      : 'border-slate-300 bg-white text-slate-600 hover:border-slate-400'
+                  }`}
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <label className="flex items-start gap-2.5 text-sm text-slate-600">
             <input
               type="checkbox"
@@ -147,6 +185,27 @@ export default function ClassReviewGate({
               It's okay for ANF to share my review publicly (website and social media). You'll get the workbook either way.
             </span>
           </label>
+
+          <label className="flex items-start gap-2.5 text-sm text-slate-600">
+            <input
+              type="checkbox"
+              checked={notify}
+              onChange={(e) => setNotify(e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-slate-300 text-flame-500 focus:ring-flame-500/40"
+            />
+            <span>Notify me when ANF Consulting hosts more events.</span>
+          </label>
+
+          {notify && (
+            <Field
+              label="Your email"
+              type="email"
+              value={email}
+              onChange={setEmail}
+              placeholder="you@email.com"
+              required
+            />
+          )}
 
           <button
             type="submit"
@@ -170,17 +229,20 @@ function Field({
   onChange,
   placeholder,
   required,
+  type = 'text',
 }: {
   label: string
   value: string
   onChange: (v: string) => void
   placeholder?: string
   required?: boolean
+  type?: string
 }) {
   return (
     <div>
       <label className="mb-1.5 block text-sm font-medium text-midnight-900">{label}</label>
       <input
+        type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
