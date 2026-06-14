@@ -52,7 +52,7 @@ export function Events() {
 
       {/* Public events */}
       <section className="max-w-6xl mx-auto px-6 pb-16">
-        <h2 className="text-2xl md:text-3xl font-display text-silver-100 mb-8">
+        <h2 className="text-2xl md:text-3xl font-display text-silver-100 mb-8 text-center">
           Upcoming public events
         </h2>
 
@@ -69,9 +69,11 @@ export function Events() {
             </p>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="flex flex-wrap justify-center gap-6">
             {publicEvents.map((ev) => (
-              <EventCard key={ev.id} event={ev} />
+              <div key={ev.id} className="w-full md:w-[calc(50%-0.75rem)] max-w-xl">
+                <EventCard event={ev} />
+              </div>
             ))}
           </div>
         )}
