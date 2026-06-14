@@ -44,7 +44,7 @@ export default function ClassMaterial() {
         </div>
         <h1 className="text-2xl font-bold text-midnight-900">Enter your class code</h1>
         <p className="mt-2 text-[15px] leading-relaxed text-slate-600">
-          Type the code from today's class to open your worksheet. You can fill it in here, then download or print your copy.
+          Type the code from today's class to open your guide. You can download or print a copy to keep.
         </p>
         <form onSubmit={handleUnlock} className="mt-5 space-y-3">
           <input
@@ -61,7 +61,7 @@ export default function ClassMaterial() {
             className="flex w-full items-center justify-center gap-2 rounded-lg bg-flame-500 px-5 py-3 font-medium text-white transition-colors hover:bg-flame-600 disabled:opacity-60"
           >
             {unlocking ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-            Open worksheet
+            Open guide
           </button>
           {error && <p className="text-center text-sm text-red-600">{error}</p>}
         </form>

@@ -1,67 +1,11 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
+import { Check } from 'lucide-react'
 
-const STORAGE_KEY = 'anf-grwai-worksheet'
+// Pre-filled takeaway guide for the "Getting Real With AI" CE class.
+// Light on detail by design: it is a teaser that points to ANF services
+// (AI coaching, website design, social media management) for the real work.
 
-// ---- tiny field helpers ----------------------------------------------------
-
-function useAnswers() {
-  const [answers, setAnswers] = useState<Record<string, string>>(() => {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
-    } catch {
-      return {}
-    }
-  })
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(answers))
-    } catch {
-      /* ignore */
-    }
-  }, [answers])
-  const set = (id: string, v: string) => setAnswers((a) => ({ ...a, [id]: v }))
-  return { answers, set }
-}
-
-function Line({ value, onChange, placeholder, wide = false }: { value: string; onChange: (v: string) => void; placeholder?: string; wide?: boolean }) {
-  return (
-    <input
-      value={value}
-      placeholder={placeholder}
-      onChange={(e) => onChange(e.target.value)}
-      className={`${wide ? 'w-full' : 'min-w-[160px]'} rounded-md border border-slate-300 bg-white px-3 py-2 text-[15px] text-slate-900 placeholder-slate-400 focus:border-flame-500 focus:outline-none focus:ring-1 focus:ring-flame-500/40`}
-    />
-  )
-}
-
-function Area({ value, onChange, placeholder, rows = 2 }: { value: string; onChange: (v: string) => void; placeholder?: string; rows?: number }) {
-  const ref = useRef<HTMLTextAreaElement>(null)
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    el.style.height = 'auto'
-    el.style.height = `${el.scrollHeight}px`
-  }, [value])
-  return (
-    <textarea
-      ref={ref}
-      rows={rows}
-      value={value}
-      placeholder={placeholder}
-      onChange={(e) => onChange(e.target.value)}
-      className="w-full resize-none overflow-hidden rounded-md border border-slate-300 bg-white px-3 py-2 text-[15px] leading-relaxed text-slate-900 placeholder-slate-400 focus:border-flame-500 focus:outline-none focus:ring-1 focus:ring-flame-500/40"
-    />
-  )
-}
-
-function Check({ checked, onChange, children }: { checked: boolean; onChange: (v: boolean) => void; children: ReactNode }) {
-  return (
-    <label className="flex cursor-pointer items-start gap-3 text-[15px] leading-relaxed text-slate-800">
-      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="mt-1 h-4 w-4 flex-shrink-0 accent-flame-600" />
-      <span>{children}</span>
-    </label>
-  )
-}
+// ---- small presentational helpers -----------------------------------------
 
 function Section({ n, title, lead, children }: { n: string; title: string; lead: string; children: ReactNode }) {
   return (
@@ -76,22 +20,54 @@ function Section({ n, title, lead, children }: { n: string; title: string; lead:
   )
 }
 
-function Label({ children }: { children: ReactNode }) {
-  return <p className="mb-1.5 text-sm font-semibold text-slate-700">{children}</p>
+function TieIn({ children }: { children: ReactNode }) {
+  return (
+    <div className="rounded-md border-l-2 border-flame-500 bg-flame-50 px-4 py-2.5 text-[14px] leading-relaxed text-slate-700">
+      <span className="font-semibold text-flame-600">Where ANF comes in. </span>
+      {children}
+    </div>
+  )
 }
 
-// ---- the worksheet ---------------------------------------------------------
+const PROMPT_PARTS: [string, string, string][] = [
+  ['Role', 'Tell it who to be.', 'Act as an expert listing copywriter.'],
+  ['Context', 'Give it the facts.', 'The address, the features, and who the buyer is.'],
+  ['Task', 'Ask for one thing.', 'Write the listing description.'],
+  ['Format', 'Say how you want it back.', 'Three short paragraphs, warm and confident.'],
+]
+
+const TOOLS: [string, string, string][] = [
+  ['Listings & descriptions', 'ChatGPT or Claude', 'Drafts that sound like you, fast.'],
+  ['Emails & follow-ups', 'ChatGPT or Claude', 'Replies and nurture notes in seconds.'],
+  ['Social captions & graphics', 'Canva', 'Posts, captions, and carousels in one place.'],
+  ['Market & neighborhood research', 'Perplexity', 'Answers with sources you can check.'],
+  ['Listing photos & video', 'CapCut', 'Quick reels and clean edits for social.'],
+  ['Notes & admin', 'ChatGPT or Claude', 'Turn a voice note into a plan.'],
+]
+
+const VISIBILITY: string[] = [
+  'A complete, active Google Business Profile.',
+  'Your name, area, and specialty read the same everywhere: Google, Zillow, Realtor.com, Instagram, your site.',
+  'Recent reviews, and a habit of asking for them.',
+  'A website that says, in plain words, who you help and where.',
+  'Helpful local content: neighborhood guides and market notes.',
+  'Mentions and links on local sites and partner pages.',
+]
+
+const SERVICES: [string, string][] = [
+  ['AI coaching & setup', 'Prompts, tools, and workflows built around your day.'],
+  ['Website design', 'A site that ranks, converts, and reads like you.'],
+  ['Social media management', 'Daily content that keeps you visible.'],
+]
+
+// ---- the guide -------------------------------------------------------------
 
 export default function GettingRealAiWorksheet({ title }: { title?: string }) {
-  const { answers, set } = useAnswers()
-  const a = (id: string) => answers[id] || ''
-
   return (
     <div className="min-h-screen bg-slate-100 px-4 py-8 print:bg-white print:p-0">
       <style>{`@media print {
         .no-print { display: none !important; }
         .ws { box-shadow: none !important; margin: 0 !important; max-width: none !important; border-radius: 0 !important; }
-        textarea { overflow: visible !important; }
         @page { margin: 0.6in; }
         body { background: #fff; }
       }`}</style>
@@ -99,7 +75,7 @@ export default function GettingRealAiWorksheet({ title }: { title?: string }) {
       <div className="ws mx-auto max-w-3xl overflow-hidden rounded-2xl bg-white shadow-xl">
         {/* Toolbar (screen only) */}
         <div className="no-print flex flex-wrap items-center justify-between gap-3 bg-midnight-900 px-6 py-3">
-          <span className="text-sm text-silver-200">Fill it in, then download or print your copy. Your answers save automatically on this device.</span>
+          <span className="text-sm text-silver-200">Your takeaway guide from class. Keep it, and download or print a copy.</span>
           <button
             onClick={() => window.print()}
             className="rounded-md bg-flame-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-flame-600"
@@ -112,17 +88,11 @@ export default function GettingRealAiWorksheet({ title }: { title?: string }) {
         <div className="border-b-2 border-flame-500/30 px-8 pb-5 pt-8">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-flame-600">Real Estate Continuing Education</p>
           <h1 className="mt-2 text-3xl font-bold text-midnight-900 md:text-4xl">{title || 'Getting Real With AI'}</h1>
-          <p className="mt-1 text-slate-600">A working session. Presented by Andrew Fowler, Coldwell Banker Schmidt Realty.</p>
-          <div className="mt-4 flex flex-wrap gap-4 text-sm text-slate-700">
-            <label className="flex items-center gap-2">
-              Name
-              <input value={a('name')} onChange={(e) => set('name', e.target.value)} className="min-w-[180px] border-b border-slate-300 px-1 focus:border-flame-500 focus:outline-none" />
-            </label>
-            <label className="flex items-center gap-2">
-              Date
-              <input value={a('date')} onChange={(e) => set('date', e.target.value)} className="min-w-[120px] border-b border-slate-300 px-1 focus:border-flame-500 focus:outline-none" />
-            </label>
-          </div>
+          <p className="mt-1 text-slate-600">Presented by Andrew Fowler, Coldwell Banker Schmidt Realty.</p>
+          <p className="mt-3 text-[15px] leading-relaxed text-slate-600">
+            The short version of what we covered, so you can start today. Keep it as your cheat sheet. When you
+            are ready to put it to work for real, that is where ANF comes in.
+          </p>
         </div>
 
         {/* Body */}
@@ -130,96 +100,116 @@ export default function GettingRealAiWorksheet({ title }: { title?: string }) {
           <Section
             n="01"
             title="How to talk to AI"
-            lead="AI gives back what you put in. The skill is the ask. A strong prompt has four parts: a role for the AI, the context it needs, the one task you want, and the format you want it back in."
+            lead="AI gives back what you put in. The skill is the ask. A strong prompt has four parts."
           >
-            <div>
-              <Label>Build a prompt to write a listing description for one of your properties.</Label>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div><p className="mb-1 text-xs uppercase tracking-wider text-slate-500">Role</p><Line wide value={a('p_role')} onChange={(v) => set('p_role', v)} placeholder="e.g. an expert luxury real estate copywriter" /></div>
-                <div><p className="mb-1 text-xs uppercase tracking-wider text-slate-500">Context</p><Line wide value={a('p_context')} onChange={(v) => set('p_context', v)} placeholder="the address, key features, the buyer" /></div>
-                <div><p className="mb-1 text-xs uppercase tracking-wider text-slate-500">Task</p><Line wide value={a('p_task')} onChange={(v) => set('p_task', v)} placeholder="write the listing description" /></div>
-                <div><p className="mb-1 text-xs uppercase tracking-wider text-slate-500">Format</p><Line wide value={a('p_format')} onChange={(v) => set('p_format', v)} placeholder="3 short paragraphs, warm tone" /></div>
-              </div>
-            </div>
-            <div>
-              <Label>Now write the full prompt in your own words.</Label>
-              <Area value={a('p_full')} onChange={(v) => set('p_full', v)} rows={3} placeholder="Act as... Here is the property... Write... Give it back as..." />
+            <div className="grid gap-3 sm:grid-cols-2">
+              {PROMPT_PARTS.map(([label, desc, ex]) => (
+                <div key={label} className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-flame-600">{label}</p>
+                  <p className="mt-0.5 text-[15px] text-slate-800">{desc}</p>
+                  <p className="mt-1 text-[14px] italic text-slate-500">{ex}</p>
+                </div>
+              ))}
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
-              <div><Label>A lazy ask</Label><Area value={a('lazy')} onChange={(v) => set('lazy', v)} placeholder='e.g. "write a listing"' /></div>
-              <div><Label>The same ask, made sharp</Label><Area value={a('sharp')} onChange={(v) => set('sharp', v)} /></div>
+              <div className="rounded-lg border border-slate-200 px-4 py-3">
+                <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-400">A lazy ask</p>
+                <p className="text-[15px] text-slate-500">{`"Write a listing."`}</p>
+              </div>
+              <div className="rounded-lg border border-flame-500/40 bg-flame-50 px-4 py-3">
+                <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-flame-600">The same ask, made sharp</p>
+                <p className="text-[15px] text-slate-800">
+                  {`"Act as an expert real estate copywriter. The home is a 4 bed colonial in Highland Heights with a renovated kitchen and a wooded lot, priced for a young family. Write the description in three short paragraphs, warm and confident, ending with an invitation to book a showing."`}
+                </p>
+              </div>
             </div>
+            <TieIn>
+              A set of prompts built around your listings, your area, and your voice is what an AI coaching session
+              sets up in an hour.
+            </TieIn>
           </Section>
 
           <Section
             n="02"
             title="Which AI tools to use"
-            lead="You do not need ten apps. Pick one tool per job and actually use it. Match the job to a tool, then commit to one to start this week."
+            lead="You do not need ten apps. Pick one tool per job and actually use it. Here is a simple starting map."
           >
             <div className="overflow-hidden rounded-lg border border-slate-200">
-              <div className="grid grid-cols-[1.1fr_1fr_1fr] bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-500">
+              <div className="grid grid-cols-[1.1fr_1fr_1.3fr] bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-500">
                 <div className="px-3 py-2">The job</div>
                 <div className="px-3 py-2">A tool to try</div>
-                <div className="px-3 py-2">When I'll use it</div>
+                <div className="px-3 py-2">What it is good for</div>
               </div>
-              {[
-                ['Listings & descriptions', 'jt_listing', 'jw_listing'],
-                ['Emails & follow-ups', 'jt_email', 'jw_email'],
-                ['Social captions & content', 'jt_social', 'jw_social'],
-                ['Market & neighborhood research', 'jt_research', 'jw_research'],
-                ['Photo & video touch-ups', 'jt_media', 'jw_media'],
-                ['Scheduling & admin', 'jt_admin', 'jw_admin'],
-              ].map(([job, tId, wId]) => (
-                <div key={tId} className="grid grid-cols-[1.1fr_1fr_1fr] border-t border-slate-200">
-                  <div className="flex items-center px-3 py-2 text-[15px] text-slate-800">{job}</div>
-                  <div className="border-l border-slate-200 p-1.5"><input value={a(tId)} onChange={(e) => set(tId, e.target.value)} className="w-full rounded px-2 py-1 text-[15px] text-slate-900 placeholder-slate-300 focus:bg-flame-50 focus:outline-none" placeholder="..." /></div>
-                  <div className="border-l border-slate-200 p-1.5"><input value={a(wId)} onChange={(e) => set(wId, e.target.value)} className="w-full rounded px-2 py-1 text-[15px] text-slate-900 placeholder-slate-300 focus:bg-flame-50 focus:outline-none" placeholder="..." /></div>
+              {TOOLS.map(([job, tool, good]) => (
+                <div key={job} className="grid grid-cols-[1.1fr_1fr_1.3fr] border-t border-slate-200 text-[15px]">
+                  <div className="px-3 py-2 text-slate-800">{job}</div>
+                  <div className="border-l border-slate-200 px-3 py-2 font-medium text-midnight-900">{tool}</div>
+                  <div className="border-l border-slate-200 px-3 py-2 text-slate-600">{good}</div>
                 </div>
               ))}
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div><Label>The ONE tool I'll start using this week</Label><Line wide value={a('one_tool')} onChange={(v) => set('one_tool', v)} /></div>
-              <div><Label>What I'll use it for first</Label><Line wide value={a('one_use')} onChange={(v) => set('one_use', v)} /></div>
-            </div>
+            <p className="text-[15px] leading-relaxed text-slate-700">
+              <span className="font-semibold text-midnight-900">Start with one.</span> If you adopt a single tool this
+              month, make it ChatGPT or Claude for writing. It touches the most of your day.
+            </p>
+            <TieIn>
+              Want these picked, set up, and connected to how you actually work, so they save real time? That is what
+              AI setup and implementation handles.
+            </TieIn>
           </Section>
 
           <Section
             n="03"
             title="How to show up in AI search"
-            lead="Buyers and sellers now ask AI 'who is a good agent in my area?'. AI answers from your online footprint. Make yourself easy to find and easy to recommend."
+            lead="Buyers and sellers now ask AI, who is a good agent near me? AI answers from your online footprint. Make yourself easy to find and easy to recommend."
           >
             <div className="space-y-2.5">
-              <Check checked={a('c_gbp') === 'yes'} onChange={(v) => set('c_gbp', v ? 'yes' : '')}>My Google Business Profile is complete and active.</Check>
-              <Check checked={a('c_consistent') === 'yes'} onChange={(v) => set('c_consistent', v ? 'yes' : '')}>My name, area, and specialty read the same everywhere (Google, Zillow, Realtor, Instagram, my site).</Check>
-              <Check checked={a('c_reviews') === 'yes'} onChange={(v) => set('c_reviews', v ? 'yes' : '')}>I have recent reviews and a habit of asking for them.</Check>
-              <Check checked={a('c_plain') === 'yes'} onChange={(v) => set('c_plain', v ? 'yes' : '')}>My website states, in plain words, who I help and where.</Check>
-              <Check checked={a('c_content') === 'yes'} onChange={(v) => set('c_content', v ? 'yes' : '')}>I publish helpful local content (neighborhood guides, market notes).</Check>
-              <Check checked={a('c_cited') === 'yes'} onChange={(v) => set('c_cited', v ? 'yes' : '')}>I am mentioned or cited on local sites and partner pages.</Check>
-            </div>
-            <div><Label>My specialty and area in one sentence, so AI can categorize me.</Label><Area value={a('one_liner')} onChange={(v) => set('one_liner', v)} placeholder="I help people buy and sell luxury homes on Cleveland's east side." /></div>
-            <div><Label>Three clients I'll ask for a review this week.</Label><Area value={a('review_list')} onChange={(v) => set('review_list', v)} rows={3} /></div>
-          </Section>
-
-          {/* Action plan */}
-          <section className="break-inside-avoid rounded-xl bg-midnight-900 px-6 py-5 text-white print:bg-slate-100 print:text-midnight-900">
-            <h2 className="text-lg font-bold">My next 7 days</h2>
-            <p className="mt-1 text-sm text-silver-300 print:text-slate-600">Three concrete things I'll actually do.</p>
-            <div className="mt-3 space-y-2">
-              {['act1', 'act2', 'act3'].map((id, i) => (
-                <div key={id} className="flex items-center gap-3">
-                  <span className="text-flame-400 print:text-flame-600">{i + 1}.</span>
-                  <input value={a(id)} onChange={(e) => set(id, e.target.value)} className="w-full rounded-md border border-white/20 bg-white/10 px-3 py-2 text-[15px] text-white placeholder-silver-400 focus:border-flame-400 focus:outline-none print:border-slate-300 print:bg-white print:text-slate-900" />
+              {VISIBILITY.map((item) => (
+                <div key={item} className="flex items-start gap-3 text-[15px] leading-relaxed text-slate-800">
+                  <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-flame-500 text-white">
+                    <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                  </span>
+                  <span>{item}</span>
                 </div>
               ))}
             </div>
-          </section>
+            <div className="rounded-md border-l-2 border-slate-300 bg-slate-50 px-4 py-2.5 text-[15px] text-slate-700">
+              <span className="font-semibold text-slate-800">Your one liner, so AI can categorize you: </span>
+              {`"I help people buy and sell homes on Cleveland's east side."`}
+            </div>
+            <TieIn>
+              A clear website, steady social, and helpful local content are what get you found and recommended. That
+              is the core of what ANF builds and runs for agents.
+            </TieIn>
+          </Section>
 
-          <div><Label>Notes</Label><Area value={a('notes')} onChange={(v) => set('notes', v)} rows={4} /></div>
+          {/* Call to action */}
+          <section className="break-inside-avoid rounded-xl bg-midnight-900 px-6 py-6 text-white print:bg-slate-100 print:text-midnight-900">
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-flame-400 print:text-flame-600">Your next step</p>
+            <h2 className="mt-2 text-xl font-bold">Ready to put this to work?</h2>
+            <p className="mt-2 text-[15px] leading-relaxed text-silver-200 print:text-slate-600">
+              This guide is the starting line. The results come from doing it consistently, set up right, and built
+              around your business. That is the part we handle.
+            </p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              {SERVICES.map(([t, b]) => (
+                <div key={t} className="rounded-lg border border-white/15 bg-white/5 px-4 py-3 print:border-slate-300 print:bg-white">
+                  <p className="text-[15px] font-semibold text-white print:text-midnight-900">{t}</p>
+                  <p className="mt-1 text-[13px] leading-relaxed text-silver-300 print:text-slate-600">{b}</p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-5 text-[15px] text-silver-200 print:text-slate-700">
+              Book a free call at{' '}
+              <span className="font-semibold text-flame-400 print:text-flame-600">anfconsult.com/book</span>. Mention
+              this class and we will start with a quick strategy chat, no charge.
+            </p>
+          </section>
         </div>
 
         {/* Footer */}
         <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-200 px-8 py-5 text-sm text-slate-600">
-          <span>Questions after class? Andrew Fowler</span>
+          <span>Presented by Andrew Fowler · ANF Consulting</span>
           <span className="font-semibold text-flame-600">anfconsult.com</span>
         </div>
       </div>
