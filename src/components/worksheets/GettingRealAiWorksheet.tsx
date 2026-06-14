@@ -40,8 +40,10 @@ const TOOLS: [string, string, string][] = [
   ['Listings & descriptions', 'ChatGPT or Claude', 'Drafts that sound like you, fast.'],
   ['Emails & follow-ups', 'ChatGPT or Claude', 'Replies and nurture notes in seconds.'],
   ['Social captions & graphics', 'Canva', 'Posts, captions, and carousels in one place.'],
+  ['Daily social media content', 'Everlee', 'Daily AI posts and a streak to keep you consistent.'],
   ['Market & neighborhood research', 'Perplexity', 'Answers with sources you can check.'],
   ['Listing photos & video', 'CapCut', 'Quick reels and clean edits for social.'],
+  ['Video without filming', 'HeyGen', 'AI presenter videos from a script, no camera needed.'],
   ['Notes & admin', 'ChatGPT or Claude', 'Turn a voice note into a plan.'],
 ]
 
