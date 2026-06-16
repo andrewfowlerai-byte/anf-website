@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { Calendar, MapPin, Lock, Ticket, Loader2, BookOpen } from 'lucide-react'
-import { listUpcomingPublicEvents, lookupPrivateEvent, type AnfEvent } from '../lib/events'
+import { Calendar, MapPin, Lock, Ticket, Loader2, BookOpen, Check } from 'lucide-react'
+import { listUpcomingPublicEvents, lookupPrivateEvent, createRsvp, type AnfEvent } from '../lib/events'
 
 export function Events() {
   const [publicEvents, setPublicEvents] = useState<AnfEvent[]>([])
@@ -145,6 +145,34 @@ function EventCard({ event, highlight = false }: { event: AnfEvent; highlight?: 
     ? event.rsvp_url
     : 'mailto:anfaiconsulting@gmail.com?subject=Event RSVP'
 
+  // Native RSVP capture for free public events. Private and paid events keep
+  // their external link (code-based attendance or Stripe checkout).
+  const nativeRsvp = isFree && event.visibility === 'public'
+  const [rsvpOpen, setRsvpOpen] = useState(false)
+  const [rsvpName, setRsvpName] = useState('')
+  const [rsvpEmail, setRsvpEmail] = useState('')
+  const [rsvpHoneypot, setRsvpHoneypot] = useState('')
+  const [rsvpBusy, setRsvpBusy] = useState(false)
+  const [rsvpDone, setRsvpDone] = useState(false)
+  const [rsvpError, setRsvpError] = useState<string | null>(null)
+
+  const submitRsvp = async (e: FormEvent) => {
+    e.preventDefault()
+    setRsvpError(null)
+    if (rsvpName.trim().length < 1) {
+      setRsvpError('Please add your name.')
+      return
+    }
+    setRsvpBusy(true)
+    try {
+      await createRsvp(event.id, { name: rsvpName, email: rsvpEmail, website: rsvpHoneypot })
+      setRsvpDone(true)
+    } catch {
+      setRsvpError('Could not RSVP. Please try again.')
+      setRsvpBusy(false)
+    }
+  }
+
   return (
     <article
       className={`relative overflow-hidden rounded-2xl border bg-midnight-900/40 transition-colors ${
@@ -219,16 +247,71 @@ function EventCard({ event, highlight = false }: { event: AnfEvent; highlight?: 
               <span className="text-silver-500 text-xs ml-2">· {event.capacity} seats</span>
             )}
           </div>
-          <a
-            href={ctaUrl}
-            target={ctaUrl.startsWith('http') ? '_blank' : undefined}
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 bg-flame-500 hover:bg-flame-600 text-white text-sm font-medium px-5 py-2.5 rounded-md transition-colors"
-          >
-            <Ticket className="w-4 h-4" />
-            {ctaLabel}
-          </a>
+          {nativeRsvp ? (
+            <button
+              type="button"
+              onClick={() => { setRsvpOpen((o) => !o); setRsvpError(null) }}
+              className="inline-flex items-center gap-1.5 bg-flame-500 hover:bg-flame-600 text-white text-sm font-medium px-5 py-2.5 rounded-md transition-colors"
+            >
+              <Ticket className="w-4 h-4" />
+              {rsvpDone ? "You're in" : 'RSVP'}
+            </button>
+          ) : (
+            <a
+              href={ctaUrl}
+              target={ctaUrl.startsWith('http') ? '_blank' : undefined}
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 bg-flame-500 hover:bg-flame-600 text-white text-sm font-medium px-5 py-2.5 rounded-md transition-colors"
+            >
+              <Ticket className="w-4 h-4" />
+              {ctaLabel}
+            </a>
+          )}
         </div>
+
+        {nativeRsvp && rsvpDone && (
+          <div className="mt-4 flex items-center gap-2 rounded-md border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">
+            <Check className="h-4 w-4 flex-shrink-0" />
+            You're on the list. We'll be in touch with the details.
+          </div>
+        )}
+
+        {nativeRsvp && rsvpOpen && !rsvpDone && (
+          <form onSubmit={submitRsvp} className="mt-4 space-y-2 rounded-md border border-midnight-700/60 bg-midnight-950/40 p-4">
+            <input
+              type="text"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              value={rsvpHoneypot}
+              onChange={(e) => setRsvpHoneypot(e.target.value)}
+              className="hidden"
+            />
+            <input
+              type="text"
+              value={rsvpName}
+              onChange={(e) => setRsvpName(e.target.value)}
+              placeholder="Your name"
+              className="w-full rounded-md border border-midnight-700 bg-midnight-950/60 px-3 py-2 text-sm text-silver-100 placeholder-silver-500 focus:border-flame-500 focus:outline-none"
+            />
+            <input
+              type="email"
+              value={rsvpEmail}
+              onChange={(e) => setRsvpEmail(e.target.value)}
+              placeholder="Email (so we can send you details)"
+              className="w-full rounded-md border border-midnight-700 bg-midnight-950/60 px-3 py-2 text-sm text-silver-100 placeholder-silver-500 focus:border-flame-500 focus:outline-none"
+            />
+            <button
+              type="submit"
+              disabled={rsvpBusy}
+              className="inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-flame-500 hover:bg-flame-600 disabled:opacity-60 px-4 py-2 text-sm font-medium text-white transition-colors"
+            >
+              {rsvpBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+              Confirm RSVP
+            </button>
+            {rsvpError && <p className="text-xs text-flame-300">{rsvpError}</p>}
+          </form>
+        )}
 
         {event.has_class_workbook && (
           <Link

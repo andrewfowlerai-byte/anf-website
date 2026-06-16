@@ -56,3 +56,23 @@ export async function lookupPrivateEvent(code: string): Promise<AnfEvent | null>
   if (Array.isArray(data) && data.length > 0) return data[0] as AnfEvent
   return null
 }
+
+export interface EventRsvpInput {
+  name: string
+  email?: string
+  guests?: number
+  website?: string // honeypot, must stay empty
+}
+
+/** Capture a public-event RSVP. RLS allows the anon insert only for public,
+ *  upcoming events. The honeypot is checked here before we ever hit the DB. */
+export async function createRsvp(eventId: string, input: EventRsvpInput): Promise<void> {
+  if (input.website && input.website.trim()) return // honeypot: silently drop bots
+  const { error } = await supabase.from('event_rsvps').insert({
+    event_id: eventId,
+    name: input.name.trim(),
+    email: input.email?.trim() || null,
+    guests: input.guests && input.guests > 0 ? input.guests : 1,
+  })
+  if (error) throw error
+}
