@@ -118,7 +118,7 @@ export function Events() {
         {unlockedEvent && (
           <div className="mt-8">
             <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3 text-center">Your private event</p>
-            <EventCard event={unlockedEvent} highlight />
+            <EventCard event={unlockedEvent} highlight code={code} />
           </div>
         )}
       </section>
@@ -128,7 +128,7 @@ export function Events() {
 
 // ─── Event Card ──────────────────────────────────────────────────────────
 
-function EventCard({ event, highlight = false }: { event: AnfEvent; highlight?: boolean }) {
+function EventCard({ event, highlight = false, code }: { event: AnfEvent; highlight?: boolean; code?: string }) {
   const start = new Date(event.starts_at)
   const dateLine = start.toLocaleDateString(undefined, {
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
@@ -145,9 +145,9 @@ function EventCard({ event, highlight = false }: { event: AnfEvent; highlight?: 
     ? event.rsvp_url
     : 'mailto:anfaiconsulting@gmail.com?subject=Event RSVP'
 
-  // Native RSVP capture for free public events. Private and paid events keep
-  // their external link (code-based attendance or Stripe checkout).
-  const nativeRsvp = isFree && event.visibility === 'public'
+  // Native RSVP capture for free events. Public events RSVP openly; an unlocked
+  // private event RSVPs with its code. Paid events keep their Stripe checkout.
+  const nativeRsvp = isFree && (event.visibility === 'public' || (event.visibility === 'private' && !!code))
   const [rsvpOpen, setRsvpOpen] = useState(false)
   const [rsvpName, setRsvpName] = useState('')
   const [rsvpEmail, setRsvpEmail] = useState('')
@@ -165,7 +165,7 @@ function EventCard({ event, highlight = false }: { event: AnfEvent; highlight?: 
     }
     setRsvpBusy(true)
     try {
-      await createRsvp(event.id, { name: rsvpName, email: rsvpEmail, website: rsvpHoneypot })
+      await createRsvp(event.id, { name: rsvpName, email: rsvpEmail, website: rsvpHoneypot }, code)
       setRsvpDone(true)
     } catch {
       setRsvpError('Could not RSVP. Please try again.')
