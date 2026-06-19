@@ -18,6 +18,28 @@ export interface ClassReviewInput {
   website?: string; // honeypot, must stay empty
 }
 
+export interface PublicReview {
+  name: string;
+  business?: string | null;
+  service?: string | null;
+  rating?: number | null;
+  quote: string;
+  date?: string;
+}
+
+/** Approved (consented) client testimonials, from the CRM's public endpoint.
+ *  Returns [] on any error so the site never breaks over reviews. */
+export async function fetchPublicReviews(): Promise<PublicReview[]> {
+  try {
+    const res = await fetch(`${CRM_API_BASE}/api/public-reviews`);
+    if (!res.ok) return [];
+    const data = (await res.json()) as { reviews?: PublicReview[] };
+    return Array.isArray(data.reviews) ? data.reviews : [];
+  } catch {
+    return [];
+  }
+}
+
 export async function submitClassReview(input: ClassReviewInput): Promise<void> {
   const res = await fetch(`${CRM_API_BASE}/api/submit-review`, {
     method: 'POST',

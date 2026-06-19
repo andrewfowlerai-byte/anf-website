@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
+import { Testimonials } from '../components/Testimonials'
 
 const credibility = [
   {
@@ -66,6 +67,12 @@ export function Home() {
             className="text-silver-300 hover:text-silver-100 text-sm uppercase tracking-widest border-b border-silver-700/50 hover:border-flame-500 pb-1 transition-colors"
           >
             See services →
+          </Link>
+          <Link
+            to="/audit"
+            className="text-silver-300 hover:text-silver-100 text-sm uppercase tracking-widest border-b border-silver-700/50 hover:border-flame-500 pb-1 transition-colors"
+          >
+            Free audit →
           </Link>
         </div>
       </section>
@@ -147,6 +154,8 @@ export function Home() {
           ))}
         </div>
       </section>
+
+      <Testimonials />
 
       <section className="max-w-4xl mx-auto px-6 py-16 md:py-24 text-center">
         <h2 className="text-3xl md:text-5xl font-display text-silver-100 mb-4">Ready to start?</h2>

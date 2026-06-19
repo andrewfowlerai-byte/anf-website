@@ -14,9 +14,11 @@ export function Header() {
           <img src="/anf-logo.png" alt="ANF Consulting" className="h-11 md:h-12 w-auto" />
         </Link>
 
-        <div className="hidden md:flex items-center gap-10">
+        <div className="hidden md:flex items-center gap-8">
           <NavLink to="/" end className={navLink}>Home</NavLink>
           <NavLink to="/services" className={navLink}>Services</NavLink>
+          <NavLink to="/work" className={navLink}>Work</NavLink>
+          <NavLink to="/realtors" className={navLink}>For Realtors</NavLink>
           <NavLink to="/events" className={navLink}>Events</NavLink>
           <NavLink to="/about" className={navLink}>About</NavLink>
         </div>

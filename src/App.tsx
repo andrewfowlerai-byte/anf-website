@@ -5,6 +5,9 @@ import { Services } from './pages/Services'
 import { About } from './pages/About'
 import { Book } from './pages/Book'
 import { Events } from './pages/Events'
+import { Work } from './pages/Work'
+import { Realtors } from './pages/Realtors'
+import { Audit } from './pages/Audit'
 import { Signature } from './pages/Signature'
 import ClassMaterial from './pages/ClassMaterial'
 
@@ -15,6 +18,9 @@ function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/work" element={<Work />} />
+          <Route path="/realtors" element={<Realtors />} />
+          <Route path="/audit" element={<Audit />} />
           <Route path="/about" element={<About />} />
           <Route path="/book" element={<Book />} />
           <Route path="/events" element={<Events />} />

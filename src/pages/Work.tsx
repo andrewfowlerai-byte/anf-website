@@ -39,6 +39,31 @@ const projects: Project[] = [
     link: '/events',
     linkLabel: 'View upcoming dates',
   },
+  {
+    name: 'Everlee',
+    category: 'Product & SaaS',
+    summary:
+      'A daily AI product we designed and built end to end: fresh content and streaks that bring people back every day. Our own product, shipped to web and mobile, proof we build real software, not just slide decks.',
+    tags: ['Product', 'SaaS', 'AI'],
+    link: 'https://useeverlee.com',
+    linkLabel: 'Visit Everlee',
+  },
+  {
+    name: 'AI Lead Responder',
+    category: 'AI & Web App',
+    summary:
+      'An embeddable assistant that answers and qualifies inbound leads around the clock, then routes them to the right person in seconds. Built so no lead goes cold while you sleep.',
+    tags: ['AI', 'Lead Gen', 'Web App'],
+  },
+  {
+    name: 'Real Estate Websites & CRMs',
+    category: 'Web App & Infrastructure',
+    summary:
+      'Listing-ready websites paired with team CRMs, built for agents and brokerages who want one system instead of four disconnected tools. Designed around how a real estate team actually works.',
+    tags: ['Real Estate', 'Website', 'CRM'],
+    link: '/realtors',
+    linkLabel: 'For realtors',
+  },
 ]
 
 function ProjectLink({ link, label }: { link: string; label: string }) {

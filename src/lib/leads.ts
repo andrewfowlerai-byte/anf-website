@@ -6,6 +6,8 @@ export interface LeadInput {
   email?: string
   phone?: string
   notes?: string
+  /** Where the lead came from; defaults to the contact form. */
+  source?: string
 }
 
 export async function submitLead(input: LeadInput): Promise<void> {
@@ -16,7 +18,7 @@ export async function submitLead(input: LeadInput): Promise<void> {
     phone: input.phone ?? null,
     notes: input.notes ?? null,
     stage: 'Prospect',
-    source: 'website-contact-form',
+    source: input.source ?? 'website-contact-form',
   })
   if (error) throw error
 }
