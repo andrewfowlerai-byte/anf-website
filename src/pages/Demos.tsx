@@ -19,6 +19,7 @@ const demos: Demo[] = [
     name: 'Real estate agents',
     who: 'Solo agents and teams',
     features: ['Lead pipeline', 'Speed to lead', 'Listings and closings'],
+    to: '/demos/real-estate',
   },
   {
     name: 'Parents and family',

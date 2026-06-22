@@ -9,6 +9,7 @@ import { Work } from './pages/Work'
 import { Realtors } from './pages/Realtors'
 import { Demos } from './pages/Demos'
 import { Demo } from './pages/Demo'
+import { RealEstateDemo } from './demos/RealEstateDemo'
 import { Audit } from './pages/Audit'
 import { Signature } from './pages/Signature'
 import ClassMaterial from './pages/ClassMaterial'
@@ -22,6 +23,7 @@ function App() {
           <Route path="/services" element={<Services />} />
           <Route path="/work" element={<Work />} />
           <Route path="/demos" element={<Demos />} />
+          <Route path="/demos/real-estate" element={<RealEstateDemo />} />
           <Route path="/demos/:slug" element={<Demo />} />
           <Route path="/realtors" element={<Realtors />} />
           <Route path="/audit" element={<Audit />} />
