@@ -100,6 +100,14 @@ export function RealEstateDemo() {
   const [view, setView] = useState<View>('today')
   const [listingId, setListingId] = useState<string | null>(null)
   const [leadId, setLeadId] = useState<string | null>(null)
+  const [agentName, setAgentName] = useState(() => { try { return localStorage.getItem('anf_demo_agent') || '' } catch { return '' } })
+  const [agentMarket, setAgentMarket] = useState(() => { try { return localStorage.getItem('anf_demo_market') || '' } catch { return '' } })
+  const fullName = agentName.trim() || 'Jordan Avery'
+  const firstName = fullName.split(/\s+/)[0]
+  const market = agentMarket.trim() || 'Cleveland East Side'
+  const initials = fullName.split(/\s+/).map((s) => s[0]).slice(0, 2).join('').toUpperCase()
+  const saveName = (v: string) => { setAgentName(v); try { localStorage.setItem('anf_demo_agent', v) } catch { /* ignore */ } }
+  const saveMarket = (v: string) => { setAgentMarket(v); try { localStorage.setItem('anf_demo_market', v) } catch { /* ignore */ } }
 
   const listing = listings.find((l) => l.id === listingId) || null
   const lead = pipeline.flatMap((c) => c.leads).find((l) => l.id === leadId) || null
@@ -118,13 +126,32 @@ export function RealEstateDemo() {
         <span className="text-xs tracking-[0.2em] uppercase text-silver-500">Real estate · interactive demo</span>
       </div>
 
+      <div className="mb-4 rounded-xl border border-midnight-700/40 bg-midnight-900/40 p-3 flex flex-wrap items-center gap-3">
+        <span className="text-sm text-silver-300 font-medium">See it as yours:</span>
+        <input
+          value={agentName}
+          onChange={(e) => saveName(e.target.value)}
+          placeholder="Your name"
+          aria-label="Your name"
+          className="bg-midnight-950/60 border border-midnight-700/50 focus:border-flame-500 rounded-lg px-3 py-1.5 text-sm text-silver-100 placeholder:text-silver-500 outline-none w-40"
+        />
+        <input
+          value={agentMarket}
+          onChange={(e) => saveMarket(e.target.value)}
+          placeholder="Your market (e.g. Highland Heights)"
+          aria-label="Your market"
+          className="bg-midnight-950/60 border border-midnight-700/50 focus:border-flame-500 rounded-lg px-3 py-1.5 text-sm text-silver-100 placeholder:text-silver-500 outline-none flex-1 min-w-[180px]"
+        />
+        <span className="text-xs text-silver-500">Updates live, and stays on your device.</span>
+      </div>
+
       <div className="rounded-2xl overflow-hidden border border-midnight-700/40 shadow-2xl flex flex-col md:flex-row bg-white text-slate-800 min-h-[580px]">
         <aside className="md:w-56 shrink-0 flex md:flex-col gap-1 p-3 md:p-4" style={{ background: NAVY }}>
           <div className="flex items-center gap-2.5 px-1 md:mb-5 mr-3 md:mr-0">
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center font-semibold text-white shrink-0" style={{ background: GOLD }}>JA</div>
-            <div className="hidden md:block">
-              <p className="text-sm font-semibold text-white leading-none">Jordan Avery</p>
-              <p className="text-[11px] mt-1" style={{ color: GOLD }}>Realtor · Cleveland East Side</p>
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center font-semibold text-white shrink-0" style={{ background: GOLD }}>{initials}</div>
+            <div className="hidden md:block min-w-0">
+              <p className="text-sm font-semibold text-white leading-none truncate">{fullName}</p>
+              <p className="text-[11px] mt-1 truncate" style={{ color: GOLD }}>Realtor · {market}</p>
             </div>
           </div>
           <nav className="flex md:flex-col gap-1 flex-1">
@@ -146,7 +173,7 @@ export function RealEstateDemo() {
 
         <div className="flex-1 min-w-0 flex flex-col bg-[#faf8f4]">
           <div className="flex items-center justify-between gap-3 px-5 py-3 border-b border-slate-200 bg-white">
-            <p className="font-semibold text-slate-800 capitalize">{view === 'today' ? 'Good morning, Jordan' : view}</p>
+            <p className="font-semibold text-slate-800 capitalize">{view === 'today' ? `Good morning, ${firstName}` : view}</p>
             <span className="text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-full text-white shrink-0" style={{ background: GOLD }}>Live demo</span>
           </div>
 
@@ -261,8 +288,34 @@ export function RealEstateDemo() {
         </div>
       </div>
 
-      <div className="mt-8 text-center">
-        <p className="text-silver-300 mb-4">This is one agent's setup. Yours would be built around how you actually work.</p>
+      <div className="mt-6 text-center">
+        <p className="text-silver-400 text-sm">
+          {agentName.trim() ? `That is your name on it, ${firstName}. ` : ''}This is one agent's setup. Yours would be built around how you actually work.
+        </p>
+      </div>
+
+      <div className="mt-12">
+        <div className="text-center mb-8">
+          <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">Why agents choose ANF</p>
+          <h2 className="text-3xl md:text-4xl font-display text-silver-100">Built around how you actually sell</h2>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-5 max-w-4xl mx-auto">
+          {[
+            { h: 'Never let a lead go cold', b: 'An assistant answers and qualifies new leads in seconds, day or night, then hands you the ones worth a call. Slow response is where most agents quietly lose deals. Here it is handled.' },
+            { h: 'One place, not five tabs', b: 'Leads, listings, showings, closings, and past clients in one system shaped to your day, instead of a CRM, a dialer, a scheduler, and a spreadsheet that never talk to each other.' },
+            { h: 'You own it, you do not rent it', b: 'No per-seat fee that climbs as your team grows. ANF builds the system for you and it is yours, so the tool fits the agent instead of the agent fitting the tool.' },
+            { h: 'One partner for the whole thing', b: 'Website, CRM, lead response, listing content and reels, and CE-credit AI training, from one team that knows real estate and your market. Not five vendors and a help desk.' },
+          ].map((c) => (
+            <div key={c.h} className="border border-midnight-700/30 rounded-2xl p-6 bg-midnight-900/40">
+              <h3 className="text-lg font-display text-silver-100 mb-2">{c.h}</h3>
+              <p className="text-silver-400 leading-relaxed text-sm">{c.b}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-10 text-center">
+        <p className="text-silver-300 mb-4">Want to see it with your listings and your market in it? Let's build it.</p>
         <BookCallButton size="lg" />
       </div>
 
