@@ -89,6 +89,22 @@ const priorities = [
   { tag: 'Follow up', color: GOLD, title: 'CMA promised to the 510 Maple seller today', sub: 'Draft is ready in your templates. One click to send.' },
 ]
 
+const leadSources = [
+  { label: 'Zillow', pct: 34 },
+  { label: 'Website', pct: 22 },
+  { label: 'Referral', pct: 18 },
+  { label: 'Sphere', pct: 14 },
+  { label: 'Open house', pct: 12 },
+]
+
+const activity: { text: string; when: string; color: string }[] = [
+  { text: 'Auto-text replied to the Reyes family in 2 minutes', when: '2m', color: '#15803d' },
+  { text: 'Review request sent after the Riverside closing', when: '1h', color: GOLD },
+  { text: 'CMA delivered to the 142 Maple sellers', when: '3h', color: NAVY },
+  { text: 'New Zillow lead captured and routed to you', when: '5h', color: '#15803d' },
+  { text: 'Price-drop alert sent to 14 saved buyers on 27 Birch', when: '1d', color: '#b45309' },
+]
+
 const statusColor: Record<Listing['status'], { bg: string; text: string }> = {
   Active: { bg: '#dcfce7', text: '#15803d' },
   Pending: { bg: '#fef3c7', text: '#b45309' },
@@ -111,9 +127,11 @@ export function RealEstateDemo() {
 
   const listing = listings.find((l) => l.id === listingId) || null
   const lead = pipeline.flatMap((c) => c.leads).find((l) => l.id === leadId) || null
+  const pipeMax = Math.max(...pipeline.map((c) => c.leads.length))
+  const listingStatusCounts = (['Active', 'Pending', 'Coming soon', 'Closed'] as Listing['status'][]).map((label) => ({ label, n: listings.filter((l) => l.status === label).length }))
 
   const navItems: { id: View; label: string }[] = [
-    { id: 'today', label: 'Today' },
+    { id: 'today', label: 'Dashboard' },
     { id: 'listings', label: 'Listings' },
     { id: 'pipeline', label: 'Pipeline' },
     { id: 'showings', label: 'Showings' },
@@ -179,7 +197,7 @@ export function RealEstateDemo() {
 
           <div className="p-5 overflow-y-auto flex-1">
             {view === 'today' && (
-              <div className="space-y-5">
+              <div className="space-y-4">
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                   {kpis.map((k) => (
                     <div key={k.label} className="rounded-xl bg-white border border-slate-200 p-3">
@@ -188,31 +206,88 @@ export function RealEstateDemo() {
                     </div>
                   ))}
                 </div>
-                <div>
-                  <p className="text-xs uppercase tracking-wider text-slate-400 mb-2">Needs you today</p>
-                  <div className="space-y-2">
-                    {priorities.map((p, i) => (
-                      <div key={i} className="rounded-xl bg-white border border-slate-200 p-3 flex gap-3" style={{ borderLeftColor: p.color, borderLeftWidth: 3 }}>
-                        <div className="min-w-0">
+
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="sm:col-span-2 rounded-xl bg-white border border-slate-200 p-4">
+                    <p className="text-xs uppercase tracking-wider text-slate-400 mb-2">Needs you today</p>
+                    <div className="space-y-2">
+                      {priorities.map((p, i) => (
+                        <div key={i} className="rounded-lg bg-[#faf8f4] p-3" style={{ borderLeftColor: p.color, borderLeftWidth: 3 }}>
                           <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: p.color }}>{p.tag}</span>
                           <p className="text-sm font-medium text-slate-800 leading-tight mt-0.5">{p.title}</p>
                           <p className="text-xs text-slate-500 mt-0.5">{p.sub}</p>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <p className="text-xs uppercase tracking-wider text-slate-400 mb-2">Next showings</p>
-                  <div className="space-y-1.5">
-                    {showings.slice(0, 2).map((s, i) => (
-                      <div key={i} className="flex items-center gap-3 rounded-lg bg-white border border-slate-200 px-3 py-2 text-sm">
-                        <span className="font-medium text-slate-700 w-16 shrink-0">{s.time}</span>
-                        <span className="text-slate-700">{s.address}</span>
-                        <span className="text-slate-400 ml-auto truncate">{s.party}</span>
-                      </div>
-                    ))}
+
+                  <div className="rounded-xl bg-white border border-slate-200 p-4">
+                    <p className="text-xs uppercase tracking-wider text-slate-400 mb-2">Commission this year</p>
+                    <p className="text-2xl font-semibold" style={{ color: NAVY }}>$142k</p>
+                    <p className="text-xs text-slate-400 mb-3">of $250k goal</p>
+                    <div className="h-2.5 rounded-full bg-slate-100 overflow-hidden"><div className="h-full rounded-full" style={{ width: '57%', background: GOLD }} /></div>
+                    <p className="text-xs text-slate-500 mt-2">57% to goal, ahead of last year's pace.</p>
                   </div>
+
+                  <button onClick={() => setView('pipeline')} className="text-left rounded-xl bg-white border border-slate-200 p-4 hover:border-slate-400 transition-colors">
+                    <div className="flex items-center justify-between mb-3"><p className="text-xs uppercase tracking-wider text-slate-400">Pipeline</p><span className="text-xs" style={{ color: GOLD }}>Open →</span></div>
+                    <div className="space-y-1.5">
+                      {pipeline.map((c) => (
+                        <div key={c.stage} className="flex items-center gap-2">
+                          <span className="text-xs text-slate-500 w-24 shrink-0 truncate">{c.stage}</span>
+                          <div className="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden"><div className="h-full rounded-full" style={{ width: `${Math.max(14, (c.leads.length / pipeMax) * 100)}%`, background: NAVY }} /></div>
+                          <span className="text-xs text-slate-600 w-4 text-right">{c.leads.length}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </button>
+
+                  <button onClick={() => setView('listings')} className="text-left rounded-xl bg-white border border-slate-200 p-4 hover:border-slate-400 transition-colors">
+                    <div className="flex items-center justify-between mb-3"><p className="text-xs uppercase tracking-wider text-slate-400">Listings</p><span className="text-xs" style={{ color: GOLD }}>Open →</span></div>
+                    <div className="grid grid-cols-2 gap-2">
+                      {listingStatusCounts.map((s) => (
+                        <div key={s.label} className="rounded-lg bg-[#faf8f4] px-3 py-2"><p className="text-lg font-semibold text-slate-800">{s.n}</p><p className="text-[11px] text-slate-500">{s.label}</p></div>
+                      ))}
+                    </div>
+                  </button>
+
+                  <div className="rounded-xl bg-white border border-slate-200 p-4">
+                    <p className="text-xs uppercase tracking-wider text-slate-400 mb-3">Where leads come from</p>
+                    <div className="space-y-1.5">
+                      {leadSources.map((s) => (
+                        <div key={s.label} className="flex items-center gap-2">
+                          <span className="text-xs text-slate-500 w-20 shrink-0">{s.label}</span>
+                          <div className="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden"><div className="h-full rounded-full" style={{ width: `${s.pct * 2.6}%`, background: GOLD }} /></div>
+                          <span className="text-xs text-slate-600 w-7 text-right">{s.pct}%</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2 rounded-xl bg-white border border-slate-200 p-4">
+                    <p className="text-xs uppercase tracking-wider text-slate-400 mb-3">Recent activity</p>
+                    <div className="space-y-2.5">
+                      {activity.map((a, i) => (
+                        <div key={i} className="flex items-start gap-3">
+                          <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: a.color }} />
+                          <p className="text-sm text-slate-600 leading-snug flex-1">{a.text}</p>
+                          <span className="text-[11px] text-slate-400 shrink-0">{a.when}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button onClick={() => setView('showings')} className="text-left rounded-xl bg-white border border-slate-200 p-4 hover:border-slate-400 transition-colors">
+                    <div className="flex items-center justify-between mb-3"><p className="text-xs uppercase tracking-wider text-slate-400">This week</p><span className="text-xs" style={{ color: GOLD }}>Open →</span></div>
+                    <div className="space-y-1.5">
+                      {showings.slice(0, 4).map((s, i) => (
+                        <div key={i} className="flex items-center gap-2 text-sm">
+                          <span className="text-slate-400 w-12 shrink-0 text-xs">{s.day === 'Today' ? s.time.replace(':00', '') : s.day.slice(0, 3)}</span>
+                          <span className="text-slate-700 truncate">{s.address}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </button>
                 </div>
               </div>
             )}
