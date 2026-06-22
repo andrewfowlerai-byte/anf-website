@@ -18,6 +18,7 @@ export function Header() {
           <NavLink to="/" end className={navLink}>Home</NavLink>
           <NavLink to="/services" className={navLink}>Services</NavLink>
           <NavLink to="/work" className={navLink}>Work</NavLink>
+          <NavLink to="/demos" className={navLink}>Demos</NavLink>
           <NavLink to="/realtors" className={navLink}>For Realtors</NavLink>
           <NavLink to="/events" className={navLink}>Events</NavLink>
           <NavLink to="/about" className={navLink}>About</NavLink>
