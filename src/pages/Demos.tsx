@@ -5,6 +5,7 @@ type Demo = {
   name: string
   who: string
   features: string[]
+  to?: string
   live?: { url: string; passcode: string }
 }
 
@@ -29,6 +30,7 @@ const demos: Demo[] = [
     name: 'Home and service pros',
     who: 'Trades, cleaners, landscapers',
     features: ['Jobs and quotes', 'Scheduling', 'Invoices and reviews'],
+    to: '/demos/home-services',
   },
   {
     name: 'Fitness and wellness',
@@ -63,7 +65,29 @@ export function Demos() {
       <section className="max-w-6xl mx-auto px-6 py-8 md:py-12">
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {demos.map((d) =>
-            d.live ? (
+            d.to ? (
+              <Link
+                key={d.name}
+                to={d.to}
+                className="group flex flex-col border border-midnight-700/30 hover:border-flame-500/50 rounded-2xl p-7 bg-midnight-900/40 transition-colors"
+              >
+                <span className="text-xs tracking-[0.2em] uppercase text-emerald-400 mb-3">Live demo</span>
+                <h3 className="text-xl font-display text-silver-100 mb-1">{d.name}</h3>
+                <p className="text-sm text-silver-400 mb-4">{d.who}</p>
+                <ul className="space-y-1.5 mb-5">
+                  {d.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-silver-300 text-sm">
+                      <span className="text-flame-500 mt-1 leading-none">·</span>
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-auto pt-3 border-t border-midnight-700/30 flex items-center justify-between">
+                  <span className="text-flame-400 group-hover:text-flame-300 text-sm uppercase tracking-widest font-medium">Open demo →</span>
+                  <span className="text-xs text-silver-500">Interactive</span>
+                </div>
+              </Link>
+            ) : d.live ? (
               <a
                 key={d.name}
                 href={d.live.url}

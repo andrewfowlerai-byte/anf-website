@@ -63,6 +63,12 @@ export function Home() {
         <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center">
           <BookCallButton size="lg" />
           <Link
+            to="/demos"
+            className="text-silver-300 hover:text-silver-100 text-sm uppercase tracking-widest border-b border-silver-700/50 hover:border-flame-500 pb-1 transition-colors"
+          >
+            See live demos →
+          </Link>
+          <Link
             to="/services"
             className="text-silver-300 hover:text-silver-100 text-sm uppercase tracking-widest border-b border-silver-700/50 hover:border-flame-500 pb-1 transition-colors"
           >
