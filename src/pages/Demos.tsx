@@ -14,17 +14,19 @@ const demos: Demo[] = [
     name: 'Coaches and consultants',
     who: '1:1 and group programs',
     features: ['Client roster', 'Session notes', 'Packages and payments'],
-    live: { url: 'https://coaches-crm.vercel.app', passcode: 'coaches2026' },
+    to: '/demos/coaches',
   },
   {
     name: 'Real estate agents',
     who: 'Solo agents and teams',
-    features: ['Listings pipeline', 'Speed to lead', 'Closing reels'],
+    features: ['Lead pipeline', 'Speed to lead', 'Listings and closings'],
+    to: '/demos/real-estate',
   },
   {
     name: 'Parents and family',
     who: 'A family HQ, not a CRM',
     features: ["Kids' schedules", 'Meals and errands', 'Appointments'],
+    to: '/demos/family',
   },
   {
     name: 'Home and service pros',
@@ -35,12 +37,14 @@ const demos: Demo[] = [
   {
     name: 'Fitness and wellness',
     who: 'Trainers, studios, clinics',
-    features: ['Members', 'Bookings', 'Retention'],
+    features: ['Members', 'Classes', 'Retention'],
+    to: '/demos/fitness',
   },
   {
     name: 'Creators and solopreneurs',
     who: 'Content as the business',
-    features: ['Brand deals', 'Content calendar', 'Reel studio'],
+    features: ['Brand deals', 'Content calendar', 'Posting'],
+    to: '/demos/creators',
   },
 ]
 
