@@ -12,6 +12,7 @@ import { Demo } from './pages/Demo'
 import { RealEstateDemo } from './demos/RealEstateDemo'
 import { Audit } from './pages/Audit'
 import { Invest } from './pages/Invest'
+import { Start } from './pages/Start'
 import { Signature } from './pages/Signature'
 import ClassMaterial from './pages/ClassMaterial'
 
@@ -30,6 +31,8 @@ function App() {
           <Route path="/audit" element={<Audit />} />
           {/* Unlisted investor page (no header nav link); Andrew shares the URL directly. */}
           <Route path="/invest" element={<Invest />} />
+          {/* Code-gated client onboarding intake; Andrew shares the URL + a code. */}
+          <Route path="/start" element={<Start />} />
           <Route path="/about" element={<About />} />
           <Route path="/book" element={<Book />} />
           <Route path="/events" element={<Events />} />
