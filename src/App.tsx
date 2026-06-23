@@ -11,6 +11,7 @@ import { Demos } from './pages/Demos'
 import { Demo } from './pages/Demo'
 import { RealEstateDemo } from './demos/RealEstateDemo'
 import { Audit } from './pages/Audit'
+import { Invest } from './pages/Invest'
 import { Signature } from './pages/Signature'
 import ClassMaterial from './pages/ClassMaterial'
 
@@ -27,6 +28,8 @@ function App() {
           <Route path="/demos/:slug" element={<Demo />} />
           <Route path="/realtors" element={<Realtors />} />
           <Route path="/audit" element={<Audit />} />
+          {/* Unlisted investor page (no header nav link); Andrew shares the URL directly. */}
+          <Route path="/invest" element={<Invest />} />
           <Route path="/about" element={<About />} />
           <Route path="/book" element={<Book />} />
           <Route path="/events" element={<Events />} />
