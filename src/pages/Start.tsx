@@ -106,13 +106,22 @@ export function Start() {
     if (!canSubmit) return
     setSubmitting(true)
     try {
-      await submitIntake(code, {
+      const id = await submitIntake(code, {
         ...form,
         selected_features: [...selected],
         personal_features: [...personal],
         custom_requests: custom.filter((c) => c.title.trim()),
         files,
       })
+      // Fire-and-forget notification. A no-op unless enabled server-side, and
+      // never blocks the success screen if it fails.
+      if (id) {
+        fetch('https://crm.anfconsult.com/api/intake-notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ submissionId: id }),
+        }).catch(() => {})
+      }
       setDone(true)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch {
