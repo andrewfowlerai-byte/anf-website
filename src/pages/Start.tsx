@@ -8,8 +8,6 @@ import {
 const inputClass =
   'w-full px-4 py-2.5 rounded-lg bg-midnight-900/60 border border-midnight-700/50 text-silver-100 placeholder-silver-500 focus:outline-none focus:border-flame-500/60 transition-colors'
 
-const dollars = (cents: number) => '$' + Math.round(cents / 100).toLocaleString('en-US')
-
 function Section({ step, title, subtitle, children }: { step: number; title: string; subtitle?: string; children: React.ReactNode }) {
   return (
     <section className="border border-midnight-700/30 rounded-2xl p-5 md:p-6 bg-midnight-900/40">
@@ -68,15 +66,6 @@ export function Start() {
 
   const bizFeatures = useMemo(() => features.filter((f) => !f.is_personal), [features])
   const personalFeatures = useMemo(() => features.filter((f) => f.is_personal), [features])
-  const weightOf = useMemo(() => new Map(features.map((f) => [f.slug, f.weight])), [features])
-
-  const used = useMemo(() => [...selected].reduce((s, slug) => s + (weightOf.get(slug) ?? 0), 0), [selected, weightOf])
-  const budget = info?.budget_credits ?? 0
-  const rate = info?.addon_rate_cents ?? 0
-  const over = Math.max(0, used - budget)
-  const addonCents = over * rate
-  const pct = budget > 0 ? Math.min(100, Math.round((used / budget) * 100)) : used > 0 ? 100 : 0
-
   const groups = useMemo(() => {
     const g: { category: string; items: IntakeFeature[] }[] = []
     for (const f of bizFeatures) {
@@ -222,7 +211,7 @@ export function Start() {
           </label>
         </Section>
 
-        <Section step={3} title="What you'd like" subtitle="Pick everything that sounds useful. The items checked already come with your plan.">
+        <Section step={3} title="What you'd like" subtitle="Pick everything that sounds useful. We will tailor your proposal to what you choose.">
           <div className="space-y-6">
             {groups.map((g) => (
               <div key={g.category}>
@@ -241,7 +230,7 @@ export function Start() {
                             {on && <svg viewBox="0 0 24 24" className="w-3 h-3 text-midnight-950" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>}
                           </span>
                           <div className="min-w-0">
-                            <p className="text-sm font-medium text-silver-100">{f.label}{on && <span className="ml-2 text-[10px] uppercase tracking-wide text-flame-400">Included</span>}</p>
+                            <p className="text-sm font-medium text-silver-100">{f.label}</p>
                             {f.description && <p className="text-xs text-silver-500 mt-0.5 leading-snug">{f.description}</p>}
                           </div>
                         </div>
@@ -316,18 +305,10 @@ export function Start() {
       {/* Running summary + submit (stays in view while you pick) */}
       <div className="sticky bottom-4 mt-5 z-20 rounded-2xl border border-midnight-700/50 bg-midnight-950/90 backdrop-blur shadow-2xl shadow-black/40">
         <div className="px-4 md:px-5 py-3 flex items-center gap-4">
-          <div className="flex-1 min-w-0">
-            <div className="h-1.5 rounded-full bg-midnight-800 overflow-hidden">
-              <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: over > 0 ? '#f59e0b' : '#F26B1D' }} />
-            </div>
-            <p className="text-xs text-silver-400 mt-1.5 truncate">
-              {over > 0
-                ? (rate > 0
-                  ? <>A few picks are beyond your plan. Estimated add-ons: <span className="text-silver-100 font-medium">+{dollars(addonCents)}</span></>
-                  : <>A few picks are beyond your plan. We will include a quote.</>)
-                : <>Everything you have picked is included in your plan.</>}
-            </p>
-          </div>
+          <p className="flex-1 min-w-0 text-sm text-silver-300 truncate">
+            {selected.size > 0 ? `${selected.size} ${selected.size === 1 ? 'item' : 'items'} selected` : 'Pick what you would like'}
+            <span className="text-silver-500"> · we tailor your proposal to your choices</span>
+          </p>
           <button
             onClick={() => void submit()}
             disabled={!canSubmit}
