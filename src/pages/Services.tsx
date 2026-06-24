@@ -1,6 +1,7 @@
 import { BookCallButton } from '../components/BookCallButton'
 
 const overview = [
+  { service: 'Complete Platform', format: 'Website + CRM bundle', starting: '$4,000', anchor: 'platform' },
   { service: 'Social Media Management', format: 'Monthly retainer', starting: '$350/mo', anchor: 'social' },
   { service: 'Website Development', format: 'Flat project fee', starting: '$1,500', anchor: 'website' },
   { service: 'AI Coaching & Integration', format: 'Per session or retainer', starting: '$229', anchor: 'coaching' },
@@ -52,6 +53,27 @@ const websiteTiers = [
     price: '$7,000+',
     idealFor: 'Established businesses, e-commerce, multi-functional platforms',
     scope: '15+ pages or custom functionality. Full custom design with advanced UI/UX. Comprehensive SEO strategy with competitive analysis. E-commerce (cart, payment gateway) or membership/portal functionality. Advanced integrations (CRM, automation tools, APIs).',
+  },
+]
+
+const platformTiers = [
+  {
+    name: 'Starter',
+    price: '$4,000',
+    idealFor: 'A clean, professional presence and the essentials',
+    scope: 'A custom marketing website with SEO, built to load fast and convert. Your own design, on your own domain.',
+  },
+  {
+    name: 'Growth',
+    price: '$7,500',
+    idealFor: 'A website plus a CRM to actually run the business',
+    scope: 'Everything in Starter, plus a custom CRM, social scheduling, and automated follow-ups so leads never slip.',
+  },
+  {
+    name: 'Platform',
+    price: '$14,000',
+    idealFor: 'The full operation: site, CRM, portal, and AI',
+    scope: 'Everything in Growth, plus a client login portal and a built-in AI assistant. One system that runs your whole business.',
   },
 ]
 
@@ -259,6 +281,32 @@ export function Services() {
         </div>
         <FinePrint>
           All projects include kickoff consultation, two rounds of design revisions, content review, and launch support. Hosting and domain are billed separately at provider cost. Ongoing maintenance retainers are available after launch.
+        </FinePrint>
+      </ServiceSection>
+
+      <ServiceSection
+        id="platform"
+        kicker="Complete platform"
+        title="Done-for-you platforms"
+        blurb="Most businesses do not want to buy pieces. These are complete platforms: a website, a CRM, and the tools to run them, built as one system that is yours. Each is a starting point we tailor to you."
+      >
+        <div className="grid md:grid-cols-3 gap-4">
+          {platformTiers.map((t) => (
+            <div key={t.name} className="border border-midnight-700/30 rounded-2xl p-6 bg-midnight-900/40 flex flex-col">
+              <h4 className="font-display text-xl text-silver-100 mb-1">{t.name}</h4>
+              <p className="text-2xl font-display text-flame-400 mb-3">{t.price}</p>
+              <p className="text-xs uppercase tracking-wider text-silver-500 mb-2">Best for</p>
+              <p className="text-sm text-silver-300 mb-4">{t.idealFor}</p>
+              <p className="text-xs uppercase tracking-wider text-silver-500 mb-2">What is included</p>
+              <p className="text-sm text-silver-400 leading-relaxed">{t.scope}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-6 text-center">
+          <BookCallButton />
+        </div>
+        <FinePrint>
+          Each platform is a starting point, tailored to your business. Prices shown are typical build fees; final scope and price are set together. Hosting, support, and ongoing iteration are billed monthly after launch.
         </FinePrint>
       </ServiceSection>
 
