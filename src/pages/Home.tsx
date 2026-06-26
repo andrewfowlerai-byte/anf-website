@@ -48,7 +48,7 @@ export function Home() {
           }}
         />
         <div className="flex justify-center mb-8">
-          <img src="/anf-logo.png" alt="ANF Consulting" className="h-24 md:h-32 w-auto" />
+          <img src="/anf-wordmark.png" alt="ANF Consulting" className="h-24 md:h-32 w-auto" />
         </div>
         <p className="text-xs md:text-sm tracking-[0.3em] uppercase text-silver-400">
           Clarity <span className="text-flame-500">·</span> Structure <span className="text-flame-500">·</span> Confidence

@@ -11,7 +11,7 @@ export function Header() {
     <header className="sticky top-0 z-30 border-b border-midnight-700/40 bg-midnight-950/70 backdrop-blur supports-[backdrop-filter]:bg-midnight-950/55">
       <nav className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
         <Link to="/" aria-label="ANF Consulting home" className="flex items-center shrink-0">
-          <img src="/anf-logo.png" alt="ANF Consulting" className="h-11 md:h-12 w-auto" />
+          <img src="/anf-wordmark.png" alt="ANF Consulting" className="h-11 md:h-12 w-auto" />
         </Link>
 
         <div className="hidden md:flex items-center gap-8">

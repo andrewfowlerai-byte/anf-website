@@ -6,7 +6,7 @@ export function Footer() {
       <div className="max-w-6xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10">
         <div>
           <Link to="/" className="inline-flex items-center" aria-label="ANF Consulting home">
-            <img src="/anf-logo.png" alt="ANF Consulting" className="h-10 w-auto" />
+            <img src="/anf-wordmark.png" alt="ANF Consulting" className="h-10 w-auto" />
           </Link>
           <p className="mt-4 text-sm text-silver-500 leading-relaxed">
             Clarity <span className="text-flame-500">·</span> Structure <span className="text-flame-500">·</span> Confidence.<br />
