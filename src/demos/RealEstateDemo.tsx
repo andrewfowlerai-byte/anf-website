@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
+import { WatchItWork } from '../components/WatchItWork'
 
 // Bespoke real estate demo. Its own navy-and-gold identity and a real
 // multi-view app (Today, Listings, Pipeline, Showings), designed around one
@@ -368,6 +369,17 @@ export function RealEstateDemo() {
           {agentName.trim() ? `That is your name on it, ${firstName}. ` : ''}This is one agent's setup. Yours would be built around how you actually work.
         </p>
       </div>
+
+      <WatchItWork
+        accent="#b4884d"
+        label="Watch a new lead turn into a booked tour"
+        steps={[
+          { t: 'A new Zillow lead lands: a pre-approved buyer', s: '9:14 AM' },
+          { t: 'An auto-text replies and qualifies them in 2 minutes', s: 'while you slept' },
+          { t: 'A Saturday tour books onto your calendar', s: 'they pick the time' },
+          { t: 'The lead is in your pipeline, already warm', s: 'you never lifted a finger' },
+        ]}
+      />
 
       <div className="mt-12">
         <div className="text-center mb-8">

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
+import { WatchItWork } from '../components/WatchItWork'
 
 // Bespoke coaching demo (CoachFlow). Its own teal identity and a real multi-view
 // app (Dashboard, Clients, Schedule, Programs), built around one coach's week.
@@ -349,6 +350,17 @@ export function CoachFlowDemo() {
           {coachName.trim() ? `That is your name on it, ${firstName}. ` : ''}This is one coach's setup. Yours would be built around how you actually run your practice.
         </p>
       </div>
+
+      <WatchItWork
+        accent="#0f766e"
+        label="Watch an inquiry become a booked client, on its own"
+        steps={[
+          { t: 'An inquiry comes in from Instagram', s: '9:02 AM' },
+          { t: 'The intake form auto-sends and the calendar hold is confirmed', s: 'seconds later' },
+          { t: 'A discovery call lands on your calendar for 3 PM', s: 'they pick the time' },
+          { t: 'They arrive warm, with their goals and notes pulled up', s: 'you just show up' },
+        ]}
+      />
 
       {/* What's included */}
       <div className="mt-12 md:mt-16">

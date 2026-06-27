@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
+import { WatchItWork } from '../components/WatchItWork'
 
 // Bespoke fitness demo (StudioFlow). A dark "studio display" with a class
 // timetable as the hero and live capacity bars. Its own energetic identity,
@@ -135,6 +136,17 @@ export function StudioFlowDemo() {
           {studio.trim() ? `That is your studio on it, ${name}. ` : ''}The whole floor, your classes, and the members worth a nudge, on one screen.
         </p>
       </div>
+
+      <WatchItWork
+        accent="#22c55e"
+        label="Watch a free trial turn into a member"
+        steps={[
+          { t: 'A trial member hits day 5, three visits in', s: 'a strong signal' },
+          { t: 'A convert offer auto-sends at the perfect moment', s: 'while motivation is high' },
+          { t: 'They upgrade to Unlimited from their phone', s: '$129 a month' },
+          { t: 'New member, and you never had to chase', s: 'retention you can see' },
+        ]}
+      />
 
       {/* What's included */}
       <div className="mt-12 md:mt-16">

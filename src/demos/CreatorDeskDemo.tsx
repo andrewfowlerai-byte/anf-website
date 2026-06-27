@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
+import { WatchItWork } from '../components/WatchItWork'
 
 // Bespoke creator demo (CreatorDesk). A vibrant plum-and-magenta content desk:
 // a post calendar across platforms plus a brand-deal money pipeline. Its own
@@ -134,6 +135,17 @@ export function CreatorDeskDemo() {
           {handle.trim() ? `That is your handle on it, @${tag}. ` : ''}Your posts and your paid deals on one desk, so the creative actually pays.
         </p>
       </div>
+
+      <WatchItWork
+        accent="#ec4899"
+        label="Watch a cold pitch turn into a paid deal"
+        steps={[
+          { t: 'You send a brand a pitch', s: 'one tap' },
+          { t: 'Your media kit and best posts attach automatically', s: 'you look pro' },
+          { t: 'A follow-up nudge queues for day 4', s: 'no inbox-refreshing' },
+          { t: 'They reply, and the deal lands in your pipeline', s: '$2,800 booked' },
+        ]}
+      />
 
       {/* What's included */}
       <div className="mt-12 md:mt-16">

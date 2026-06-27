@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
+import { WatchItWork } from '../components/WatchItWork'
 
 // Bespoke family demo (Family HQ). Deliberately NOT a CRM: a warm, calm
 // household board with its own sage-and-clay identity. Its own world, its own
@@ -209,6 +210,17 @@ export function FamilyHqDemo() {
           {familyName.trim() ? `That is your family on it, the ${name}s. ` : ''}A calm command center for the whole household, not another chore app.
         </p>
       </div>
+
+      <WatchItWork
+        accent="#5b7553"
+        label="Watch the week sort itself out"
+        steps={[
+          { t: "You set this week's dinners, once", s: 'Sunday night' },
+          { t: 'The grocery list builds itself from the meals', s: 'automatically' },
+          { t: 'Soccer goes on the board and the carpool is sorted', s: 'Sarah drives Thursday' },
+          { t: 'Everyone gets the reminder the night before', s: 'nothing slips' },
+        ]}
+      />
 
       {/* What's included */}
       <div className="mt-12 md:mt-16">

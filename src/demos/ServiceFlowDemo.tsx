@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
+import { WatchItWork } from '../components/WatchItWork'
 
 // Bespoke home-services demo (ServiceFlow). A bold dispatch board: today's route
 // as a timeline with crew status, plus an incoming-requests queue. Its own
@@ -168,6 +169,17 @@ export function ServiceFlowDemo() {
           {company.trim() ? `That is your company on it, ${name}. ` : ''}Your whole day, your crews, and every new lead answered in seconds, on one board.
         </p>
       </div>
+
+      <WatchItWork
+        accent="#ea580c"
+        label="Watch a missed call become a booked job"
+        steps={[
+          { t: 'A missed call comes in at 6:41 AM', s: 'before the office opens' },
+          { t: 'An auto-text offers a same-day slot in 40 seconds', s: 'the fast reply wins' },
+          { t: "She books herself onto today's route", s: 'no phone tag' },
+          { t: 'The job is on your board, crew assigned', s: 'you just show up' },
+        ]}
+      />
 
       {/* What's included */}
       <div className="mt-12 md:mt-16">
