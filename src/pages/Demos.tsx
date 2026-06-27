@@ -14,6 +14,7 @@ const demos: Demo[] = [
     name: 'Coaches and consultants',
     who: '1:1 and group programs',
     features: ['Client roster', 'Session notes', 'Packages and payments'],
+    to: '/demos/coaches',
   },
   {
     name: 'Real estate agents',
@@ -25,21 +26,25 @@ const demos: Demo[] = [
     name: 'Parents and family',
     who: 'A family HQ, not a CRM',
     features: ["Kids' schedules", 'Meals and errands', 'Appointments'],
+    to: '/demos/family',
   },
   {
     name: 'Home and service pros',
     who: 'Trades, cleaners, landscapers',
     features: ['Jobs and quotes', 'Scheduling', 'Invoices and reviews'],
+    to: '/demos/home-services',
   },
   {
     name: 'Fitness and wellness',
     who: 'Trainers, studios, clinics',
     features: ['Members', 'Classes', 'Retention'],
+    to: '/demos/fitness',
   },
   {
     name: 'Creators and solopreneurs',
     who: 'Content as the business',
     features: ['Brand deals', 'Content calendar', 'Posting'],
+    to: '/demos/creators',
   },
 ]
 
@@ -57,7 +62,7 @@ export function Demos() {
           See a CRM built for your world.
         </h1>
         <p className="mt-6 max-w-2xl mx-auto text-lg md:text-xl text-silver-400 leading-relaxed">
-          A CRM shaped for the way your kind of business actually runs. Each one is designed around its own world, not a template with the colors swapped. The first builds are landing soon. Tell us yours and we will build a demo around it.
+          A CRM shaped for the way your kind of business actually runs. Each one is designed around its own world, not a template with the colors swapped. Open any one below to look around, or tell us yours and we will build a demo around it.
         </p>
       </section>
 
