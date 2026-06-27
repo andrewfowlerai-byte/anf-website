@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
 import { WatchItWork } from '../components/WatchItWork'
+import { DemoAssistant } from '../components/DemoAssistant'
 
 // Bespoke family demo (Family HQ). Deliberately NOT a CRM: a warm, calm
 // household board with its own sage-and-clay identity. Its own world, its own
@@ -85,6 +86,17 @@ export function FamilyHqDemo() {
         />
         <span className="text-xs text-silver-500">Updates live, and stays on your device.</span>
       </div>
+
+      <DemoAssistant
+        accent="#5b7553"
+        name="Family HQ"
+        greeting="Hi, I'm your Family HQ helper. Ask about the week, meals, or what's coming up."
+        qa={[
+          { q: "What's happening today?", a: "Busy one. Leo has his checkup at 9 (bring the insurance card), pickup at 3:15 with your partner driving, Mia has soccer at 5:30 with Sarah carpooling, and it is taco night, all in the fridge." },
+          { q: "What's for dinner this week?", a: "Tacos tonight, sheet-pan chicken Tuesday, leftovers Wednesday, pasta Thursday, homemade pizza Friday. The grocery list already built itself from that." },
+          { q: "What am I forgetting?", a: "Mia's field trip form still needs a signature, and the car registration is due in 8 days. Both are on the board. Want a reminder set for tonight?" },
+        ]}
+      />
 
       {/* The board: warm, rounded, calm. Nothing corporate. */}
       <div className="rounded-[28px] border border-[#e6dfcf] shadow-2xl p-5 md:p-7" style={{ background: '#f6f2e9' }}>

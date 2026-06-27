@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
 import { WatchItWork } from '../components/WatchItWork'
 import { CountUp } from '../components/CountUp'
+import { DemoAssistant } from '../components/DemoAssistant'
 
 // Bespoke coaching demo (CoachFlow). Its own teal identity and a real multi-view
 // app (Dashboard, Clients, Schedule, Programs), built around one coach's week.
@@ -151,6 +152,17 @@ export function CoachFlowDemo() {
         />
         <span className="text-xs text-silver-500">Updates live, and stays on your device.</span>
       </div>
+
+      <DemoAssistant
+        accent="#0f766e"
+        name="CoachFlow AI"
+        greeting="Hi, I'm your CoachFlow assistant. Ask me about a client, your week, or renewals."
+        qa={[
+          { q: "Who needs my attention?", a: "Sofia. She missed her last session and has not rebooked in 12 days. I already drafted a warm, no-pressure check-in, so one tap and it goes out before she drifts." },
+          { q: "Prep me for my next session", a: "Marcus, Thursday 10am, session 3 of 12. Last time you mapped his Q3 priorities and set two action items. He is working on delegation and board presence. Want the full notes?" },
+          { q: "Any renewals coming up?", a: "Dana wraps in 9 days and is a strong fit for the continuation track. The renewal offer is drafted and ready to send." },
+        ]}
+      />
 
       <div className="rounded-2xl overflow-hidden border border-midnight-700/40 shadow-2xl flex flex-col md:flex-row bg-white text-slate-800 min-h-[580px]">
         <aside className="md:w-56 shrink-0 flex md:flex-col gap-1 p-3 md:p-4" style={{ background: DEEP }}>

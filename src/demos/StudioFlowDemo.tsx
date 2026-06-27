@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
 import { WatchItWork } from '../components/WatchItWork'
 import { CountUp } from '../components/CountUp'
+import { DemoAssistant } from '../components/DemoAssistant'
 
 // Bespoke fitness demo (StudioFlow). A dark "studio display" with a class
 // timetable as the hero and live capacity bars. Its own energetic identity,
@@ -69,6 +70,17 @@ export function StudioFlowDemo() {
         />
         <span className="text-xs text-silver-500">Updates live, and stays on your device.</span>
       </div>
+
+      <DemoAssistant
+        accent="#22c55e"
+        name="StudioFlow AI"
+        greeting="Hey, I'm your StudioFlow assistant. Ask me about classes, members, or retention."
+        qa={[
+          { q: "Who's about to cancel?", a: "Tom R. No visit in 18 days on a 3x-per-week plan, the classic lapse pattern. I drafted a friendly check-in to reach him before he cancels, ready to send." },
+          { q: "Which trials should I convert?", a: "Jordan P. Day 5 of 7 with three visits already, a strong buyer signal. The membership offer is timed to go out today while motivation is high." },
+          { q: "How full is tonight?", a: "The 6pm HIIT has 14 of 16 booked, two spots left. Tomorrow's 7am yoga is full with 3 on the waitlist, and they get auto-texted the moment a spot opens." },
+        ]}
+      />
 
       {/* The studio display: dark, bold, energetic */}
       <div className="rounded-3xl overflow-hidden border border-white/10 shadow-2xl" style={{ background: INK }}>

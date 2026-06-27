@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
 import { WatchItWork } from '../components/WatchItWork'
 import { CountUp } from '../components/CountUp'
+import { DemoAssistant } from '../components/DemoAssistant'
 
 // Bespoke creator demo (CreatorDesk). A vibrant plum-and-magenta content desk:
 // a post calendar across platforms plus a brand-deal money pipeline. Its own
@@ -79,6 +80,17 @@ export function CreatorDeskDemo() {
         />
         <span className="text-xs text-silver-500">Updates live, and stays on your device.</span>
       </div>
+
+      <DemoAssistant
+        accent="#ec4899"
+        name="CreatorDesk AI"
+        greeting="Hey, I'm your CreatorDesk assistant. Ask me about deals, pricing, or content."
+        qa={[
+          { q: "What's a fair price for this deal?", a: "For the skincare co.'s 3 reels with 60-day usage, your $2,500 counter is right. Your last campaign in that category performed well, so you have the proof to hold the number. It is attached to your reply." },
+          { q: "What's due this week?", a: "Your launch reel goes out today at 6pm, script ready and caption drafted. Tomorrow's TikTok is still a draft, want the outline?" },
+          { q: "Which deal is biggest?", a: "The fitness app at $3,400, due next Wednesday with 90-day paid usage. Script approved, shoot booked, invoice scheduled." },
+        ]}
+      />
 
       <div className="rounded-3xl overflow-hidden border border-white/10 shadow-2xl" style={{ background: PLUM }}>
         <div className="px-6 py-5 flex items-center justify-between gap-3 border-b border-white/10" style={{ background: 'linear-gradient(120deg, rgba(236,72,153,0.18), rgba(168,85,247,0.10))' }}>

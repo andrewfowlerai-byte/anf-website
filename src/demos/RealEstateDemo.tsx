@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
 import { WatchItWork } from '../components/WatchItWork'
 import { CountUp } from '../components/CountUp'
+import { DemoAssistant } from '../components/DemoAssistant'
 
 // Bespoke real estate demo. Its own navy-and-gold identity and a real
 // multi-view app (Today, Listings, Pipeline, Showings), designed around one
@@ -164,6 +165,17 @@ export function RealEstateDemo() {
         />
         <span className="text-xs text-silver-500">Updates live, and stays on your device.</span>
       </div>
+
+      <DemoAssistant
+        accent="#b4884d"
+        name="AgentDesk AI"
+        greeting="Hey, I'm your AgentDesk assistant. Ask me about your day, a lead, or a listing."
+        qa={[
+          { q: "What should I do first today?", a: "Call the Reyes family. They replied 2 minutes ago, are pre-approved at $450k, and already have a Saturday tour booked. Warm leads cool fast, so they are your highest-value move this morning." },
+          { q: "Which listing needs attention?", a: "27 Birch Run. 18 days on market with only one showing. A small price move would re-trigger buyer alerts, and I can draft the price-drop notice to your 14 saved buyers whenever you are ready." },
+          { q: "How fast am I answering leads?", a: "Your average is 4 minutes, which beats most agents in your market. The auto-responder handles the first reply day or night, so nothing sits cold." },
+        ]}
+      />
 
       <div className="rounded-2xl overflow-hidden border border-midnight-700/40 shadow-2xl flex flex-col md:flex-row bg-white text-slate-800 min-h-[580px]">
         <aside className="md:w-56 shrink-0 flex md:flex-col gap-1 p-3 md:p-4" style={{ background: NAVY }}>

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
 import { WatchItWork } from '../components/WatchItWork'
 import { CountUp } from '../components/CountUp'
+import { DemoAssistant } from '../components/DemoAssistant'
 
 // Bespoke home-services demo (ServiceFlow). A bold dispatch board: today's route
 // as a timeline with crew status, plus an incoming-requests queue. Its own
@@ -80,6 +81,17 @@ export function ServiceFlowDemo() {
         />
         <span className="text-xs text-silver-500">Updates live, and stays on your device.</span>
       </div>
+
+      <DemoAssistant
+        accent="#ea580c"
+        name="ServiceFlow AI"
+        greeting="Hey, I'm your ServiceFlow assistant. Ask about today's jobs, quotes, or leads."
+        qa={[
+          { q: "What's my day look like?", a: "Four jobs. The deck wash is done and paid. Mike and Tony are en route to the water heater install, then the 1pm AC diagnostic, and Dave has the gutter repair at 3:30. On-my-way texts are queued." },
+          { q: "Any quotes to chase?", a: "The Hartleys' bathroom remodel, $8,400. They have opened it three times, a strong signal. Worth a call today, and a 5pm follow-up nudge is already queued." },
+          { q: "Did I miss any leads?", a: "None. A missed call at 6:41 this morning got an auto-text with a same-day slot in 40 seconds, and she booked the 1pm before the office even opened." },
+        ]}
+      />
 
       <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-2xl bg-slate-50">
         <div className="flex items-center justify-between gap-3 px-6 py-4" style={{ background: '#1e293b' }}>
