@@ -211,7 +211,7 @@ export function Start() {
           </label>
         </Section>
 
-        <Section step={3} title="What you'd like" subtitle="Pick everything that sounds useful. We will tailor your proposal to what you choose.">
+        <Section step={3} title="What you'd like" subtitle="Pick everything that sounds useful. We will tailor your plan to what you choose.">
           <div className="space-y-6">
             {groups.map((g) => (
               <div key={g.category}>
@@ -244,7 +244,7 @@ export function Start() {
         </Section>
 
         {personalFeatures.length > 0 && (
-          <Section step={4} title="A few things for you" subtitle="Optional personal touches we can fold in at no extra cost.">
+          <Section step={4} title="A few things for you" subtitle="Optional personal touches we can fold in.">
             <div className="grid sm:grid-cols-2 gap-2">
               {personalFeatures.map((f) => {
                 const on = personal.has(f.slug)
@@ -270,7 +270,7 @@ export function Start() {
           </Section>
         )}
 
-        <Section step={personalFeatures.length > 0 ? 5 : 4} title="Anything else?" subtitle="Something not on the list? Describe it and we will quote it separately.">
+        <Section step={personalFeatures.length > 0 ? 5 : 4} title="Anything else?" subtitle="Something not on the list? Describe it and we will include it in your plan.">
           <div className="space-y-3">
             {custom.map((c, i) => (
               <div key={i} className="grid sm:grid-cols-[1fr_1.5fr_auto] gap-2 items-start">
@@ -307,7 +307,7 @@ export function Start() {
         <div className="px-4 md:px-5 py-3 flex items-center gap-4">
           <p className="flex-1 min-w-0 text-sm text-silver-300 truncate">
             {selected.size > 0 ? `${selected.size} ${selected.size === 1 ? 'item' : 'items'} selected` : 'Pick what you would like'}
-            <span className="text-silver-500"> · we tailor your proposal to your choices</span>
+            <span className="text-silver-500"> · we tailor your plan to your choices</span>
           </p>
           <button
             onClick={() => void submit()}
