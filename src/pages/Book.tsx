@@ -27,6 +27,23 @@ export function Book() {
         </div>
       </section>
 
+      <section className="max-w-3xl mx-auto px-6 pb-4">
+        <p className="text-center text-xs tracking-[0.3em] uppercase text-flame-500 mb-6">What happens next</p>
+        <div className="grid sm:grid-cols-3 gap-4">
+          {[
+            { n: '1', t: 'Pick a time', b: 'Grab a slot below, or send a note and we will find one. You get a confirmation either way.' },
+            { n: '2', t: 'We talk, 30 minutes', b: 'Your goals, what you have now, and where you are stuck. It is a conversation, not a pitch.' },
+            { n: '3', t: 'You get a plan', b: 'A clear proposal with scope and price within two business days. If it fits, we start. If not, the plan is yours to keep.' },
+          ].map((s) => (
+            <div key={s.n} className="rounded-2xl border border-midnight-700/30 bg-midnight-900/40 p-5">
+              <div className="w-8 h-8 rounded-full bg-flame-500/15 border border-flame-400/40 text-flame-300 flex items-center justify-center font-semibold text-sm mb-3">{s.n}</div>
+              <p className="text-silver-100 font-medium mb-1">{s.t}</p>
+              <p className="text-silver-400 text-sm leading-relaxed">{s.b}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {CAL_USERNAME && (
         <section className="max-w-4xl mx-auto px-6 py-8">
           <CalBooking />
