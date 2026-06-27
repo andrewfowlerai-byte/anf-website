@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
 import { WatchItWork } from '../components/WatchItWork'
+import { CountUp } from '../components/CountUp'
 
 // Bespoke home-services demo (ServiceFlow). A bold dispatch board: today's route
 // as a timeline with crew status, plus an incoming-requests queue. Its own
@@ -95,7 +96,7 @@ export function ServiceFlowDemo() {
         <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-slate-200 bg-white border-b border-slate-200">
           {stats.map((s) => (
             <div key={s.label} className="px-5 py-3.5">
-              <p className="text-2xl font-bold text-slate-800">{s.value}</p>
+              <p className="text-2xl font-bold text-slate-800"><CountUp value={s.value} /></p>
               <p className="text-[11px] uppercase tracking-wide text-slate-400 mt-0.5">{s.label}</p>
             </div>
           ))}

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
 import { WatchItWork } from '../components/WatchItWork'
+import { CountUp } from '../components/CountUp'
 
 // Bespoke coaching demo (CoachFlow). Its own teal identity and a real multi-view
 // app (Dashboard, Clients, Schedule, Programs), built around one coach's week.
@@ -190,7 +191,7 @@ export function CoachFlowDemo() {
                   {kpis.map((k) => (
                     <div key={k.label} className="rounded-xl bg-white border border-slate-200 p-3">
                       <p className="text-[11px] uppercase tracking-wide text-slate-400">{k.label}</p>
-                      <p className="text-2xl font-semibold mt-1" style={{ color: TEAL }}>{k.value}</p>
+                      <p className="text-2xl font-semibold mt-1" style={{ color: TEAL }}><CountUp value={k.value} /></p>
                     </div>
                   ))}
                 </div>

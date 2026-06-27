@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
 import { WatchItWork } from '../components/WatchItWork'
+import { CountUp } from '../components/CountUp'
 
 // Bespoke creator demo (CreatorDesk). A vibrant plum-and-magenta content desk:
 // a post calendar across platforms plus a brand-deal money pipeline. Its own
@@ -89,8 +90,8 @@ export function CreatorDeskDemo() {
             </div>
           </div>
           <div className="hidden sm:flex gap-5 text-right">
-            <div><p className="text-lg font-black text-white leading-none">$18.2k</p><p className="text-[10px] uppercase tracking-wide mt-1" style={{ color: '#c4b5d4' }}>Active deals</p></div>
-            <div><p className="text-lg font-black text-white leading-none">5</p><p className="text-[10px] uppercase tracking-wide mt-1" style={{ color: '#c4b5d4' }}>Open pitches</p></div>
+            <div><p className="text-lg font-black text-white leading-none"><CountUp value="$18.2k" /></p><p className="text-[10px] uppercase tracking-wide mt-1" style={{ color: '#c4b5d4' }}>Active deals</p></div>
+            <div><p className="text-lg font-black text-white leading-none"><CountUp value="5" /></p><p className="text-[10px] uppercase tracking-wide mt-1" style={{ color: '#c4b5d4' }}>Open pitches</p></div>
           </div>
         </div>
 

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
 import { WatchItWork } from '../components/WatchItWork'
+import { CountUp } from '../components/CountUp'
 
 // Bespoke fitness demo (StudioFlow). A dark "studio display" with a class
 // timetable as the hero and live capacity bars. Its own energetic identity,
@@ -85,7 +86,7 @@ export function StudioFlowDemo() {
         <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-white/5 border-b border-white/10">
           {stats.map((s) => (
             <div key={s.label} className="px-5 py-4">
-              <p className="text-3xl font-black text-white tracking-tight">{s.value}</p>
+              <p className="text-3xl font-black text-white tracking-tight"><CountUp value={s.value} /></p>
               <p className="text-[11px] uppercase tracking-wide mt-1" style={{ color: '#7c8aa5' }}>{s.label}</p>
             </div>
           ))}

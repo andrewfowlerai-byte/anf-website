@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
 import { WatchItWork } from '../components/WatchItWork'
+import { CountUp } from '../components/CountUp'
 
 // Bespoke real estate demo. Its own navy-and-gold identity and a real
 // multi-view app (Today, Listings, Pipeline, Showings), designed around one
@@ -203,7 +204,7 @@ export function RealEstateDemo() {
                   {kpis.map((k) => (
                     <div key={k.label} className="rounded-xl bg-white border border-slate-200 p-3">
                       <p className="text-[11px] uppercase tracking-wide text-slate-400">{k.label}</p>
-                      <p className="text-2xl font-semibold mt-1" style={{ color: NAVY }}>{k.value}</p>
+                      <p className="text-2xl font-semibold mt-1" style={{ color: NAVY }}><CountUp value={k.value} /></p>
                     </div>
                   ))}
                 </div>
