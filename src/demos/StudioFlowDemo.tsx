@@ -4,6 +4,7 @@ import { BookCallButton } from '../components/BookCallButton'
 import { WatchItWork } from '../components/WatchItWork'
 import { CountUp } from '../components/CountUp'
 import { DemoAssistant } from '../components/DemoAssistant'
+import { useDemoToast, DemoToast } from '../components/DemoToast'
 
 // Bespoke fitness demo (StudioFlow). A dark "studio display" with a class
 // timetable as the hero and live capacity bars. Its own energetic identity,
@@ -23,7 +24,7 @@ interface Klass {
   waitlist: number
 }
 
-const classes: Klass[] = [
+const initialClasses: Klass[] = [
   { id: 'cl1', time: '6:00a', name: 'Sunrise HIIT', coach: 'Jordan', booked: 12, cap: 16, roster: ['Bree K.', 'Chris D.', 'Alex M.', '+9 more'], waitlist: 0 },
   { id: 'cl2', time: '7:00a', name: 'Vinyasa Flow', coach: 'Maya', booked: 16, cap: 16, roster: ['Sofia B.', 'Tom R.', 'Dana W.', '+13 more'], waitlist: 3 },
   { id: 'cl3', time: '12:00p', name: 'Express Strength', coach: 'Andre', booked: 9, cap: 14, roster: ['James O.', 'Priya N.', 'Marcus T.', '+6 more'], waitlist: 0 },
@@ -50,6 +51,14 @@ export function StudioFlowDemo() {
   const [openId, setOpenId] = useState<string | null>(null)
   const name = studio.trim() || 'Forge'
   const save = (v: string) => { setStudio(v); try { localStorage.setItem('anf_studio_name', v) } catch { /* ignore */ } }
+  const [classes, setClasses] = useState(initialClasses)
+  const [toast, fireToast] = useDemoToast()
+  const bookClass = () => {
+    const target = classes.find((c) => c.booked < c.cap)
+    if (!target) { fireToast('Every class is full tonight'); return }
+    setClasses((prev) => prev.map((c) => (c.id === target.id ? { ...c, booked: c.booked + 1 } : c)))
+    fireToast(`Someone just booked ${target.name}`)
+  }
   const open = classes.find((c) => c.id === openId) || null
 
   return (
@@ -70,6 +79,8 @@ export function StudioFlowDemo() {
         />
         <span className="text-xs text-silver-500">Updates live, and stays on your device.</span>
       </div>
+
+      <DemoToast toast={toast} accent="#22c55e" />
 
       <DemoAssistant
         accent="#22c55e"
@@ -105,7 +116,10 @@ export function StudioFlowDemo() {
         </div>
 
         <div className="p-5 md:p-6">
-          <p className="text-xs uppercase tracking-[0.2em] mb-4" style={{ color: LIME }}>Today's classes</p>
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-xs uppercase tracking-[0.2em]" style={{ color: LIME }}>Today's classes</p>
+            <button onClick={bookClass} className="text-[11px] font-semibold px-2.5 py-1 rounded-full text-black transition-transform hover:scale-105" style={{ background: LIME }}>+ Simulate a booking</button>
+          </div>
           <div className="grid sm:grid-cols-2 gap-3">
             {classes.map((c) => {
               const pct = Math.round((c.booked / c.cap) * 100)

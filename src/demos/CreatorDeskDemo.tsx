@@ -4,6 +4,7 @@ import { BookCallButton } from '../components/BookCallButton'
 import { WatchItWork } from '../components/WatchItWork'
 import { CountUp } from '../components/CountUp'
 import { DemoAssistant } from '../components/DemoAssistant'
+import { useDemoToast, DemoToast } from '../components/DemoToast'
 
 // Bespoke creator demo (CreatorDesk). A vibrant plum-and-magenta content desk:
 // a post calendar across platforms plus a brand-deal money pipeline. Its own
@@ -61,6 +62,18 @@ export function CreatorDeskDemo() {
   const tag = (handle.trim() || 'yourhandle').replace(/^@/, '')
   const save = (v: string) => { setHandle(v); try { localStorage.setItem('anf_creator_handle', v) } catch { /* ignore */ } }
   const open = deals.find((d) => d.id === openId) || null
+  const [toast, fireToast] = useDemoToast()
+  const [extra, setExtra] = useState<{ id: string; brand: string; fee: string; detail: string }[]>([])
+  const dealPool = [
+    { brand: 'Athleisure brand', fee: '$3,900', detail: 'Inbound, wants a 3-video series' },
+    { brand: 'Travel app', fee: '$2,200', detail: 'DM inquiry, replied with your kit' },
+    { brand: 'Local roaster', fee: '$1,500', detail: 'Repeat partner, easy yes' },
+  ]
+  const dropDeal = () => {
+    const p = dealPool[extra.length % dealPool.length]
+    setExtra((prev) => [{ id: `x${prev.length}-${p.brand}`, ...p }, ...prev])
+    fireToast('New brand deal landed in your pipeline')
+  }
 
   return (
     <section className="max-w-5xl mx-auto px-6 py-10 md:py-12">
@@ -80,6 +93,8 @@ export function CreatorDeskDemo() {
         />
         <span className="text-xs text-silver-500">Updates live, and stays on your device.</span>
       </div>
+
+      <DemoToast toast={toast} accent={PINK} />
 
       <DemoAssistant
         accent="#ec4899"
@@ -127,8 +142,21 @@ export function CreatorDeskDemo() {
             ))}
           </div>
 
-          <p className="text-xs uppercase tracking-[0.2em] mt-7 mb-3" style={{ color: PINK }}>Brand deal pipeline</p>
+          <div className="flex items-center justify-between mt-7 mb-3">
+            <p className="text-xs uppercase tracking-[0.2em]" style={{ color: PINK }}>Brand deal pipeline</p>
+            <button onClick={dropDeal} className="text-[11px] font-semibold px-2.5 py-1 rounded-full text-white transition-transform hover:scale-105" style={{ background: PINK }}>+ Simulate a deal</button>
+          </div>
           <div className="grid sm:grid-cols-2 gap-3">
+            {extra.map((d) => (
+              <div key={d.id} className="rounded-2xl p-4 border" style={{ background: 'rgba(236,72,153,0.10)', borderColor: 'rgba(236,72,153,0.45)' }}>
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-white font-semibold leading-tight">{d.brand}</p>
+                  <span className="text-base font-black" style={{ color: '#f9a8d4' }}>{d.fee}</span>
+                </div>
+                <p className="text-xs mt-0.5" style={{ color: '#c4b5d4' }}>{d.detail}</p>
+                <span className="inline-block mt-2 text-[10px] uppercase tracking-wide font-semibold px-2 py-0.5 rounded-full text-white" style={{ background: PINK }}>New pitch</span>
+              </div>
+            ))}
             {deals.map((d) => (
               <button key={d.id} onClick={() => setOpenId(d.id)} className="text-left rounded-2xl p-4 border border-white/10 hover:border-white/25 transition-colors" style={{ background: '#1f1530' }}>
                 <div className="flex items-center justify-between gap-2">

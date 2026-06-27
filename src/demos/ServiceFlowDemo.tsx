@@ -4,6 +4,7 @@ import { BookCallButton } from '../components/BookCallButton'
 import { WatchItWork } from '../components/WatchItWork'
 import { CountUp } from '../components/CountUp'
 import { DemoAssistant } from '../components/DemoAssistant'
+import { useDemoToast, DemoToast } from '../components/DemoToast'
 
 // Bespoke home-services demo (ServiceFlow). A bold dispatch board: today's route
 // as a timeline with crew status, plus an incoming-requests queue. Its own
@@ -62,6 +63,18 @@ export function ServiceFlowDemo() {
   const name = company.trim() || 'Summit Home Services'
   const save = (v: string) => { setCompany(v); try { localStorage.setItem('anf_service_co', v) } catch { /* ignore */ } }
   const open = jobs.find((j) => j.id === openId) || null
+  const [toast, fireToast] = useDemoToast()
+  const [extra, setExtra] = useState<{ id: string; customer: string; service: string; when: string; note: string }[]>([])
+  const leadPool = [
+    { customer: 'T. Walsh', service: 'Sump pump replacement', note: 'Auto-text with a booking link sent in 38 seconds.' },
+    { customer: 'A. Romano', service: 'Roof leak, urgent', note: 'Replied instantly and offered a same-day slot.' },
+    { customer: 'P. Singh', service: 'Water softener install', note: 'Qualified and a quote link went out automatically.' },
+  ]
+  const dropLead = () => {
+    const p = leadPool[extra.length % leadPool.length]
+    setExtra((prev) => [{ id: `x${prev.length}-${p.customer}`, when: 'Just now', ...p }, ...prev])
+    fireToast('New lead answered in under a minute')
+  }
 
   return (
     <section className="max-w-5xl mx-auto px-6 py-10 md:py-12">
@@ -81,6 +94,8 @@ export function ServiceFlowDemo() {
         />
         <span className="text-xs text-silver-500">Updates live, and stays on your device.</span>
       </div>
+
+      <DemoToast toast={toast} accent={ORANGE} />
 
       <DemoAssistant
         accent="#ea580c"
@@ -144,8 +159,21 @@ export function ServiceFlowDemo() {
           {/* Right column: new requests + quotes */}
           <div className="md:col-span-2 space-y-4">
             <div className="rounded-xl bg-white border border-slate-200 p-5">
-              <p className="text-xs uppercase tracking-[0.2em] mb-3" style={{ color: '#16a34a' }}>New requests</p>
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs uppercase tracking-[0.2em]" style={{ color: '#16a34a' }}>New requests</p>
+                <button onClick={dropLead} className="text-[11px] font-semibold px-2.5 py-1 rounded-full text-white transition-transform hover:scale-105" style={{ background: ORANGE }}>+ Simulate a lead</button>
+              </div>
               <div className="space-y-3">
+                {extra.map((r) => (
+                  <div key={r.id} className="rounded-lg border p-3" style={{ background: '#fff7ed', borderColor: '#fed7aa' }}>
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-sm font-semibold text-slate-800 leading-tight">{r.service}</p>
+                      <span className="text-[10px] uppercase tracking-wide font-semibold px-1.5 py-0.5 rounded-full text-white shrink-0" style={{ background: ORANGE }}>New</span>
+                    </div>
+                    <p className="text-xs text-slate-500">{r.customer} · {r.when}</p>
+                    <p className="text-[11px] mt-1 leading-snug" style={{ color: '#c2410c' }}>{r.note}</p>
+                  </div>
+                ))}
                 {requests.map((r) => (
                   <div key={r.customer} className="rounded-lg bg-green-50 border border-green-100 p-3">
                     <div className="flex items-center justify-between gap-2">
