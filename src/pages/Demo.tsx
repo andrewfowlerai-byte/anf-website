@@ -70,7 +70,23 @@ export function Demo() {
         </div>
       </div>
 
-      <div className="mt-8 text-center">
+      {/* What's included: the features list, so visitors see what they actually get */}
+      <div className="mt-12 md:mt-16">
+        <div className="text-center mb-8">
+          <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">What's included</p>
+          <h2 className="text-3xl md:text-4xl font-display text-silver-100">{config.featuresTitle}</h2>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-5 max-w-4xl mx-auto">
+          {config.features.map((f) => (
+            <div key={f.h} className="border border-midnight-700/30 rounded-2xl p-6 bg-midnight-900/40">
+              <h3 className="text-lg font-display text-silver-100 mb-2">{f.h}</h3>
+              <p className="text-silver-400 leading-relaxed text-sm">{f.b}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-12 text-center">
         <p className="text-silver-300 mb-4">Want this, built for your business and your words?</p>
         <BookCallButton size="lg" />
       </div>
