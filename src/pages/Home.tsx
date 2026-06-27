@@ -161,6 +161,34 @@ export function Home() {
         </div>
       </section>
 
+      <section className="max-w-6xl mx-auto px-6 py-16 md:py-24">
+        <div className="text-center mb-12">
+          <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">Why ANF</p>
+          <h2 className="text-3xl md:text-4xl font-display text-silver-100">One partner beats the alternatives</h2>
+          <p className="mt-4 max-w-2xl mx-auto text-silver-400 leading-relaxed">
+            Most businesses end up doing it themselves, hiring a freelancer, or paying an agency. Each one has a catch.
+          </p>
+        </div>
+        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { label: 'Doing it yourself', catch: 'Nights and weekends building tools you half-finish, while the real work waits.' },
+            { label: 'A freelancer', catch: 'Cheap and quick, but one skill, no continuity, and gone when you need the next thing.' },
+            { label: 'A big agency', catch: 'Expensive and slow, and you are a small account getting a template with your logo on it.' },
+          ].map((c) => (
+            <div key={c.label} className="rounded-2xl border border-midnight-700/30 bg-midnight-900/20 p-6">
+              <p className="text-silver-300 font-medium mb-2">{c.label}</p>
+              <p className="text-silver-500 text-sm leading-relaxed">{c.catch}</p>
+            </div>
+          ))}
+          <div className="rounded-2xl border border-flame-500/50 bg-flame-500/[0.07] p-6">
+            <p className="text-flame-300 font-semibold mb-2">ANF Consulting</p>
+            <p className="text-silver-300 text-sm leading-relaxed">
+              One partner across marketing, infrastructure, AI, and education. A small roster, so you are never a number, and you own what we build.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <Testimonials />
 
       <section className="max-w-4xl mx-auto px-6 py-16 md:py-24 text-center">
