@@ -4,6 +4,7 @@ const overview = [
   { service: 'Complete Platform', format: 'Website + CRM bundle', starting: '$4,000', anchor: 'platform' },
   { service: 'Social Media Management', format: 'Monthly retainer', starting: '$350/mo', anchor: 'social' },
   { service: 'Website Development', format: 'Flat project fee', starting: '$1,500', anchor: 'website' },
+  { service: 'Proof-of-Work Marketing System', format: 'Build + monthly', starting: '$4,000', anchor: 'proof-of-work' },
   { service: 'AI Coaching & Integration', format: 'Per session or retainer', starting: '$229', anchor: 'coaching' },
   { service: 'AI Strategy', format: 'Flat package', starting: '$297', anchor: 'strategy' },
   { service: 'AI Implementation', format: 'Flat package', starting: '$1,500', anchor: 'implementation' },
@@ -75,6 +76,15 @@ const platformTiers = [
     idealFor: 'The full operation: site, CRM, portal, and AI',
     scope: 'Everything in Growth, plus a client login portal and a built-in AI assistant. One system that runs your whole business.',
   },
+]
+
+const proofOfWorkIncluded = [
+  'Your team captures before and after photos plus a quick customer review on site, tagged to the job address and service',
+  'Those become search-indexable proof pages and an interactive service-area map, so you show up for "near me" searches in the towns you actually serve',
+  'An embeddable "recent work near you" gallery that drops onto your existing website',
+  'A running portfolio of completed jobs your sales team can pull up to win the next bid',
+  'Automatic review requests after each job, with the strongest ones featured on your site',
+  'Hosting, content generation, and review management handled for you every month',
 ]
 
 const coachingPackages = [
@@ -307,6 +317,52 @@ export function Services() {
         </div>
         <FinePrint>
           Each platform is a starting point, tailored to your business. Prices shown are typical build fees; final scope and price are set together. Hosting, support, and ongoing iteration are billed monthly after launch.
+        </FinePrint>
+      </ServiceSection>
+
+      <ServiceSection
+        id="proof-of-work"
+        kicker="Marketing"
+        title="Proof-of-Work Marketing System"
+        blurb="Turn the work you already do into your best marketing. Every completed job becomes proof: photos, a customer review, and local search pages that bring in the next customer. Built for home services and trades businesses that win on trust and reputation."
+      >
+        <div className="border border-flame-500/40 rounded-2xl p-8 bg-midnight-900/60 shadow-flame-glow">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-6">
+            <h4 className="font-display text-2xl text-silver-100">Proof-of-Work Marketing System</h4>
+            <p className="text-right">
+              <span className="block text-3xl font-display text-flame-400">$4,000 build</span>
+              <span className="block text-sm text-silver-400 mt-1">then $250/mo</span>
+            </p>
+          </div>
+          <p className="text-xs uppercase tracking-wider text-silver-500 mb-3">Included</p>
+          <ul className="space-y-2 mb-6">
+            {proofOfWorkIncluded.map((item) => (
+              <li key={item} className="flex items-start gap-3 text-silver-300">
+                <span className="text-flame-500 mt-1">·</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+          <div className="grid md:grid-cols-2 gap-6 pt-6 border-t border-midnight-700/40">
+            <div>
+              <p className="text-xs uppercase tracking-wider text-silver-500 mb-2">Best for</p>
+              <p className="text-sm text-silver-300 leading-relaxed">
+                Home services and trades (HVAC, plumbing, electrical, roofing, landscaping, cleaning) and any local business that earns work by proving it has done the job well nearby.
+              </p>
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-wider text-silver-500 mb-2">Why this exists</p>
+              <p className="text-sm text-silver-300 leading-relaxed">
+                Most service businesses do great work that no one ever sees. This captures every completed job and turns it into proof that ranks on search, builds trust, and books the next customer. The work is already happening. This puts it to work for you.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="mt-6 text-center">
+          <BookCallButton />
+        </div>
+        <FinePrint>
+          Build covers setup, branding, and integration with your existing site. The monthly covers hosting, new proof content, and review management. Final scope and price are set together. Your photos, reviews, and pages remain yours.
         </FinePrint>
       </ServiceSection>
 
