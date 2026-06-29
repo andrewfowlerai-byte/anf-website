@@ -198,19 +198,35 @@ const faqs = [
 export function Services() {
   return (
     <>
-      <section className="max-w-4xl mx-auto px-6 pt-16 md:pt-24 pb-12 text-center">
-        <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">2026 Service Menu</p>
-        <h1 className="text-4xl md:text-6xl font-display text-silver-100 mb-6 leading-tight">
-          Service Menu &amp; Capabilities
-        </h1>
-        <p className="text-lg md:text-xl text-silver-400 leading-relaxed">
-          A complete menu of services and engagement options. Every package is built to be clear, delivered, and accountable. Where pricing varies, ranges are shown. Where pricing is fixed, the number is what you&rsquo;ll see on the invoice.
-        </p>
+      <section className="relative overflow-hidden">
+        <div aria-hidden className="absolute inset-0 -z-10">
+          <div className="absolute inset-x-0 top-0 h-[120%]" style={{ background: 'radial-gradient(ellipse 55% 50% at 50% 0%, rgba(242,107,29,0.13), transparent 70%)' }} />
+          <div
+            className="absolute inset-0 opacity-40"
+            style={{
+              backgroundImage: 'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)',
+              backgroundSize: '60px 60px',
+              WebkitMaskImage: 'radial-gradient(ellipse 60% 50% at 50% 18%, #000, transparent 72%)',
+              maskImage: 'radial-gradient(ellipse 60% 50% at 50% 18%, #000, transparent 72%)',
+            }}
+          />
+        </div>
+        <div className="max-w-4xl mx-auto px-6 pt-20 md:pt-28 pb-12 text-center">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-[11px] sm:text-xs tracking-[0.22em] uppercase text-silver-300 mb-7">
+            <span className="w-1.5 h-1.5 rounded-full bg-flame-500" /> 2026 Service Menu
+          </div>
+          <h1 className="text-4xl md:text-6xl font-display text-silver-100 mb-6 leading-tight">
+            Everything we do, <span className="text-flame-400">priced in the open</span>
+          </h1>
+          <p className="text-lg md:text-xl text-silver-400 leading-relaxed">
+            A complete menu of services and engagement options. Every package is built to be clear, delivered, and accountable. Where pricing varies, ranges are shown. Where pricing is fixed, the number is what you will see on the invoice.
+          </p>
+        </div>
       </section>
 
       <section className="max-w-5xl mx-auto px-6 py-12">
         <h2 className="text-center text-xs tracking-[0.3em] uppercase text-flame-500 mb-6">At a glance</h2>
-        <div className="overflow-hidden border border-midnight-700/30 rounded-2xl bg-midnight-900/40">
+        <div className="overflow-hidden border border-white/[0.07] rounded-2xl bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors hover:border-flame-500/30">
           <table className="w-full text-left text-sm">
             <thead className="bg-midnight-900/80 text-silver-100">
               <tr>
@@ -271,7 +287,7 @@ export function Services() {
       >
         <div className="grid md:grid-cols-3 gap-4">
           {websiteTiers.map((t) => (
-            <div key={t.name} className="border border-midnight-700/30 rounded-2xl p-6 bg-midnight-900/40 flex flex-col">
+            <div key={t.name} className="border border-white/[0.07] rounded-2xl p-6 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors hover:border-flame-500/30 flex flex-col">
               <h4 className="font-display text-xl text-silver-100 mb-1">{t.name}</h4>
               <p className="text-2xl font-display text-flame-400 mb-3">{t.price}</p>
               <p className="text-xs uppercase tracking-wider text-silver-500 mb-2">Ideal for</p>
@@ -294,7 +310,7 @@ export function Services() {
       >
         <div className="grid md:grid-cols-3 gap-4">
           {platformTiers.map((t) => (
-            <div key={t.name} className="border border-midnight-700/30 rounded-2xl p-6 bg-midnight-900/40 flex flex-col">
+            <div key={t.name} className="border border-white/[0.07] rounded-2xl p-6 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors hover:border-flame-500/30 flex flex-col">
               <h4 className="font-display text-xl text-silver-100 mb-1">{t.name}</h4>
               <p className="text-2xl font-display text-flame-400 mb-3">{t.price}</p>
               <p className="text-xs uppercase tracking-wider text-silver-500 mb-2">Best for</p>
@@ -366,7 +382,7 @@ export function Services() {
       >
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           {coachingPackages.map((p) => (
-            <div key={p.name} className="border border-midnight-700/30 rounded-2xl p-5 bg-midnight-900/40 flex flex-col">
+            <div key={p.name} className="border border-white/[0.07] rounded-2xl p-5 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors hover:border-flame-500/30 flex flex-col">
               <h4 className="font-display text-lg text-silver-100 mb-1">{p.name}</h4>
               <p className="text-2xl font-display text-flame-400 mb-3">{p.price}</p>
               <p className="text-sm text-silver-400 leading-relaxed mb-3 flex-1">{p.includes}</p>
@@ -387,7 +403,7 @@ export function Services() {
       >
         <div className="grid md:grid-cols-2 gap-4">
           {strategyOfferings.map((o) => (
-            <div key={o.name} className="border border-midnight-700/30 rounded-2xl p-6 bg-midnight-900/40 flex flex-col">
+            <div key={o.name} className="border border-white/[0.07] rounded-2xl p-6 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors hover:border-flame-500/30 flex flex-col">
               <h4 className="font-display text-xl text-silver-100 mb-1">{o.name}</h4>
               <p className="text-2xl font-display text-flame-400 mb-3">{o.price}</p>
               <p className="text-xs uppercase tracking-wider text-silver-500 mb-2">What’s included</p>
@@ -410,7 +426,7 @@ export function Services() {
       >
         <div className="grid md:grid-cols-3 gap-4 mb-6">
           {implementationPackages.map((p) => (
-            <div key={p.name} className="border border-midnight-700/30 rounded-2xl p-6 bg-midnight-900/40 flex flex-col">
+            <div key={p.name} className="border border-white/[0.07] rounded-2xl p-6 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors hover:border-flame-500/30 flex flex-col">
               <h4 className="font-display text-xl text-silver-100 mb-1">{p.name}</h4>
               <p className="text-2xl font-display text-flame-400 mb-3">{p.price}</p>
               <p className="text-sm text-silver-300 leading-relaxed mb-3 flex-1">{p.body}</p>
@@ -445,7 +461,7 @@ export function Services() {
           </p>
           <div className="grid md:grid-cols-2 gap-4">
             {ceChannels.map((c) => (
-              <div key={c.channel} className="border border-midnight-700/30 rounded-2xl p-5 bg-midnight-900/40 flex flex-col">
+              <div key={c.channel} className="border border-white/[0.07] rounded-2xl p-5 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors hover:border-flame-500/30 flex flex-col">
                 <div className="flex justify-between items-baseline mb-2">
                   <h5 className="font-display text-silver-100">{c.channel}</h5>
                   <span className="text-flame-400 font-medium">{c.price}</span>
@@ -462,7 +478,7 @@ export function Services() {
           </p>
           <div className="grid md:grid-cols-3 gap-4">
             {corporateFormats.map((f) => (
-              <div key={f.format} className="border border-midnight-700/30 rounded-2xl p-5 bg-midnight-900/40 flex flex-col">
+              <div key={f.format} className="border border-white/[0.07] rounded-2xl p-5 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors hover:border-flame-500/30 flex flex-col">
                 <h5 className="font-display text-silver-100 mb-1">{f.format}</h5>
                 <p className="text-xl font-display text-flame-400 mb-3">{f.price}</p>
                 <p className="text-sm text-silver-400 leading-relaxed">{f.includes}</p>
@@ -482,7 +498,7 @@ export function Services() {
         </div>
         <div className="grid md:grid-cols-4 gap-4">
           {processSteps.map((s) => (
-            <div key={s.step} className="border border-midnight-700/30 rounded-2xl p-6 bg-midnight-900/40">
+            <div key={s.step} className="border border-white/[0.07] rounded-2xl p-6 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors hover:border-flame-500/30">
               <p className="font-display text-3xl text-flame-500 mb-3">{s.step}</p>
               <h4 className="font-display text-silver-100 mb-2">{s.title}</h4>
               <p className="text-sm text-silver-400 leading-relaxed">{s.body}</p>
@@ -575,7 +591,7 @@ interface TierCardProps {
 
 function TierCard({ name, price, body }: TierCardProps) {
   return (
-    <div className="border border-midnight-700/30 rounded-2xl p-6 bg-midnight-900/40 flex flex-col">
+    <div className="border border-white/[0.07] rounded-2xl p-6 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors hover:border-flame-500/30 flex flex-col">
       <h4 className="font-display text-xl text-silver-100 mb-1">{name}</h4>
       <p className="text-2xl font-display text-flame-400 mb-3">{price}</p>
       <p className="text-sm text-silver-400 leading-relaxed">{body}</p>
