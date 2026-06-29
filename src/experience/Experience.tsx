@@ -209,7 +209,6 @@ precision highp float;
 uniform vec3 uColorA;
 uniform vec3 uColorB;
 uniform float uOpacity;
-uniform float uMorphTurb;
 varying float vMix;
 varying float vRand;
 varying float vFade;
@@ -222,7 +221,6 @@ void main() {
   vec3 col = mix(uColorA, uColorB, vMix);            // flame core, electric dust at the edges
   if (vRand > 0.95) col = uColorA * 1.6;             // flame embers
   else if (vRand > 0.90) col = uColorB * 1.7;        // cyan data sparks
-  col = mix(col, vec3(0.6, 0.85, 1.0), uMorphTurb * 0.22); // subtle cyan tint through the morph
   a *= (1.0 - vFade * 0.55) * uOpacity;
   gl_FragColor = vec4(col, a);
 }
@@ -270,7 +268,6 @@ function ParticleField() {
         uSize: { value: coarse ? 0.016 : 0.011 },
         uScreenH: { value: 1 },
         uReduced: { value: reduced ? 1 : 0 },
-        uMorphTurb: { value: 0 },
         uOpacity: { value: 0 },
         uColorA: { value: new THREE.Color('#f0631a') },
         uColorB: { value: new THREE.Color('#2fb8f5') },
@@ -336,7 +333,6 @@ function ParticleField() {
       t = m * m * m * (m * (m * 6 - 15) + 10) // smootherstep: gentle ease in and out
     }
     u.uBlend.value = i0 === i1 ? 1 : t
-    u.uMorphTurb.value = i0 === i1 ? 0 : Math.sin(t * Math.PI) // subtle tint, peaks mid-morph
 
     // Scale the cloud to the viewport so the wide "ANF" wordmark always fits, even
     // on a narrow portrait phone (where the horizontal field of view is small).
