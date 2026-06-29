@@ -39,6 +39,7 @@ export interface SubmitPayload {
   goals?: string
   timeline?: string
   budget?: string
+  programs?: string[]
   selected_features: string[]
   personal_features: string[]
   custom_requests: CustomRequest[]

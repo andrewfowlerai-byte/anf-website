@@ -8,6 +8,18 @@ import {
 const inputClass =
   'w-full px-4 py-2.5 rounded-lg bg-midnight-900/60 border border-midnight-700/50 text-silver-100 placeholder-silver-500 focus:outline-none focus:border-flame-500/60 transition-colors'
 
+// Program types let someone focus the catalog on what they actually want, so a
+// personal/life build is not buried under CRMs and newsletters (and the reverse).
+// Each maps to catalog categories; "personal" maps to the Personal/Life pack.
+// Category strings must match intake_features.category (verified against the DB).
+const PROGRAM_TYPES: { key: string; label: string; categories: string[]; personal?: boolean }[] = [
+  { key: 'website', label: 'A website', categories: ['Website', 'Branding & content'] },
+  { key: 'crm', label: 'CRM & client management', categories: ['CRM', 'Sales & follow-up', 'Client portal', 'Scheduling', 'Operations & finance', 'Integrations'] },
+  { key: 'marketing', label: 'Marketing & content', categories: ['Marketing & content', 'Branding & content'] },
+  { key: 'ai', label: 'AI & automation', categories: ['AI', 'Integrations'] },
+  { key: 'personal', label: 'Personal / life tools', categories: [], personal: true },
+]
+
 function Section({ step, title, subtitle, children }: { step: number; title: string; subtitle?: string; children: React.ReactNode }) {
   return (
     <section className="border border-midnight-700/30 rounded-2xl p-5 md:p-6 bg-midnight-900/40">
@@ -36,6 +48,8 @@ export function Start() {
   const [showCode, setShowCode] = useState(false)
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [personal, setPersonal] = useState<Set<string>>(new Set())
+  const [programs, setPrograms] = useState<Set<string>>(new Set())
+  const [showAll, setShowAll] = useState(false)
   const [custom, setCustom] = useState<CustomRequest[]>([])
   const [files, setFiles] = useState<IntakeFile[]>([])
   const [uploading, setUploading] = useState(false)
@@ -78,6 +92,22 @@ export function Start() {
     return g
   }, [bizFeatures])
 
+  // Focus the catalog to the chosen program types. No selection (or "show all")
+  // means everything shows, so skipping the picker never hides anything.
+  const activeCats = useMemo(() => {
+    if (programs.size === 0 || showAll) return null
+    const set = new Set<string>()
+    for (const t of PROGRAM_TYPES) if (programs.has(t.key)) for (const c of t.categories) set.add(c.toLowerCase())
+    return set
+  }, [programs, showAll])
+  const visibleGroups = useMemo(
+    () => (activeCats ? groups.filter((g) => activeCats.has(g.category.toLowerCase())) : groups),
+    [groups, activeCats],
+  )
+  const personalShown =
+    personalFeatures.length > 0 &&
+    (programs.size === 0 || showAll || [...programs].some((k) => PROGRAM_TYPES.find((t) => t.key === k)?.personal))
+
   const toggleIn = (setSet: React.Dispatch<React.SetStateAction<Set<string>>>, slug: string) =>
     setSet((prev) => { const n = new Set(prev); if (n.has(slug)) n.delete(slug); else n.add(slug); return n })
 
@@ -101,6 +131,7 @@ export function Start() {
     try {
       const id = await submitIntake(code, {
         ...form,
+        programs: [...programs].map((k) => PROGRAM_TYPES.find((t) => t.key === k)?.label).filter((x): x is string => !!x),
         selected_features: [...selected],
         personal_features: [...personal],
         custom_requests: custom.filter((c) => c.title.trim()),
@@ -194,6 +225,26 @@ export function Start() {
       </div>
 
       <div className="space-y-5">
+        {/* Focus picker: narrow the catalog to what they actually want. */}
+        <section className="border border-midnight-700/30 rounded-2xl p-5 md:p-6 bg-midnight-900/40">
+          <h2 className="text-lg md:text-xl font-display text-silver-100">What are you looking for?</h2>
+          <p className="text-sm text-silver-500 mt-0.5">Pick any that apply and we will focus the options below. You can still open everything.</p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {PROGRAM_TYPES.map((t) => {
+              const on = programs.has(t.key)
+              return (
+                <button
+                  key={t.key}
+                  onClick={() => toggleIn(setPrograms, t.key)}
+                  className={`px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors ${on ? 'border-flame-500/60 bg-flame-500/10 text-silver-100' : 'border-midnight-700/40 bg-midnight-900/30 text-silver-300 hover:border-midnight-700/70'}`}
+                >
+                  {t.label}
+                </button>
+              )
+            })}
+          </div>
+        </section>
+
         <Section step={1} title="About you" subtitle="The basics so we can reach you.">
           <div className="grid sm:grid-cols-2 gap-4">
             <label className="text-sm text-silver-400">Your name *
@@ -231,7 +282,7 @@ export function Start() {
 
         <Section step={3} title="What you'd like" subtitle="Pick everything that sounds useful. We will tailor your plan to what you choose.">
           <div className="space-y-6">
-            {groups.map((g) => (
+            {visibleGroups.map((g) => (
               <div key={g.category}>
                 <p className="text-xs font-semibold uppercase tracking-wider text-silver-500 mb-2">{g.category}</p>
                 <div className="grid sm:grid-cols-2 gap-2">
@@ -259,9 +310,14 @@ export function Start() {
               </div>
             ))}
           </div>
+          {programs.size > 0 && (
+            <button onClick={() => setShowAll((v) => !v)} className="mt-5 text-sm text-flame-400 hover:text-flame-300">
+              {showAll ? 'Show only what fits what I picked' : 'Show all options'}
+            </button>
+          )}
         </Section>
 
-        {personalFeatures.length > 0 && (
+        {personalShown && (
           <Section step={4} title="A few things for you" subtitle="Optional personal touches we can fold in.">
             <div className="grid sm:grid-cols-2 gap-2">
               {personalFeatures.map((f) => {
@@ -288,7 +344,7 @@ export function Start() {
           </Section>
         )}
 
-        <Section step={personalFeatures.length > 0 ? 5 : 4} title="Anything else?" subtitle="Something not on the list? Describe it and we will include it in your plan.">
+        <Section step={personalShown ? 5 : 4} title="Anything else?" subtitle="Something not on the list? Describe it and we will include it in your plan.">
           <div className="space-y-3">
             {custom.map((c, i) => (
               <div key={i} className="grid sm:grid-cols-[1fr_1.5fr_auto] gap-2 items-start">
@@ -301,7 +357,7 @@ export function Start() {
           </div>
         </Section>
 
-        <Section step={personalFeatures.length > 0 ? 6 : 5} title="Share your files" subtitle="Logo, brand assets, photos, anything you have. Optional.">
+        <Section step={personalShown ? 6 : 5} title="Share your files" subtitle="Logo, brand assets, photos, anything you have. Optional.">
           <label className="flex flex-col items-center justify-center gap-2 py-8 rounded-xl border border-dashed border-midnight-700/60 bg-midnight-900/30 cursor-pointer hover:border-flame-500/50 transition-colors">
             <input type="file" multiple className="hidden" onChange={(e) => void onFiles(e.target.files)} />
             <span className="text-sm text-silver-400">{uploading ? 'Uploading...' : 'Click to upload files'}</span>
