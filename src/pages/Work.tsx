@@ -135,7 +135,7 @@ export function Work() {
           Have something you&rsquo;d like built or grown?
         </h2>
         <p className="text-lg text-silver-400 leading-relaxed mb-8">
-          Whether it&rsquo;s a website, a social presence, an AI workflow, or a system to tie it all
+          Whether it&rsquo;s a website, a custom CRM, an AI workflow, or a system to tie it all
           together, the right first step is a short conversation. No pitch, no pressure.
         </p>
         <BookCallButton />

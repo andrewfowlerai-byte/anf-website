@@ -3,7 +3,7 @@ import { Check, Copy } from 'lucide-react'
 
 // Pre-filled takeaway guide for the "Getting Real With AI" CE class.
 // Light on detail by design: it is a teaser that points to ANF services
-// (AI coaching, website design, social media management) for the real work.
+// (AI coaching, website design, custom CRM builds) for the real work.
 
 // ---- small presentational helpers -----------------------------------------
 
@@ -95,7 +95,6 @@ const SERVICES: [string, string][] = [
   ['AI coaching & setup', 'Prompts, tools, and workflows built around your day.'],
   ['Custom CRM builds', 'One system for leads, follow-ups, and content, shaped around your business.'],
   ['Website design', 'A site that ranks, converts, and reads like you.'],
-  ['Social media management', 'Daily content that keeps you visible.'],
 ]
 
 const CRM_POINTS: string[] = [
@@ -239,8 +238,8 @@ export default function GettingRealAiWorksheet({ title }: { title?: string }) {
               {`"I help people buy and sell homes on Cleveland's east side."`}
             </div>
             <TieIn>
-              A clear website, steady social, and helpful local content are what get you found and recommended. That
-              is the core of what ANF builds and runs for agents.
+              A clear website and helpful local content are what get you found and recommended. That
+              is the core of what ANF builds for agents.
             </TieIn>
           </Section>
 

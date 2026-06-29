@@ -2,7 +2,6 @@ import { BookCallButton } from '../components/BookCallButton'
 
 const overview = [
   { service: 'Complete Platform', format: 'Website + CRM bundle', starting: '$4,000', anchor: 'platform' },
-  { service: 'Social Media Management', format: 'Monthly retainer', starting: '$350/mo', anchor: 'social' },
   { service: 'Website Development', format: 'Flat project fee', starting: '$1,500', anchor: 'website' },
   { service: 'Proof-of-Work Marketing System', format: 'Build + monthly', starting: '$4,000', anchor: 'proof-of-work' },
   { service: 'AI Coaching & Integration', format: 'Per session or retainer', starting: '$229', anchor: 'coaching' },
@@ -10,29 +9,6 @@ const overview = [
   { service: 'AI Implementation', format: 'Flat package', starting: '$1,500', anchor: 'implementation' },
   { service: 'Ohio Real Estate CE', format: 'Per seat or private booking', starting: '$39/seat', anchor: 'education' },
   { service: 'Corporate Workshops', format: 'Flat per event', starting: '$500', anchor: 'education' },
-]
-
-const socialTiers = [
-  {
-    name: 'Starter',
-    price: '$350/mo',
-    scope: '3 platforms with 1 post per day, or 1 platform with 3 posts per day. Daily engagement on comments and DMs. Monthly strategy review.',
-  },
-  {
-    name: 'Growth',
-    price: '$750/mo',
-    scope: '3 platforms with 3 posts per day. 1 blog per day (Substack, Medium, or your platform of choice). Daily engagement. Weekly or monthly strategy calls.',
-  },
-  {
-    name: 'Premier',
-    price: '$1,000/mo',
-    scope: '5 platforms with 3 posts per day. Daily blogs across 2 platforms. Daily engagement. Weekly strategy calls. Priority content turnaround.',
-  },
-]
-
-const socialAddons = [
-  { addon: 'Additional daily blog', price: '+$50/mo', available: 'Starter tier' },
-  { addon: 'Additional social platform', price: '+$100/mo', available: 'Any tier' },
 ]
 
 const websiteTiers = [
@@ -167,23 +143,23 @@ const faqs = [
   },
   {
     q: 'How quickly do you start once we sign?',
-    a: 'For retainer services (social media and coaching), work begins within 5 business days. For project work (website builds, AI implementation), kickoff is scheduled within 2 weeks. Educational and workshop bookings work to your calendar.',
+    a: 'For retainer services (coaching and ongoing support), work begins within 5 business days. For project work (website builds, CRM builds, AI implementation), kickoff is scheduled within 2 weeks. Educational and workshop bookings work to your calendar.',
   },
   {
     q: 'Do you work with clients outside Ohio?',
-    a: 'Yes. The Ohio Real Estate Continuing Education credential is location-specific, but social media management, websites, AI services, and corporate workshops are delivered virtually nationwide. In-person workshops are available within Northeast Ohio.',
+    a: 'Yes. The Ohio Real Estate Continuing Education credential is location-specific, but websites, CRMs, AI services, and corporate workshops are delivered virtually nationwide. In-person workshops are available within Northeast Ohio.',
   },
   {
     q: 'I’m not in real estate. Is ANF still a fit?',
-    a: 'Yes. Andrew’s background includes real estate, but the vast majority of services (social, websites, AI coaching, AI implementation, corporate workshops) are built for professionals and small businesses in any industry. Only the Ohio CE course is real-estate-specific.',
+    a: 'Yes. Andrew’s background includes real estate, but the vast majority of services (websites, CRMs, AI coaching, AI implementation, corporate workshops) are built for professionals and small businesses in any industry. Only the Ohio CE course is real-estate-specific.',
   },
   {
     q: 'Can I bundle services or change packages later?',
-    a: 'Yes. Custom bundles combining website + social, AI implementation + coaching, etc., are available on request. Tiers can be adjusted as your needs evolve, with reasonable notice.',
+    a: 'Yes. Custom bundles combining website + CRM, AI implementation + coaching, etc., are available on request. Tiers can be adjusted as your needs evolve, with reasonable notice.',
   },
   {
     q: 'Are there contracts? Can I cancel?',
-    a: 'Social media engagements run on a 3-month initial term, then renew monthly thereafter. Cancel any time after the initial term. Project work is scoped per-engagement and ends when the deliverable ships. Workshops and CE bookings are per-event.',
+    a: 'Retainer engagements (coaching and ongoing support) renew monthly and can be cancelled any time. Project work is scoped per-engagement and ends when the deliverable ships. Workshops and CE bookings are per-event.',
   },
   {
     q: 'How is payment handled?',
@@ -249,35 +225,6 @@ export function Services() {
           </table>
         </div>
       </section>
-
-      <ServiceSection
-        id="social"
-        kicker="Social media"
-        title="Social Media Management"
-        blurb="Consistent, brand-aligned content delivered every day. ANF Consulting manages your social presence end-to-end (original content creation, daily posting, comment and DM engagement, and ongoing strategy) so your accounts grow without becoming a second job."
-      >
-        <div className="grid md:grid-cols-3 gap-4 mb-6">
-          {socialTiers.map((t) => (
-            <TierCard key={t.name} name={t.name} price={t.price} body={t.scope} />
-          ))}
-        </div>
-        <SubBlock title="Add-ons">
-          <div className="grid sm:grid-cols-2 gap-3">
-            {socialAddons.map((a) => (
-              <div key={a.addon} className="border border-midnight-700/40 rounded-md p-4 bg-midnight-900/30">
-                <div className="flex justify-between items-baseline gap-3 mb-1">
-                  <span className="text-silver-100 font-medium">{a.addon}</span>
-                  <span className="text-flame-400 text-sm whitespace-nowrap">{a.price}</span>
-                </div>
-                <p className="text-xs text-silver-500">Available on {a.available}</p>
-              </div>
-            ))}
-          </div>
-        </SubBlock>
-        <FinePrint>
-          All social media engagements run on a 3-month initial term, reviewed and renewed monthly thereafter. Client retains full ownership of all accounts and content produced.
-        </FinePrint>
-      </ServiceSection>
 
       <ServiceSection
         id="website"
@@ -580,22 +527,6 @@ function ServiceSection({ id, kicker, title, blurb, children }: ServiceSectionPr
       </div>
       {children}
     </section>
-  )
-}
-
-interface TierCardProps {
-  name: string
-  price: string
-  body: string
-}
-
-function TierCard({ name, price, body }: TierCardProps) {
-  return (
-    <div className="border border-white/[0.07] rounded-2xl p-6 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors hover:border-flame-500/30 flex flex-col">
-      <h4 className="font-display text-xl text-silver-100 mb-1">{name}</h4>
-      <p className="text-2xl font-display text-flame-400 mb-3">{price}</p>
-      <p className="text-sm text-silver-400 leading-relaxed">{body}</p>
-    </div>
   )
 }
 

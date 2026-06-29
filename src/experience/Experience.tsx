@@ -254,7 +254,7 @@ function Overlay() {
         <p className="mt-16 text-[10px] uppercase tracking-[0.4em] text-white/25">Scroll</p>
       </section>
 
-      <PillarSection side="left" num="01" title="Marketing" body="Content, social, and campaigns that compound. Built for your brand and your audience, not pulled from a template." />
+      <PillarSection side="left" num="01" title="Marketing" body="Content and campaigns that compound. Built for your brand and your audience, not pulled from a template." />
       <PillarSection side="right" num="02" title="Infrastructure" body="Websites, CRMs, and the systems that run the business. Fast, yours, and built to last." />
       <PillarSection side="left" num="03" title="AI" body="Practical AI woven into how you actually work. Custom tools and automations, not hype." />
       <PillarSection side="right" num="04" title="Education" body="Workshops and Ohio real estate CE, built on real delivery, so your team can run it without us." />

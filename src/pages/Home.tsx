@@ -17,7 +17,7 @@ const credibility = [
 ]
 
 const services = [
-  { title: 'Marketing & Social', body: 'Daily content, engagement, and strategy across every major platform.' },
+  { title: 'Marketing & Content', body: 'Brand, content, and campaigns that compound, built around your business and your audience.' },
   { title: 'Websites & Systems', body: 'From single-page landing sites to full custom platforms and CRMs.' },
   { title: 'AI Coaching & Integration', body: 'Practical AI training and productized implementation for your workflows.' },
   { title: 'Education & Workshops', body: 'Ohio Real Estate CE and corporate AI training built on real delivery.' },
