@@ -8,6 +8,7 @@ import { submitClassReview } from '../lib/reviews'
 const CLASS_SERVICE_LABEL = 'Getting Real With AI class'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const wordCount = (s: string) => s.trim().split(/\s+/).filter(Boolean).length
 
 export default function ClassReviewGate({
   slug,
@@ -41,12 +42,12 @@ export default function ClassReviewGate({
       setError('Please tap a star rating.')
       return
     }
-    if (takeaway.trim().length < 2) {
-      setError('Please share your biggest takeaway.')
+    if (wordCount(takeaway) < 4) {
+      setError('A full sentence helps. What specifically will you do differently after today?')
       return
     }
-    if (thoughts.trim().length < 2) {
-      setError('Please tell us what you thought of the class.')
+    if (wordCount(thoughts) < 4) {
+      setError('A sentence or two makes a great review. What stood out, and what would you tell another agent?')
       return
     }
     if (!recommend) {
@@ -93,7 +94,7 @@ export default function ClassReviewGate({
         </div>
         <h1 className="text-2xl font-bold text-midnight-900">Leave a quick review to open your workbook</h1>
         <p className="mt-2 text-[15px] leading-relaxed text-slate-600">
-          Your honest feedback unlocks the free workbook and helps other people decide to attend. Takes about thirty seconds.
+          Your honest feedback unlocks the free workbook and helps other agents decide to attend. The more specific you are, the more it helps. Takes about a minute.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-5 space-y-4">
@@ -140,16 +141,20 @@ export default function ClassReviewGate({
           />
 
           <TextArea
-            label="Your biggest takeaway"
+            label="What is one thing you'll do differently after today?"
             value={takeaway}
             onChange={setTakeaway}
-            placeholder="The one thing you'll use first..."
+            rows={3}
+            placeholder="e.g. Use the four-part prompt to write my next listing description, and actually post it the same day instead of putting it off."
+            hint="Be specific. A real example is far more useful than 'it was helpful'."
           />
           <TextArea
-            label="What did you think of the class?"
+            label="What stood out, and what would you tell another agent about it?"
             value={thoughts}
             onChange={setThoughts}
-            placeholder="What stood out..."
+            rows={3}
+            placeholder="e.g. It was practical and hands-on, not theory. I walked out with prompts and tools I used that same night."
+            hint="A sentence or two. With your OK below, we may feature your words and name."
           />
 
           <div>
@@ -258,11 +263,15 @@ function TextArea({
   value,
   onChange,
   placeholder,
+  hint,
+  rows = 2,
 }: {
   label: string
   value: string
   onChange: (v: string) => void
   placeholder?: string
+  hint?: string
+  rows?: number
 }) {
   return (
     <div>
@@ -271,9 +280,10 @@ function TextArea({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        rows={2}
-        className="w-full resize-none rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-midnight-900 placeholder-slate-300 focus:border-flame-500 focus:outline-none focus:ring-1 focus:ring-flame-500/40"
+        rows={rows}
+        className="w-full resize-y rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-[15px] leading-relaxed text-midnight-900 placeholder-slate-400 focus:border-flame-500 focus:outline-none focus:ring-1 focus:ring-flame-500/40"
       />
+      {hint && <p className="mt-1 text-xs text-slate-400">{hint}</p>}
     </div>
   )
 }
