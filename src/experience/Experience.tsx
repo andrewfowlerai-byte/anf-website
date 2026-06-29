@@ -1,7 +1,6 @@
-import { Suspense, useRef, type ReactNode } from 'react'
+import { Component, Suspense, useRef, type ReactNode } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { ScrollControls, Scroll, Float, Stars, MeshDistortMaterial } from '@react-three/drei'
-import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
 import * as THREE from 'three'
 
 /**
@@ -17,6 +16,14 @@ import * as THREE from 'three'
 const PAGES = 6
 
 export default function Experience() {
+  return (
+    <ExperienceBoundary>
+      <ExperienceInner />
+    </ExperienceBoundary>
+  )
+}
+
+function ExperienceInner() {
   return (
     <div className="fixed inset-0 bg-[#060F1F] text-white overflow-hidden">
       {/* Fixed chrome, sits above the canvas and does not scroll */}
@@ -48,11 +55,6 @@ export default function Experience() {
               <Overlay />
             </Scroll>
           </ScrollControls>
-
-          <EffectComposer>
-            <Bloom intensity={0.85} luminanceThreshold={0.2} luminanceSmoothing={0.9} mipmapBlur />
-            <Vignette eskil={false} offset={0.25} darkness={0.85} />
-          </EffectComposer>
         </Suspense>
       </Canvas>
     </div>
@@ -119,9 +121,9 @@ function Shape({
         <mesh ref={ref} scale={scale}>
           {children}
           {distort > 0 ? (
-            <MeshDistortMaterial color="#0B1A33" emissive={color} emissiveIntensity={0.4} roughness={0.15} metalness={0.6} distort={distort} speed={1.6} />
+            <MeshDistortMaterial color="#0B1A33" emissive={color} emissiveIntensity={0.85} roughness={0.15} metalness={0.6} distort={distort} speed={1.6} />
           ) : (
-            <meshStandardMaterial color="#0B1A33" emissive={color} emissiveIntensity={0.55} roughness={0.22} metalness={0.5} wireframe={wireframe} />
+            <meshStandardMaterial color="#0B1A33" emissive={color} emissiveIntensity={1.05} roughness={0.22} metalness={0.5} wireframe={wireframe} />
           )}
         </mesh>
       </Float>
@@ -182,4 +184,31 @@ function PillarSection({ side, num, title, body }: { side: 'left' | 'right'; num
       </div>
     </section>
   )
+}
+
+// Catches a mount/render crash in the scene so the page shows the actual error
+// instead of a blank screen or a cryptic "couldn't read this file".
+class ExperienceBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+  state: { error: Error | null } = { error: null }
+  static getDerivedStateFromError(error: Error) {
+    return { error }
+  }
+  componentDidCatch(error: Error) {
+    console.error('[experience] crashed', error)
+  }
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="fixed inset-0 bg-[#060F1F] text-white flex items-center justify-center p-8">
+          <div className="max-w-lg text-center">
+            <p className="text-flame-400 text-xs uppercase tracking-[0.3em] mb-3">3D experience hit an error</p>
+            <p className="text-silver-300/80 text-sm mb-4">It loaded, but something in the scene crashed. Here is the message so it can be fixed fast:</p>
+            <pre className="text-left text-xs text-red-300 bg-white/5 border border-white/10 rounded-lg p-4 overflow-auto whitespace-pre-wrap">{this.state.error.message}</pre>
+            <a href="/" className="inline-block mt-5 text-flame-400 hover:text-flame-300 text-sm">Back to the site</a>
+          </div>
+        </div>
+      )
+    }
+    return this.props.children
+  }
 }
