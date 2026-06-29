@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Layout } from './components/Layout'
 import { Home } from './pages/Home'
@@ -20,6 +21,9 @@ import { Invest } from './pages/Invest'
 import { Start } from './pages/Start'
 import { Signature } from './pages/Signature'
 import ClassMaterial from './pages/ClassMaterial'
+
+// Heavy WebGL bundle, code-split so it only loads on /experience.
+const Experience = lazy(() => import('./experience/Experience'))
 
 function App() {
   return (
@@ -52,6 +56,15 @@ function App() {
         <Route path="/signature" element={<Signature />} />
         {/* Code-locked class worksheet (scan a QR, enter the code). */}
         <Route path="/class" element={<ClassMaterial />} />
+        {/* Immersive 3D experience demo (standalone, full-screen, lazy-loaded). */}
+        <Route
+          path="/experience"
+          element={
+            <Suspense fallback={<div className="fixed inset-0 bg-[#060F1F]" />}>
+              <Experience />
+            </Suspense>
+          }
+        />
         {/* Anything else lands on the home page instead of a blank screen. */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

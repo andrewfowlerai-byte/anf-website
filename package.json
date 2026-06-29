@@ -11,11 +11,15 @@
   },
   "dependencies": {
     "@calcom/embed-react": "^1.5.3",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
+    "@react-three/postprocessing": "^3.0.4",
     "@supabase/supabase-js": "^2.106.2",
     "lucide-react": "^1.17.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
-    "react-router-dom": "^7.15.1"
+    "react-router-dom": "^7.15.1",
+    "three": "^0.185.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
