@@ -1,8 +1,9 @@
 import { supabase } from './supabase'
 
-// Public client onboarding intake. The form is code-gated and writes through
-// two SECURITY DEFINER RPCs (validate_intake_code, submit_intake), so the anon
-// client never reads the codes table or inserts submissions directly. Weights
+// Public client onboarding intake. The form is open to anyone; an access code is
+// optional and only personalizes it (preset features, greeting, budget). It writes
+// through two SECURITY DEFINER RPCs (validate_intake_code, submit_intake), so the
+// anon client never reads the codes table or inserts submissions directly. Weights
 // ("credits") are internal and never shown to the client.
 
 export interface IntakeFeature {
@@ -37,6 +38,7 @@ export interface SubmitPayload {
   industry?: string
   goals?: string
   timeline?: string
+  budget?: string
   selected_features: string[]
   personal_features: string[]
   custom_requests: CustomRequest[]

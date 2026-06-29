@@ -31,6 +31,12 @@ export function Header() {
           >
             Client Login
           </a>
+          <Link
+            to="/start"
+            className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md border border-flame-500/50 text-flame-300 hover:bg-flame-500/10 transition-colors"
+          >
+            Start a project
+          </Link>
           <BookCallButton size="sm" />
         </div>
       </nav>

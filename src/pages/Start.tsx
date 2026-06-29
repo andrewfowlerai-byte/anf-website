@@ -31,7 +31,9 @@ export function Start() {
   const [gateError, setGateError] = useState('')
   const [features, setFeatures] = useState<IntakeFeature[]>([])
 
-  const [form, setForm] = useState({ contact_name: '', business_name: '', email: '', phone: '', website: '', industry: '', goals: '', timeline: '' })
+  const [form, setForm] = useState({ contact_name: '', business_name: '', email: '', phone: '', website: '', industry: '', goals: '', timeline: '', budget: '' })
+  const [hp, setHp] = useState('') // honeypot: bots fill it, people never see it
+  const [showCode, setShowCode] = useState(false)
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [personal, setPersonal] = useState<Set<string>>(new Set())
   const [custom, setCustom] = useState<CustomRequest[]>([])
@@ -93,6 +95,8 @@ export function Start() {
 
   const submit = async () => {
     if (!canSubmit) return
+    // Honeypot tripped: pretend it worked, drop it silently.
+    if (hp.trim()) { setDone(true); window.scrollTo({ top: 0, behavior: 'smooth' }); return }
     setSubmitting(true)
     try {
       const id = await submitIntake(code, {
@@ -135,50 +139,59 @@ export function Start() {
     )
   }
 
-  // --- Code gate ---
-  if (!info) {
-    return (
-      <div className="max-w-md mx-auto px-6 py-24">
-        <div className="text-center mb-8">
-          <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">Client intake</p>
-          <h1 className="text-3xl md:text-4xl font-display text-silver-100">Let's start your project</h1>
-          <p className="text-silver-400 mt-4 leading-relaxed">Enter the access code Andrew gave you to open your intake form.</p>
-        </div>
-        <div className="border border-midnight-700/30 rounded-2xl p-6 bg-midnight-900/40">
-          <input
-            value={code}
-            onChange={(e) => setCode(e.target.value.toUpperCase())}
-            onKeyDown={(e) => { if (e.key === 'Enter') void unlock(code) }}
-            placeholder="Your access code"
-            autoFocus
-            className={`${inputClass} text-center font-mono tracking-widest text-lg`}
-          />
-          {gateError && <p className="text-sm text-red-400 mt-3 text-center">{gateError}</p>}
-          <button
-            onClick={() => void unlock(code)}
-            disabled={checking || !code.trim()}
-            className="mt-4 w-full py-3 rounded-lg bg-flame-500 hover:bg-flame-400 disabled:opacity-50 text-midnight-950 font-semibold transition-colors"
-          >
-            {checking ? 'Checking...' : 'Open my form'}
-          </button>
-          <p className="text-xs text-silver-500 mt-4 text-center">No code? Email <a href="mailto:anfaiconsulting@gmail.com" className="text-flame-400 hover:text-flame-300">anfaiconsulting@gmail.com</a></p>
-        </div>
-      </div>
-    )
-  }
-
-  // --- Form ---
+  // --- Form (open to anyone; an access code is optional and personalizes it) ---
   return (
     <div className="max-w-3xl mx-auto px-5 md:px-6 py-12 md:py-16">
       <header className="mb-10">
         <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">Client intake</p>
         <h1 className="text-3xl md:text-5xl font-display text-silver-100 leading-tight">
-          {info.intro || `Welcome${info.client_name ? `, ${info.client_name}` : ''}. Let's build your project.`}
+          {info?.intro
+            ? info.intro
+            : info?.client_name
+              ? `Welcome, ${info.client_name}. Let's build your project.`
+              : `Let's build your project.`}
         </h1>
         <p className="text-silver-400 mt-4 leading-relaxed">
           Tell us about your business and pick what you want. Nothing here is locked in. It just gives Andrew everything he needs to put together your plan.
         </p>
+
+        {/* Optional access code. The form works without one; a code just personalizes it. */}
+        {info ? (
+          <p className="mt-4 inline-flex items-center gap-1.5 text-xs text-flame-400">
+            <span className="w-1.5 h-1.5 rounded-full bg-flame-400" />
+            Access code applied{info.client_name ? `: ${info.client_name}` : ''}
+          </p>
+        ) : showCode ? (
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <input
+              value={code}
+              onChange={(e) => setCode(e.target.value.toUpperCase())}
+              onKeyDown={(e) => { if (e.key === 'Enter') void unlock(code) }}
+              placeholder="Access code"
+              className={`${inputClass} max-w-[220px] font-mono tracking-widest`}
+            />
+            <button
+              onClick={() => void unlock(code)}
+              disabled={checking || !code.trim()}
+              className="px-4 py-2.5 rounded-lg bg-flame-500 hover:bg-flame-400 disabled:opacity-50 text-midnight-950 font-semibold text-sm transition-colors"
+            >
+              {checking ? 'Checking...' : 'Apply'}
+            </button>
+            {gateError && <p className="w-full text-sm text-red-400">{gateError}</p>}
+          </div>
+        ) : (
+          <button onClick={() => setShowCode(true)} className="mt-4 text-sm text-flame-400 hover:text-flame-300">
+            Have an access code?
+          </button>
+        )}
       </header>
+
+      {/* Honeypot: parked off-screen, invisible to people. Only bots fill it. */}
+      <div aria-hidden className="absolute -left-[9999px] top-0 h-px w-px overflow-hidden">
+        <label>Company URL
+          <input tabIndex={-1} autoComplete="off" value={hp} onChange={(e) => setHp(e.target.value)} />
+        </label>
+      </div>
 
       <div className="space-y-5">
         <Section step={1} title="About you" subtitle="The basics so we can reach you.">
@@ -206,9 +219,14 @@ export function Start() {
 
         <Section step={2} title="Your goals" subtitle="What would make this a win for you?">
           <textarea value={form.goals} onChange={(e) => setForm({ ...form, goals: e.target.value })} rows={4} className={`${inputClass} resize-y`} placeholder="What do you want this to do for your business? What is not working today?" />
-          <label className="block text-sm text-silver-400 mt-4">Ideal timeline
-            <input value={form.timeline} onChange={(e) => setForm({ ...form, timeline: e.target.value })} className={`mt-1 ${inputClass}`} placeholder="e.g. live within 6 weeks" />
-          </label>
+          <div className="grid sm:grid-cols-2 gap-4 mt-4">
+            <label className="block text-sm text-silver-400">Ideal timeline
+              <input value={form.timeline} onChange={(e) => setForm({ ...form, timeline: e.target.value })} className={`mt-1 ${inputClass}`} placeholder="e.g. live within 6 weeks" />
+            </label>
+            <label className="block text-sm text-silver-400">Budget range
+              <input value={form.budget} onChange={(e) => setForm({ ...form, budget: e.target.value })} className={`mt-1 ${inputClass}`} placeholder="e.g. $3k to $6k, or not sure yet" />
+            </label>
+          </div>
         </Section>
 
         <Section step={3} title="What you'd like" subtitle="Pick everything that sounds useful. We will tailor your plan to what you choose.">
