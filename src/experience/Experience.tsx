@@ -169,6 +169,7 @@ uniform float uMouseStrength;
 uniform float uSize;
 uniform float uScreenH;
 uniform float uReduced;
+uniform float uMorphTurb;
 attribute vec3 aFrom;
 attribute vec3 aTo;
 attribute float aRand;
@@ -186,6 +187,12 @@ void main() {
   pos.y += cos(uTime * 0.5 + pos.z * 1.4 + ph) * amp * (0.4 + aRand * 0.6);
   pos.z += sin(uTime * 0.7 + pos.x * 1.4 + ph) * amp * (0.4 + aRand * 0.6);
 
+  // Reassembly burst: particles scatter at the midpoint of a morph, then snap into
+  // the next form. Reads like the system recomputing itself.
+  float turb = uMorphTurb * mix(1.0, 0.35, uReduced);
+  vec3 sc = vec3(sin(aRand * 53.0), sin(aRand * 97.0 + 2.0), sin(aRand * 71.0 + 4.0));
+  pos += sc * turb * (0.35 + aRand * 0.5);
+
   // Part around the cursor (and ripple outward on click).
   vec2 toM = pos.xy - uMouse;
   float d2 = dot(toM, toM);
@@ -198,7 +205,7 @@ void main() {
   vec4 mv = modelViewMatrix * vec4(pos, 1.0);
   float dist = -mv.z;
   vFade = clamp((dist - 3.0) / 12.0, 0.0, 1.0);
-  float sz = uSize * (0.6 + aRand * 0.9) * (uScreenH / dist);
+  float sz = uSize * (0.6 + aRand * 0.9) * (uScreenH / dist) * (1.0 + turb * 0.5);
   gl_PointSize = clamp(sz, 1.0, 22.0);
   gl_Position = projectionMatrix * mv;
 }
@@ -209,6 +216,7 @@ precision highp float;
 uniform vec3 uColorA;
 uniform vec3 uColorB;
 uniform float uOpacity;
+uniform float uMorphTurb;
 varying float vMix;
 varying float vRand;
 varying float vFade;
@@ -218,9 +226,11 @@ void main() {
   float r2 = dot(c, c);
   if (r2 > 0.25) discard;
   float a = smoothstep(0.25, 0.0, r2);
-  vec3 col = mix(uColorA, uColorB, vMix);       // warm core, cool dust at the edges
-  col = mix(col, uColorA * 1.5, step(0.94, vRand)); // a few brighter flame embers
-  a *= (1.0 - vFade * 0.55) * uOpacity;
+  vec3 col = mix(uColorA, uColorB, vMix);            // flame core, electric dust at the edges
+  if (vRand > 0.95) col = uColorA * 1.6;             // flame embers
+  else if (vRand > 0.90) col = uColorB * 1.7;        // cyan data sparks
+  col = mix(col, vec3(0.55, 0.85, 1.0), uMorphTurb * 0.4); // cyan flash while reassembling
+  a *= (1.0 - vFade * 0.55) * uOpacity * (1.0 + uMorphTurb * 0.25);
   gl_FragColor = vec4(col, a);
 }
 `
@@ -232,7 +242,7 @@ function ParticleField() {
   const { size, viewport, camera } = useThree()
   const reduced = useMemo(() => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches, [])
   const coarse = useMemo(() => typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches, [])
-  const N = coarse ? 16000 : 38000
+  const N = coarse ? 12000 : 38000
 
   // Build the cloud only once the brand font is ready, so the "ANF" wordmark is
   // sampled in Space Grotesk and not whatever fallback happened to be loaded.
@@ -264,12 +274,13 @@ function ParticleField() {
         uTime: { value: 0 },
         uMouse: { value: new THREE.Vector2(99, 99) },
         uMouseStrength: { value: 0 },
-        uSize: { value: coarse ? 0.014 : 0.011 },
+        uSize: { value: coarse ? 0.016 : 0.011 },
         uScreenH: { value: 1 },
         uReduced: { value: reduced ? 1 : 0 },
+        uMorphTurb: { value: 0 },
         uOpacity: { value: 0 },
         uColorA: { value: new THREE.Color('#f0631a') },
-        uColorB: { value: new THREE.Color('#5d79c8') },
+        uColorB: { value: new THREE.Color('#2fb8f5') },
       },
       vertexShader: VERT,
       fragmentShader: FRAG,
@@ -321,6 +332,12 @@ function ParticleField() {
       idx.current.a = i0; idx.current.b = i1
     }
     u.uBlend.value = i0 === i1 ? 1 : frac * frac * (3 - 2 * frac) // smoothstep
+    u.uMorphTurb.value = i0 === i1 ? 0 : Math.sin(frac * Math.PI) // peaks mid-transition
+
+    // Scale the cloud to the viewport so the wide "ANF" wordmark always fits, even
+    // on a narrow portrait phone (where the horizontal field of view is small).
+    const aspect = size.width / Math.max(1, size.height)
+    points.scale.setScalar(THREE.MathUtils.clamp(aspect * 0.92, 0.42, 1))
 
     // Subtle sway keeps it alive while the wordmark stays readable. Set before the
     // cursor transform so worldToLocal uses this frame's orientation.
@@ -407,6 +424,68 @@ function SmoothWheel() {
   return null
 }
 
+// Reports the active section index out to the HUD. Lives inside ScrollControls
+// (so it can read scroll.offset) and only fires React state on a section change.
+function ScrollReporter({ onSection }: { onSection: (i: number) => void }) {
+  const scroll = useScroll()
+  const last = useRef(-1)
+  useFrame(() => {
+    const i = Math.max(0, Math.min(NUM_FORMS - 1, Math.round(scroll.offset * PAGES - 0.5)))
+    if (i !== last.current) { last.current = i; onSection(i) }
+  })
+  return null
+}
+
+// ─── HUD (command-center chrome) ─────────────────────────────────────────────
+
+const HUD_LABELS = [
+  'ANF // INITIALIZE',
+  '01 / MARKETING',
+  '02 / INFRASTRUCTURE',
+  '03 / INTELLIGENCE',
+  '04 / EDUCATION',
+  'ANF // DEPLOY',
+]
+
+function Hud({ section }: { section: number }) {
+  return (
+    <div className="pointer-events-none fixed inset-0 z-10">
+      {/* Scanlines for a screen feel. */}
+      <div
+        className="absolute inset-0 opacity-[0.05]"
+        style={{ backgroundImage: 'repeating-linear-gradient(to bottom, rgba(255,255,255,0.7) 0px, rgba(255,255,255,0.7) 1px, transparent 1px, transparent 3px)' }}
+      />
+      {/* Corner brackets. */}
+      <span className="absolute left-3 top-3 h-5 w-5 border-l border-t border-flame-500/30" />
+      <span className="absolute right-3 top-3 h-5 w-5 border-r border-t border-flame-500/30" />
+      <span className="absolute left-3 bottom-3 h-5 w-5 border-l border-b border-flame-500/30" />
+      <span className="absolute right-3 bottom-3 h-5 w-5 border-r border-b border-flame-500/30" />
+
+      {/* Status + live section readout. */}
+      <div className="absolute left-6 bottom-6 font-mono text-[10px] uppercase tracking-[0.2em] text-silver-400/80">
+        <span className="flex items-center gap-2">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" /> ANF systems online
+        </span>
+        <span className="mt-1 block text-flame-300/90">{HUD_LABELS[section]}</span>
+      </div>
+
+      {/* Vertical tick rail (desktop). */}
+      <div className="absolute right-5 top-1/2 hidden -translate-y-1/2 flex-col items-end gap-2.5 sm:flex">
+        {HUD_LABELS.map((_, i) => (
+          <span key={i} className={`h-px transition-all duration-500 ${i === section ? 'w-6 bg-flame-500' : 'w-3 bg-white/20'}`} />
+        ))}
+      </div>
+
+      {/* Tick rail (mobile, along the bottom). */}
+      <div className="absolute inset-x-0 bottom-3 flex justify-center gap-1.5 sm:hidden">
+        {HUD_LABELS.map((_, i) => (
+          <span key={i} className={`h-1 rounded-full transition-all duration-500 ${i === section ? 'w-4 bg-flame-500' : 'w-1.5 bg-white/25'}`} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 export default function Experience() {
@@ -418,9 +497,10 @@ export default function Experience() {
 }
 
 function ExperienceInner() {
-  // Lighter bloom on phones: additive points + multi-pass mipmap bloom is the main
-  // GPU cost, so ease off where it matters most.
+  // Lighter bloom + lower dpr on phones: additive points + multi-pass mipmap bloom
+  // is the main GPU cost, so ease off where it matters most.
   const coarse = useMemo(() => typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches, [])
+  const [section, setSection] = useState(0)
   return (
     <div className="fixed inset-0 bg-[#060d1a] text-white overflow-hidden">
       {/* Fixed chrome */}
@@ -436,12 +516,13 @@ function ExperienceInner() {
         </a>
       </div>
 
-      <Canvas camera={{ position: [0, 0, 6], fov: 42 }} dpr={[1, 1.8]} gl={{ antialias: true, alpha: false }}>
+      <Canvas camera={{ position: [0, 0, 6], fov: 42 }} dpr={coarse ? [1, 1.4] : [1, 1.8]} gl={{ antialias: true, alpha: false }}>
         <color attach="background" args={['#060d1a']} />
         <ScrollControls pages={PAGES} damping={0.12}>
           <SmoothWheel />
           <CameraRig />
           <ParticleField />
+          <ScrollReporter onSection={setSection} />
           <Scroll html style={{ width: '100%' }}>
             <Overlay />
           </Scroll>
@@ -460,6 +541,8 @@ function ExperienceInner() {
         className="pointer-events-none fixed inset-0 z-10"
         style={{ background: 'radial-gradient(ellipse 78% 78% at 50% 45%, transparent 52%, rgba(3,7,15,0.8) 100%)' }}
       />
+
+      <Hud section={section} />
     </div>
   )
 }
@@ -480,7 +563,7 @@ function Overlay() {
           <p className="text-base sm:text-lg text-silver-400 leading-relaxed font-light">
             Smart marketing. Modern infrastructure. Practical AI. Plus the education that makes it stick.
           </p>
-          <p className="mt-10 text-[10px] uppercase tracking-[0.4em] text-white/30">Scroll. Move your cursor. Click.</p>
+          <p className="mt-10 text-[10px] uppercase tracking-[0.4em] text-white/30">Scroll. Move your cursor, or tap.</p>
         </div>
       </section>
 
