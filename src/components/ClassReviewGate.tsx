@@ -10,6 +10,30 @@ const CLASS_SERVICE_LABEL = 'Getting Real With AI class'
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const wordCount = (s: string) => s.trim().split(/\s+/).filter(Boolean).length
 
+// Append a tapped suggestion to the current answer, joined cleanly, no dupes.
+const appendSuggestion = (current: string, s: string) => {
+  if (current.includes(s)) return current
+  const base = current.trim()
+  if (!base) return s
+  return base + (/[.!?]$/.test(base) ? ' ' : '. ') + s
+}
+
+const TAKEAWAY_SUGGESTIONS = [
+  'Use the four-part prompt on my next listing',
+  'Set up ChatGPT or Claude for my emails and follow-ups',
+  'Try one new AI tool this week',
+  'Clean up my Google profile and ask for reviews',
+  'Let AI draft a first version so I stop putting it off',
+]
+
+const THOUGHTS_SUGGESTIONS = [
+  'It was practical and hands-on, not theory',
+  'Real tools and prompts I can actually use',
+  'Easy to follow, even if you are not techy',
+  'I left with things I can use today',
+  'Andrew made AI feel approachable',
+]
+
 export default function ClassReviewGate({
   slug,
   onDone,
@@ -145,16 +169,17 @@ export default function ClassReviewGate({
             value={takeaway}
             onChange={setTakeaway}
             rows={3}
-            placeholder="e.g. Use the four-part prompt to write my next listing description, and actually post it the same day instead of putting it off."
-            hint="Be specific. A real example is far more useful than 'it was helpful'."
+            suggestions={TAKEAWAY_SUGGESTIONS}
+            placeholder="Tap a suggestion above, or write your own. A specific example helps most."
           />
           <TextArea
             label="What stood out, and what would you tell another agent about it?"
             value={thoughts}
             onChange={setThoughts}
             rows={3}
-            placeholder="e.g. It was practical and hands-on, not theory. I walked out with prompts and tools I used that same night."
-            hint="A sentence or two. With your OK below, we may feature your words and name."
+            suggestions={THOUGHTS_SUGGESTIONS}
+            placeholder="Tap a suggestion above, or write your own."
+            hint="With your OK below, we may feature your words and name."
           />
 
           <div>
@@ -264,6 +289,7 @@ function TextArea({
   onChange,
   placeholder,
   hint,
+  suggestions,
   rows = 2,
 }: {
   label: string
@@ -271,11 +297,37 @@ function TextArea({
   onChange: (v: string) => void
   placeholder?: string
   hint?: string
+  suggestions?: string[]
   rows?: number
 }) {
   return (
     <div>
       <label className="mb-1.5 block text-sm font-medium text-midnight-900">{label}</label>
+      {suggestions && suggestions.length > 0 && (
+        <div className="mb-2">
+          <p className="mb-1.5 text-xs text-slate-400">Tap to add, then make it your own:</p>
+          <div className="flex flex-wrap gap-1.5">
+            {suggestions.map((s) => {
+              const picked = value.includes(s)
+              return (
+                <button
+                  type="button"
+                  key={s}
+                  onClick={() => onChange(appendSuggestion(value, s))}
+                  className={`rounded-full border px-2.5 py-1 text-xs transition-colors ${
+                    picked
+                      ? 'border-flame-500 bg-flame-500/10 text-flame-700'
+                      : 'border-slate-300 bg-white text-slate-600 hover:border-flame-400 hover:text-flame-600'
+                  }`}
+                >
+                  {picked ? '✓ ' : '+ '}
+                  {s}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      )}
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
