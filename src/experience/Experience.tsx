@@ -1,5 +1,5 @@
 import { Component, Suspense, useRef, type ReactNode } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { ScrollControls, Scroll, Float, Stars, Environment, Lightformer } from '@react-three/drei'
 import * as THREE from 'three'
 
@@ -89,29 +89,31 @@ function CameraRig() {
 // ─── 3D content that scrolls with the page ────────────────────────────────
 
 function ScrollObjects() {
-  // Each page is one viewport tall. drei translates this group as you scroll, so
-  // an object at y = -i * VH centers when you reach page i.
-  const VH = 6.4
+  // Each page is one viewport tall. Position objects in REAL viewport-height
+  // units so every shape stays centered with its caption as you scroll. Pillar
+  // objects sit opposite their text (x flips per section), with room to breathe.
+  const { height } = useThree((s) => s.viewport)
+  const x = 2.4
   return (
     <Scroll>
-      <FacetShape position={[0, 0, 0]} scale={1.55}>
+      <FacetShape position={[0, 0, 0]} scale={1.4}>
         <icosahedronGeometry args={[1.3, 0]} />
       </FacetShape>
 
-      <FacetShape position={[2.1, -1 * VH, 0]} scale={1.05}>
+      <FacetShape position={[x, -1 * height, 0]} scale={0.95}>
         <dodecahedronGeometry args={[1.2, 0]} />
       </FacetShape>
-      <FacetShape position={[-2.1, -2 * VH, 0]} scale={1.1}>
+      <FacetShape position={[-x, -2 * height, 0]} scale={1.0}>
         <octahedronGeometry args={[1.35, 0]} />
       </FacetShape>
-      <FacetShape position={[2.1, -3 * VH, 0]} scale={1.0}>
+      <FacetShape position={[x, -3 * height, 0]} scale={0.9}>
         <icosahedronGeometry args={[1.3, 1]} />
       </FacetShape>
-      <FacetShape position={[-2.1, -4 * VH, 0]} scale={1.05}>
+      <FacetShape position={[-x, -4 * height, 0]} scale={0.95}>
         <tetrahedronGeometry args={[1.6, 0]} />
       </FacetShape>
 
-      <FacetShape position={[0, -5 * VH, 0]} scale={1.4}>
+      <FacetShape position={[0, -5 * height, 0]} scale={1.3}>
         <icosahedronGeometry args={[1.3, 0]} />
       </FacetShape>
     </Scroll>
@@ -182,8 +184,8 @@ function Overlay() {
 
 function PillarSection({ side, num, title, body }: { side: 'left' | 'right'; num: string; title: string; body: string }) {
   return (
-    <section className="h-screen flex items-center px-8 md:px-20">
-      <div className={`max-w-sm ${side === 'left' ? 'mr-auto' : 'ml-auto'}`}>
+    <section className="h-screen flex items-center px-10 md:px-24">
+      <div className={`max-w-md ${side === 'left' ? 'mr-auto' : 'ml-auto'}`}>
         <p className="font-display text-[10px] tracking-[0.5em] uppercase text-flame-400/80 mb-4">Pillar {num}</p>
         <h2 className="font-display text-4xl md:text-6xl font-medium tracking-tight text-silver-100 leading-[0.98]">{title}</h2>
         <div className="mt-5 h-px w-12 bg-flame-500/70" />
