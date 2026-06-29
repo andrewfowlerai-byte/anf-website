@@ -1,6 +1,6 @@
-import { Component, Suspense, useRef, type ReactNode } from 'react'
+import { Component, Suspense, useEffect, useRef, type ReactNode } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { ScrollControls, Scroll, Float, Stars, Environment, Lightformer } from '@react-three/drei'
+import { ScrollControls, Scroll, Float, Stars, Environment, Lightformer, useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 
 /**
@@ -56,7 +56,8 @@ function ExperienceInner() {
           <pointLight position={[-4, -2, 5]} intensity={14} color="#F26B1D" distance={22} />
           <Stars radius={80} depth={42} count={800} factor={2.4} saturation={0} fade speed={0.35} />
 
-          <ScrollControls pages={PAGES} damping={0.3}>
+          <ScrollControls pages={PAGES} damping={0.12}>
+            <SmoothWheel />
             <CameraRig />
             <ScrollObjects />
             <Scroll html style={{ width: '100%' }}>
@@ -73,6 +74,52 @@ function ExperienceInner() {
       />
     </div>
   )
+}
+
+// Momentum scrolling. The browser's native mouse wheel moves the page in coarse,
+// steppy jumps, which reads as choppy no matter how much you damp the follow. This
+// intercepts the wheel and eases scrollTop toward a target every frame, so the page
+// glides with inertia. drei's own damping is kept low (above) so this owns the
+// smoothing and the scene never trails a half second behind the input. Touch and
+// scrollbar input fall through to native scroll, which already has momentum.
+function SmoothWheel() {
+  const scroll = useScroll()
+  useEffect(() => {
+    const el = scroll?.el
+    if (!el) return
+    let target = el.scrollTop
+    let animating = false
+    let raf = 0
+    const maxScroll = () => el.scrollHeight - el.clientHeight
+    const tick = () => {
+      const current = el.scrollTop
+      const next = current + (target - current) * 0.12
+      if (Math.abs(target - next) < 0.5) {
+        el.scrollTop = target
+        animating = false
+        return
+      }
+      el.scrollTop = next
+      raf = requestAnimationFrame(tick)
+    }
+    const onWheel = (e: WheelEvent) => {
+      if (e.ctrlKey) return // leave pinch-zoom to the browser
+      e.preventDefault()
+      if (!animating) target = el.scrollTop // re-sync if they grabbed the scrollbar
+      const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? el.clientHeight : 1
+      target = Math.max(0, Math.min(maxScroll(), target + e.deltaY * unit))
+      if (!animating) {
+        animating = true
+        raf = requestAnimationFrame(tick)
+      }
+    }
+    el.addEventListener('wheel', onWheel, { passive: false })
+    return () => {
+      el.removeEventListener('wheel', onWheel)
+      cancelAnimationFrame(raf)
+    }
+  }, [scroll])
+  return null
 }
 
 // Subtle mouse parallax on the camera. Slow lerp, small magnitude, premium.
