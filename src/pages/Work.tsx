@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
+import { PageHero } from '../components/PageHero'
 
 type Project = {
   name: string
@@ -91,24 +92,18 @@ function ProjectLink({ link, label }: { link: string; label: string }) {
 export function Work() {
   return (
     <>
-      <section className="max-w-4xl mx-auto px-6 pt-16 md:pt-24 pb-10 text-center">
-        <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">Portfolio</p>
-        <h1 className="text-4xl md:text-6xl font-display text-silver-100 mb-6 leading-tight">
-          Selected Work
-        </h1>
-        <p className="text-lg md:text-xl text-silver-400 leading-relaxed">
-          A look at projects we&rsquo;ve designed, built, and run. From brands and websites to the
-          systems and AI behind them, plus the education we deliver along the way. Every engagement
-          is built to be clear, delivered, and accountable.
-        </p>
-      </section>
+      <PageHero
+        eyebrow="Portfolio"
+        title="Selected Work"
+        subtitle="A look at projects we have designed, built, and run. From brands and websites to the systems and AI behind them, plus the education we deliver along the way. Every engagement is built to be clear, delivered, and accountable."
+      />
 
       <section className="max-w-5xl mx-auto px-6 py-8">
         <div className="grid md:grid-cols-2 gap-5">
           {projects.map((p) => (
             <article
               key={p.name}
-              className="group relative flex flex-col rounded-2xl border border-midnight-700/40 bg-midnight-900/40 overflow-hidden transition-colors hover:border-flame-500/40"
+              className="group relative flex flex-col rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.05] to-white/[0.01] overflow-hidden transition-colors hover:border-flame-500/40"
             >
               <div className="h-1.5 w-full bg-gradient-to-r from-flame-600/50 via-flame-400 to-flame-500" />
               <div className="p-6 md:p-7 flex flex-col flex-1">

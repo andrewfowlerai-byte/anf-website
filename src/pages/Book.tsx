@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Cal, { getCalApi } from '@calcom/embed-react'
 import { submitLead } from '../lib/leads'
+import { PageHero } from '../components/PageHero'
 
 // ─── Cal.com setup ────────────────────────────────────────────────────────────
 // To enable inline booking, set CAL_USERNAME to your Cal.com username.
@@ -15,17 +16,11 @@ type FormState = 'idle' | 'submitting' | 'success' | 'error'
 export function Book() {
   return (
     <>
-      <section className="max-w-2xl mx-auto px-6 pt-16 md:pt-24 pb-8">
-        <div className="text-center">
-          <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">Discovery Call</p>
-          <h1 className="text-4xl md:text-5xl font-display text-silver-100 mb-4 leading-tight">
-            Let&rsquo;s talk.
-          </h1>
-          <p className="text-silver-400 text-lg">
-            A 30-minute call to understand your business, your goals, and how ANF can help. No pitch, no pressure.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Discovery Call"
+        title="Let's talk."
+        subtitle="A 30-minute call to understand your business, your goals, and how ANF can help. No pitch, no pressure."
+      />
 
       <section className="max-w-3xl mx-auto px-6 pb-4">
         <p className="text-center text-xs tracking-[0.3em] uppercase text-flame-500 mb-6">What happens next</p>
@@ -35,7 +30,7 @@ export function Book() {
             { n: '2', t: 'We talk, 30 minutes', b: 'Your goals, what you have now, and where you are stuck. It is a conversation, not a pitch.' },
             { n: '3', t: 'You get a plan', b: 'A clear proposal with scope and price within two business days. If it fits, we start. If not, the plan is yours to keep.' },
           ].map((s) => (
-            <div key={s.n} className="rounded-2xl border border-midnight-700/30 bg-midnight-900/40 p-5">
+            <div key={s.n} className="rounded-2xl border border-white/[0.07] bg-gradient-to-b from-white/[0.05] to-white/[0.01] p-5">
               <div className="w-8 h-8 rounded-full bg-flame-500/15 border border-flame-400/40 text-flame-300 flex items-center justify-center font-semibold text-sm mb-3">{s.n}</div>
               <p className="text-silver-100 font-medium mb-1">{s.t}</p>
               <p className="text-silver-400 text-sm leading-relaxed">{s.b}</p>
@@ -74,7 +69,7 @@ function CalBooking() {
   }, [])
 
   return (
-    <div className="rounded-2xl border border-midnight-700/30 bg-midnight-900/60 overflow-hidden">
+    <div className="rounded-2xl border border-white/[0.07] bg-midnight-900/60 overflow-hidden">
       <Cal
         calLink={`${CAL_USERNAME}/${CAL_EVENT_SLUG}`}
         style={{ width: '100%', height: '640px', overflow: 'auto' }}
@@ -121,7 +116,7 @@ function ContactForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-5 rounded-2xl border border-midnight-700/30 p-6 md:p-8 bg-midnight-900/40"
+      className="space-y-5 rounded-2xl border border-white/[0.07] p-6 md:p-8 bg-gradient-to-b from-white/[0.05] to-white/[0.01]"
     >
       <Field label="Your name" name="name" required />
       <Field label="Business name" name="business" />

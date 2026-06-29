@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
+import { PageHero } from '../components/PageHero'
 
 const stack = [
   {
@@ -30,29 +31,21 @@ const outcomes = [
 export function Realtors() {
   return (
     <>
-      <section className="relative max-w-5xl mx-auto px-6 pt-16 md:pt-24 pb-12 text-center">
-        <div
-          aria-hidden
-          className="absolute inset-x-0 top-0 -z-10 h-[70%] pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse 60% 55% at 50% 0%, rgba(242, 107, 29, 0.10), transparent 70%)' }}
-        />
-        <p className="text-xs md:text-sm tracking-[0.3em] uppercase text-flame-500">For real estate professionals</p>
-        <h1 className="mt-5 text-4xl md:text-6xl font-display font-medium text-silver-100 leading-[1.05] tracking-tight">
-          Your website, CRM, and lead response,<br className="hidden sm:block" /> handled by one partner.
-        </h1>
-        <p className="mt-6 max-w-2xl mx-auto text-lg md:text-xl text-silver-400 leading-relaxed">
-          ANF builds the website, the team CRM, and the AI lead response that modern agents and brokerages need to compete, plus the training to use all of it well.
-        </p>
-        <div className="mt-9 flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <BookCallButton size="lg" />
+      <PageHero
+        eyebrow="For real estate professionals"
+        title={<>Your website, CRM, and lead response,<br className="hidden sm:block" /> handled by one partner.</>}
+        subtitle="ANF builds the website, the team CRM, and the AI lead response that modern agents and brokerages need to compete, plus the training to use all of it well."
+      >
+        <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+          <BookCallButton size="lg" className="!rounded-full" />
           <Link
             to="/audit"
-            className="text-silver-300 hover:text-silver-100 text-sm uppercase tracking-widest border-b border-silver-700/50 hover:border-flame-500 pb-1 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-white/[0.12] text-silver-100 hover:border-flame-500/50 hover:bg-white/[0.03] transition-colors font-medium"
           >
             Get a free audit →
           </Link>
         </div>
-      </section>
+      </PageHero>
 
       <section className="max-w-6xl mx-auto px-6 py-12 md:py-16">
         <div className="text-center mb-10">
@@ -63,7 +56,7 @@ export function Realtors() {
           {stack.map((s) => (
             <div
               key={s.title}
-              className="border border-midnight-700/30 hover:border-flame-500/40 rounded-2xl p-7 bg-midnight-900/40 transition-colors"
+              className="border border-white/[0.07] hover:border-flame-500/40 rounded-2xl p-7 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors"
             >
               <h3 className="text-xl font-display text-silver-100 mb-2">{s.title}</h3>
               <p className="text-silver-400 leading-relaxed">{s.body}</p>

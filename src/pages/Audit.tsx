@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { submitLead } from '../lib/leads'
+import { PageHero } from '../components/PageHero'
 
 function Field({
   label,
@@ -76,34 +77,30 @@ export function Audit() {
 
   if (status === 'done') {
     return (
-      <section className="max-w-2xl mx-auto px-6 pt-20 pb-24 text-center">
-        <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">Request received</p>
-        <h1 className="text-4xl md:text-5xl font-display text-silver-100 mb-5">Your audit is on the way</h1>
-        <p className="text-lg text-silver-400 mb-8 leading-relaxed">
-          We will review your website and lead flow and send a short, specific audit within two business days.
-          Want to talk it through sooner? Grab a time below.
-        </p>
+      <PageHero
+        eyebrow="Request received"
+        title="Your audit is on the way"
+        subtitle="We will review your website and lead flow and send a short, specific audit within two business days. Want to talk it through sooner? Grab a time below."
+      >
         <Link
           to="/book"
-          className="inline-block rounded-xl bg-flame-500 hover:bg-flame-400 text-midnight-950 font-semibold px-6 py-3 transition-colors"
+          className="inline-flex items-center gap-2 rounded-full bg-flame-500 hover:bg-flame-600 text-white font-semibold px-7 py-3.5 transition-colors shadow-flame-glow"
         >
           Book a call
         </Link>
-      </section>
+      </PageHero>
     )
   }
 
   return (
-    <section className="max-w-2xl mx-auto px-6 pt-16 md:pt-24 pb-20">
-      <div className="text-center mb-10">
-        <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">Free, no obligation</p>
-        <h1 className="text-4xl md:text-5xl font-display text-silver-100 mb-5 leading-tight">Free Website &amp; CRM Audit</h1>
-        <p className="text-lg text-silver-400 leading-relaxed">
-          Tell us about your business and we will send back a short, specific audit: where your site and lead flow are
-          costing you, and the highest-leverage fixes. No pitch attached.
-        </p>
-      </div>
-      <form onSubmit={onSubmit} className="space-y-5">
+    <>
+      <PageHero
+        eyebrow="Free, no obligation"
+        title={<>Free Website &amp; CRM Audit</>}
+        subtitle="Tell us about your business and we will send back a short, specific audit: where your site and lead flow are costing you, and the highest-leverage fixes. No pitch attached."
+      />
+      <section className="max-w-2xl mx-auto px-6 pb-20">
+      <form onSubmit={onSubmit} className="space-y-5 rounded-2xl border border-white/[0.07] bg-gradient-to-b from-white/[0.05] to-white/[0.01] p-6 md:p-8">
         <input
           type="text"
           value={hp}
@@ -139,6 +136,7 @@ export function Audit() {
           We will only use this to send your audit and follow up. No spam.
         </p>
       </form>
-    </section>
+      </section>
+    </>
   )
 }

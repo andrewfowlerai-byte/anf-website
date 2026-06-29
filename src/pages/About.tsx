@@ -1,4 +1,5 @@
 import { BookCallButton } from '../components/BookCallButton'
+import { PageHero } from '../components/PageHero'
 
 const values = [
   {
@@ -22,15 +23,11 @@ const values = [
 export function About() {
   return (
     <>
-      <section className="max-w-4xl mx-auto px-6 pt-16 md:pt-24 pb-12 text-center">
-        <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">About</p>
-        <h1 className="text-4xl md:text-6xl font-display text-silver-100 leading-tight">
-          Built around your business.
-        </h1>
-        <p className="mt-6 text-lg md:text-xl text-silver-400 max-w-2xl mx-auto leading-relaxed">
-          Steady guidance through change. Simple systems that hold up. One partner, one roadmap, one team.
-        </p>
-      </section>
+      <PageHero
+        eyebrow="About"
+        title="Built around your business."
+        subtitle="Steady guidance through change. Simple systems that hold up. One partner, one roadmap, one team."
+      />
 
       <section className="max-w-6xl mx-auto px-6 py-16 md:py-20">
         <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3 text-center">Meet the founder</p>
@@ -87,7 +84,7 @@ export function About() {
         </div>
         <div className="grid md:grid-cols-2 gap-6">
           {values.map((v) => (
-            <div key={v.title} className="border border-midnight-700/30 hover:border-flame-500/40 rounded-2xl p-7 bg-midnight-900/40 transition-colors">
+            <div key={v.title} className="border border-white/[0.07] hover:border-flame-500/40 rounded-2xl p-7 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors">
               <h3 className="text-xl font-display text-flame-400 mb-3">{v.title}</h3>
               <p className="text-silver-400 leading-relaxed">{v.body}</p>
             </div>

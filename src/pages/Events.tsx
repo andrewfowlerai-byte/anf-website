@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { Calendar, MapPin, Lock, Ticket, Loader2, BookOpen, Check } from 'lucide-react'
 import { listUpcomingPublicEvents, lookupPrivateEvent, createRsvp, type AnfEvent } from '../lib/events'
+import { PageHero } from '../components/PageHero'
 
 export function Events() {
   const [publicEvents, setPublicEvents] = useState<AnfEvent[]>([])
@@ -40,16 +41,11 @@ export function Events() {
 
   return (
     <>
-      {/* Hero */}
-      <section className="max-w-4xl mx-auto px-6 pt-16 md:pt-24 pb-12 text-center">
-        <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">Events</p>
-        <h1 className="text-4xl md:text-6xl font-display text-silver-100 leading-tight">
-          Workshops, classes, and gatherings.
-        </h1>
-        <p className="mt-6 text-lg md:text-xl text-silver-400 max-w-2xl mx-auto leading-relaxed">
-          Open sessions, invite-only roundtables, and the occasional dinner. Public events are listed below. If you have a private code, unlock yours next.
-        </p>
-      </section>
+      <PageHero
+        eyebrow="Events"
+        title="Workshops, classes, and gatherings."
+        subtitle="Open sessions, invite-only roundtables, and the occasional dinner. Public events are listed below. If you have a private code, unlock yours next."
+      />
 
       {/* Public events */}
       <section className="max-w-6xl mx-auto px-6 pb-16">
@@ -62,7 +58,7 @@ export function Events() {
             <Loader2 className="w-6 h-6 text-flame-400 animate-spin" />
           </div>
         ) : publicEvents.length === 0 ? (
-          <div className="border border-dashed border-midnight-700/60 rounded-2xl px-8 py-12 text-center bg-midnight-900/40">
+          <div className="border border-dashed border-midnight-700/60 rounded-2xl px-8 py-12 text-center bg-gradient-to-b from-white/[0.05] to-white/[0.01]">
             <Calendar className="w-6 h-6 text-flame-400/60 mx-auto mb-3" />
             <p className="text-silver-300 font-display text-lg">No public events right now.</p>
             <p className="text-silver-400 text-sm mt-2 max-w-md mx-auto leading-relaxed">
@@ -82,7 +78,7 @@ export function Events() {
 
       {/* Private code unlock */}
       <section className="max-w-2xl mx-auto px-6 pb-24">
-        <div className="rounded-2xl border border-flame-500/30 bg-midnight-900/40 p-6 md:p-8">
+        <div className="rounded-2xl border border-flame-500/30 bg-gradient-to-b from-white/[0.05] to-white/[0.01] p-6 md:p-8">
           <div className="flex items-center gap-2 mb-2">
             <Lock className="w-4 h-4 text-flame-400" />
             <p className="text-xs tracking-[0.3em] uppercase text-flame-500">Private invitation</p>
@@ -175,10 +171,10 @@ function EventCard({ event, highlight = false, code }: { event: AnfEvent; highli
 
   return (
     <article
-      className={`relative overflow-hidden rounded-2xl border bg-midnight-900/40 transition-colors ${
+      className={`relative overflow-hidden rounded-2xl border bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors ${
         highlight
           ? 'border-flame-500/60 shadow-[0_0_40px_-10px_rgba(242,107,29,0.45)]'
-          : 'border-midnight-700/50 hover:border-flame-500/40'
+          : 'border-white/[0.08] hover:border-flame-500/40'
       }`}
     >
       {event.cover_image_url && (

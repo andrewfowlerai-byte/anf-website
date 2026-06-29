@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
+import { PageHero } from '../components/PageHero'
 
 type Demo = {
   name: string
@@ -51,20 +52,11 @@ const demos: Demo[] = [
 export function Demos() {
   return (
     <>
-      <section className="relative max-w-5xl mx-auto px-6 pt-16 md:pt-24 pb-10 text-center">
-        <div
-          aria-hidden
-          className="absolute inset-x-0 top-0 -z-10 h-[70%] pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse 60% 55% at 50% 0%, rgba(242, 107, 29, 0.10), transparent 70%)' }}
-        />
-        <p className="text-xs md:text-sm tracking-[0.3em] uppercase text-flame-500">Demo studio</p>
-        <h1 className="mt-5 text-4xl md:text-6xl font-display font-medium text-silver-100 leading-[1.05] tracking-tight">
-          See a CRM built for your world.
-        </h1>
-        <p className="mt-6 max-w-2xl mx-auto text-lg md:text-xl text-silver-400 leading-relaxed">
-          A CRM shaped for the way your kind of business actually runs. Each one is designed around its own world, not a template with the colors swapped. Open any one below to look around, or tell us yours and we will build a demo around it.
-        </p>
-      </section>
+      <PageHero
+        eyebrow="Demo studio"
+        title="See a CRM built for your world."
+        subtitle="A CRM shaped for the way your kind of business actually runs. Each one is designed around its own world, not a template with the colors swapped. Open any one below to look around, or tell us yours and we will build a demo around it."
+      />
 
       <section className="max-w-6xl mx-auto px-6 py-8 md:py-12">
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -73,7 +65,7 @@ export function Demos() {
               <Link
                 key={d.name}
                 to={d.to}
-                className="group flex flex-col border border-midnight-700/30 hover:border-flame-500/50 rounded-2xl p-7 bg-midnight-900/40 transition-colors"
+                className="group flex flex-col border border-white/[0.07] hover:border-flame-500/50 rounded-2xl p-7 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors"
               >
                 <span className="text-xs tracking-[0.2em] uppercase text-emerald-400 mb-3">Live demo</span>
                 <h3 className="text-xl font-display text-silver-100 mb-1">{d.name}</h3>
@@ -86,7 +78,7 @@ export function Demos() {
                     </li>
                   ))}
                 </ul>
-                <div className="mt-auto pt-3 border-t border-midnight-700/30 flex items-center justify-between">
+                <div className="mt-auto pt-3 border-t border-white/[0.07] flex items-center justify-between">
                   <span className="text-flame-400 group-hover:text-flame-300 text-sm uppercase tracking-widest font-medium">Open demo →</span>
                   <span className="text-xs text-silver-500">Interactive</span>
                 </div>
@@ -97,7 +89,7 @@ export function Demos() {
                 href={d.live.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex flex-col border border-midnight-700/30 hover:border-flame-500/50 rounded-2xl p-7 bg-midnight-900/40 transition-colors"
+                className="group flex flex-col border border-white/[0.07] hover:border-flame-500/50 rounded-2xl p-7 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors"
               >
                 <span className="text-xs tracking-[0.2em] uppercase text-emerald-400 mb-3">Live demo</span>
                 <h3 className="text-xl font-display text-silver-100 mb-1">{d.name}</h3>
@@ -110,7 +102,7 @@ export function Demos() {
                     </li>
                   ))}
                 </ul>
-                <div className="mt-auto pt-3 border-t border-midnight-700/30 flex items-center justify-between">
+                <div className="mt-auto pt-3 border-t border-white/[0.07] flex items-center justify-between">
                   <span className="text-flame-400 group-hover:text-flame-300 text-sm uppercase tracking-widest font-medium">Open demo →</span>
                   <span className="text-xs text-silver-500">Code: {d.live.passcode}</span>
                 </div>
@@ -118,7 +110,7 @@ export function Demos() {
             ) : (
               <div
                 key={d.name}
-                className="flex flex-col border border-midnight-700/30 rounded-2xl p-7 bg-midnight-900/20"
+                className="flex flex-col border border-white/[0.07] rounded-2xl p-7 bg-midnight-900/20"
               >
                 <span className="text-xs tracking-[0.2em] uppercase text-silver-500 mb-3">Coming soon</span>
                 <h3 className="text-xl font-display text-silver-200 mb-1">{d.name}</h3>
