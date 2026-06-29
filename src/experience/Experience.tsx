@@ -233,7 +233,7 @@ function ParticleField() {
   const { size, viewport, camera } = useThree()
   const reduced = useMemo(() => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches, [])
   const coarse = useMemo(() => typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches, [])
-  const N = coarse ? 12000 : 38000
+  const N = coarse ? 9000 : 38000
 
   // Build the cloud only once the brand font is ready, so the "ANF" wordmark is
   // sampled in Space Grotesk and not whatever fallback happened to be loaded.
@@ -344,25 +344,27 @@ function ParticleField() {
     const swayK = reduced ? 0.3 : 1
     points.rotation.y = Math.sin(u.uTime.value * 0.1) * 0.15 * swayK
     points.rotation.x = Math.sin(u.uTime.value * 0.13) * 0.06 * swayK
-    points.updateMatrixWorld()
 
     // Fade in on first load.
     u.uOpacity.value += (1 - u.uOpacity.value) * (1 - Math.exp(-2.4 * d))
 
-    // Map the cursor to the z=0 plane (accounts for the camera parallax), then into
-    // the cloud's local space so the "part around the cursor" lands under the pointer.
-    DIR.set(state.pointer.x, state.pointer.y, 0.5).unproject(camera).sub(camera.position).normalize()
-    if (Math.abs(DIR.z) > 1e-5) {
-      WORLD.copy(camera.position).addScaledVector(DIR, -camera.position.z / DIR.z)
-      points.worldToLocal(WORLD)
-      const mEase = 1 - Math.exp(-6.3 * d)
-      const mouse = u.uMouse.value as THREE.Vector2
-      mouse.x += (WORLD.x - mouse.x) * mEase
-      mouse.y += (WORLD.y - mouse.y) * mEase
+    // Cursor interaction is desktop-only; skip the per-frame matrix work on touch.
+    if (!coarse) {
+      points.updateMatrixWorld()
+      // Map the cursor to the z=0 plane (accounts for the camera parallax), then into
+      // the cloud's local space so the "part around the cursor" lands under the pointer.
+      DIR.set(state.pointer.x, state.pointer.y, 0.5).unproject(camera).sub(camera.position).normalize()
+      if (Math.abs(DIR.z) > 1e-5) {
+        WORLD.copy(camera.position).addScaledVector(DIR, -camera.position.z / DIR.z)
+        points.worldToLocal(WORLD)
+        const mEase = 1 - Math.exp(-6.3 * d)
+        const mouse = u.uMouse.value as THREE.Vector2
+        mouse.x += (WORLD.x - mouse.x) * mEase
+        mouse.y += (WORLD.y - mouse.y) * mEase
+      }
+      burst.current *= Math.exp(-5 * d) // ~0.92 per 60fps frame
+      u.uMouseStrength.value += (0.5 + burst.current - u.uMouseStrength.value) * (1 - Math.exp(-13 * d))
     }
-    burst.current *= Math.exp(-5 * d) // ~0.92 per 60fps frame
-    const baseStr = coarse ? 0 : 0.5
-    u.uMouseStrength.value += (baseStr + burst.current - u.uMouseStrength.value) * (1 - Math.exp(-13 * d))
   })
 
   return points ? <primitive object={points} /> : null
@@ -516,9 +518,10 @@ function ExperienceInner() {
         </a>
       </div>
 
-      <Canvas camera={{ position: [0, 0, 6], fov: 42 }} dpr={coarse ? [1, 1.4] : [1, 1.8]} gl={{ antialias: true, alpha: false }}>
+      <Canvas camera={{ position: [0, 0, 6], fov: 42 }} dpr={coarse ? 1 : [1, 1.8]} gl={{ antialias: !coarse, alpha: false, powerPreference: 'high-performance' }}>
         <color attach="background" args={['#060d1a']} />
-        <ScrollControls pages={PAGES} damping={0.12}>
+        {/* Lower damping on touch so the scene tracks the finger immediately. */}
+        <ScrollControls pages={PAGES} damping={coarse ? 0.05 : 0.12}>
           <SmoothWheel />
           <CameraRig />
           <ParticleField />
@@ -531,7 +534,7 @@ function ExperienceInner() {
             blanks the scroll UI. The scene reads fine the instant before glow. */}
         <Suspense fallback={null}>
           <EffectComposer>
-            <Bloom mipmapBlur intensity={coarse ? 0.5 : 0.85} luminanceThreshold={0.15} luminanceSmoothing={0.4} radius={coarse ? 0.5 : 0.7} />
+            <Bloom mipmapBlur intensity={coarse ? 0.4 : 0.85} luminanceThreshold={0.15} luminanceSmoothing={0.4} radius={coarse ? 0.45 : 0.7} />
           </EffectComposer>
         </Suspense>
       </Canvas>
