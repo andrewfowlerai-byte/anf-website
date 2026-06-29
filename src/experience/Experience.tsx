@@ -324,13 +324,13 @@ function ParticleField() {
     // Dwell: hold each form fully structured for most of the section, then morph
     // quickly between holds. Without this the shape is only "whole" at the exact
     // center and is mid-morph everywhere else, which reads as too quick.
-    const HOLD = 0.35 // share of the section that stays settled at each end
+    const HOLD = 0.24 // share of the section that stays settled at each end
     let t: number
     if (frac < HOLD) t = 0
     else if (frac > 1 - HOLD) t = 1
     else {
       const m = (frac - HOLD) / (1 - 2 * HOLD)
-      t = m * m * m * (m * (m * 6 - 15) + 10) // smootherstep: gentle ease in and out
+      t = m * m * (3 - 2 * m) // smoothstep: eased ends, even pace through the middle
     }
     u.uBlend.value = i0 === i1 ? 1 : t
 
