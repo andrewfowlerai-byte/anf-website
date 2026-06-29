@@ -6,11 +6,10 @@ const overview = [
   { service: 'Website Development', format: 'Flat project fee', starting: '$1,500', anchor: 'website' },
   { service: 'Proof-of-Work Marketing System', format: 'Build + monthly', starting: '$4,000', anchor: 'proof-of-work' },
   { service: 'AI Coaching & Integration', format: 'Per session or retainer', starting: '$229', anchor: 'coaching' },
-  { service: 'AI Strategy', format: 'Flat package', starting: '$297', anchor: 'strategy' },
+  { service: 'AI Strategy', format: 'Flat package', starting: '$229', anchor: 'strategy' },
   { service: 'AI Implementation', format: 'Flat package', starting: '$1,500', anchor: 'implementation' },
   { service: 'Ohio Real Estate CE', format: 'Per seat or private booking', starting: '$39/seat', anchor: 'education' },
   { service: 'Corporate Workshops', format: 'Flat per event', starting: '$500', anchor: 'education' },
-  { service: 'Growth Partner Package', format: 'Bundled monthly retainer', starting: '$1,200/mo', anchor: 'growth-partner' },
 ]
 
 const socialTiers = [
@@ -97,7 +96,7 @@ const coachingPackages = [
 const strategyOfferings = [
   {
     name: 'AI Possibilities Session',
-    price: '$297',
+    price: '$229',
     includes: '60-minute working session walking through 5 to 8 specific AI use cases tailored to your business, plus a 3-page written summary of where AI can help you.',
     bestFor: 'Owners curious about AI but unsure where to start. The right first step for most clients.',
   },
@@ -146,13 +145,6 @@ const corporateFormats = [
   { format: 'Full-Day Workshop (6 hrs)', price: '$2,500', includes: 'Comprehensive training covering multiple AI use cases with practical implementation exercises. Includes follow-up materials and 30-day Q&A access.' },
 ]
 
-const growthPartnerIncluded = [
-  'Growth-tier Social Media Management ($750/mo equivalent)',
-  'Monthly AI Coaching: 2 sessions per month ($450/mo equivalent)',
-  'Quarterly strategic review and roadmap alignment',
-  'Priority scheduling and direct access to Andrew',
-]
-
 const processSteps = [
   { step: '1', title: 'Discovery Call', body: '30-minute call to understand your business, goals, and what you’d like ANF to help with. No pitch, no pressure.' },
   { step: '2', title: 'Proposal', body: 'If there’s a fit, you’ll receive a written proposal within 48 hours outlining the recommended scope and investment.' },
@@ -175,7 +167,7 @@ const faqs = [
   },
   {
     q: 'How quickly do you start once we sign?',
-    a: 'For retainer services (social media, coaching, the Growth Partner Package), work begins within 5 business days. For project work (website builds, AI implementation), kickoff is scheduled within 2 weeks. Educational and workshop bookings work to your calendar.',
+    a: 'For retainer services (social media and coaching), work begins within 5 business days. For project work (website builds, AI implementation), kickoff is scheduled within 2 weeks. Educational and workshop bookings work to your calendar.',
   },
   {
     q: 'Do you work with clients outside Ohio?',
@@ -187,11 +179,11 @@ const faqs = [
   },
   {
     q: 'Can I bundle services or change packages later?',
-    a: 'Yes. The Growth Partner Package is the standard bundle (social + coaching). Custom bundles combining website + social, AI implementation + coaching, etc., are available on request. Tiers can be adjusted as your needs evolve, with reasonable notice.',
+    a: 'Yes. Custom bundles combining website + social, AI implementation + coaching, etc., are available on request. Tiers can be adjusted as your needs evolve, with reasonable notice.',
   },
   {
     q: 'Are there contracts? Can I cancel?',
-    a: 'Social media engagements run on a 3-month initial term, then renew monthly thereafter. Cancel any time after the initial term. The Growth Partner Package has the same 3-month minimum. Project work is scoped per-engagement and ends when the deliverable ships. Workshops and CE bookings are per-event.',
+    a: 'Social media engagements run on a 3-month initial term, then renew monthly thereafter. Cancel any time after the initial term. Project work is scoped per-engagement and ends when the deliverable ships. Workshops and CE bookings are per-event.',
   },
   {
     q: 'How is payment handled?',
@@ -199,7 +191,7 @@ const faqs = [
   },
   {
     q: 'What if I’m not sure which service I need?',
-    a: 'Start with the discovery call. It’s free and almost always the right first step. If you’re specifically curious about AI but not sure where to begin, the AI Possibilities Session ($297) walks through 5 to 8 use cases tailored to your business with a written 3-page summary.',
+    a: 'Start with the discovery call. It’s free and almost always the right first step. If you’re specifically curious about AI but not sure where to begin, the AI Possibilities Session ($229) walks through 5 to 8 use cases tailored to your business with a written 3-page summary.',
   },
 ]
 
@@ -478,44 +470,6 @@ export function Services() {
             ))}
           </div>
         </SubBlock>
-      </ServiceSection>
-
-      <ServiceSection
-        id="growth-partner"
-        kicker="Partnership"
-        title="Growth Partner Package"
-        blurb="One partner. One monthly invoice. One integrated roadmap. The Growth Partner Package combines ANF Consulting’s two most-requested services into a single relationship designed for clients who want their content engine and their AI workflows aligned under one strategy."
-      >
-        <div className="border border-flame-500/40 rounded-2xl p-8 bg-midnight-900/60 shadow-flame-glow">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-6">
-            <h4 className="font-display text-2xl text-silver-100">Growth Partner Package</h4>
-            <p className="text-3xl font-display text-flame-400">$1,200/mo</p>
-          </div>
-          <p className="text-xs uppercase tracking-wider text-silver-500 mb-3">Included</p>
-          <ul className="space-y-2 mb-6">
-            {growthPartnerIncluded.map((item) => (
-              <li key={item} className="flex items-start gap-3 text-silver-300">
-                <span className="text-flame-500 mt-1">·</span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-          <div className="grid md:grid-cols-2 gap-6 pt-6 border-t border-midnight-700/40">
-            <div>
-              <p className="text-xs uppercase tracking-wider text-silver-500 mb-2">Term</p>
-              <p className="text-sm text-silver-300">3-month minimum commitment, monthly renewal thereafter.</p>
-            </div>
-            <div>
-              <p className="text-xs uppercase tracking-wider text-silver-500 mb-2">Why this exists</p>
-              <p className="text-sm text-silver-300 leading-relaxed">
-                Clients who buy both social and AI coaching separately often see them drift apart. The Growth Partner Package keeps them aligned. Your content and your internal workflows run on the same brand voice, the same strategy, and the same point of contact.
-              </p>
-            </div>
-          </div>
-        </div>
-        <FinePrint>
-          Custom bundles combining other service lines (website + social, AI implementation + coaching, etc.) are available on request. Talk to Andrew about what makes sense for your business.
-        </FinePrint>
       </ServiceSection>
 
       <section className="max-w-5xl mx-auto px-6 py-16 md:py-24">
