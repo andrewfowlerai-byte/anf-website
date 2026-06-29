@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
 import { Testimonials } from '../components/Testimonials'
+import { ProductShowcase } from '../components/ProductShowcase'
+import { Reveal } from '../components/Reveal'
 
 const PILLARS = [
   { num: '01', title: 'Marketing', body: 'Content and campaigns that compound.' },
@@ -30,7 +32,7 @@ const approach = [
   { title: 'Long engagements over short', body: 'Our best work happens over 3+ months. We are not interested in one-off projects that do not compound.' },
 ]
 
-const cardClass = 'rounded-2xl border border-white/[0.07] bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-all duration-300'
+const cardClass = 'rounded-2xl border border-white/[0.07] bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-all duration-300 hover:-translate-y-0.5'
 
 function SectionHeader({ eyebrow, title, subtitle }: { eyebrow: string; title: string; subtitle?: string }) {
   return (
@@ -48,7 +50,7 @@ export function Home() {
       {/* HERO */}
       <section className="relative overflow-hidden">
         <div aria-hidden className="absolute inset-0 -z-10">
-          <div className="absolute inset-x-0 top-0 h-[130%]" style={{ background: 'radial-gradient(ellipse 55% 45% at 50% 0%, rgba(242,107,29,0.16), transparent 70%)' }} />
+          <div className="absolute inset-x-0 top-0 h-[130%] anf-drift" style={{ background: 'radial-gradient(ellipse 55% 45% at 50% 0%, rgba(242,107,29,0.16), transparent 70%)' }} />
           <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[55rem] h-[55rem] rounded-full opacity-[0.06] blur-3xl" style={{ background: 'conic-gradient(from 200deg at 50% 50%, #F26B1D, #1A2B4A, #060F1F, #F26B1D)' }} />
           <div
             className="absolute inset-0 opacity-50"
@@ -103,10 +105,12 @@ export function Home() {
         </div>
       </section>
 
+      <Reveal><ProductShowcase /></Reveal>
+
       {/* WHO WE WORK WITH */}
       <section className="max-w-6xl mx-auto px-6 py-16 md:py-24">
         <SectionHeader eyebrow="Who we work with" title="Built for two kinds of clients" />
-        <div className="grid md:grid-cols-2 gap-5">
+        <Reveal className="grid md:grid-cols-2 gap-5">
           {[
             { h: 'Independent Professionals', b: 'Solo lawyers, realtors, accountants, coaches, and other practitioners ready to weave AI and modern marketing into how they actually work, not just talk about it.' },
             { h: 'Business Owners', b: 'Owners running growing businesses who want their content, their website, their AI workflows, and their team training handled by one focused partner, not stitched together from four vendors.' },
@@ -116,7 +120,7 @@ export function Home() {
               <p className="text-silver-400 leading-relaxed">{c.b}</p>
             </div>
           ))}
-        </div>
+        </Reveal>
       </section>
 
       {/* CREDIBILITY */}
@@ -136,7 +140,7 @@ export function Home() {
       {/* SERVICES */}
       <section className="max-w-6xl mx-auto px-6 py-16 md:py-24">
         <SectionHeader eyebrow="What we do" title="Four service lines, one strategy" />
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <Reveal className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {services.map((s, i) => (
             <div key={s.title} className={`${cardClass} p-6 hover:border-flame-500/30`}>
               <p className="text-flame-400/80 font-mono text-xs mb-3">{String(i + 1).padStart(2, '0')}</p>
@@ -144,7 +148,7 @@ export function Home() {
               <p className="text-sm text-silver-400 leading-relaxed">{s.body}</p>
             </div>
           ))}
-        </div>
+        </Reveal>
         <div className="text-center mt-12">
           <Link to="/services" className="text-flame-400 hover:text-flame-300 text-sm uppercase tracking-widest font-medium">
             See full service menu →
@@ -155,7 +159,7 @@ export function Home() {
       {/* APPROACH */}
       <section className="max-w-5xl mx-auto px-6 py-16 md:py-24">
         <SectionHeader eyebrow="Our approach" title="How we work" />
-        <div className="grid md:grid-cols-2 gap-4">
+        <Reveal className="grid md:grid-cols-2 gap-4">
           {approach.map((p) => (
             <div key={p.title} className={`${cardClass} p-6`}>
               <h3 className="text-lg font-display text-silver-100 mb-2 flex items-center gap-3">
@@ -165,7 +169,7 @@ export function Home() {
               <p className="text-silver-400 leading-relaxed pl-7">{p.body}</p>
             </div>
           ))}
-        </div>
+        </Reveal>
       </section>
 
       {/* ALTERNATIVES */}
@@ -175,7 +179,7 @@ export function Home() {
           title="One partner beats the alternatives"
           subtitle="Most businesses end up doing it themselves, hiring a freelancer, or paying an agency. Each one has a catch."
         />
-        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <Reveal className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { label: 'Doing it yourself', catch: 'Nights and weekends building tools you half-finish, while the real work waits.' },
             { label: 'A freelancer', catch: 'Cheap and quick, but one skill, no continuity, and gone when you need the next thing.' },
@@ -193,7 +197,7 @@ export function Home() {
               One partner across marketing, infrastructure, AI, and education. A small roster, so you are never a number, and you own what we build.
             </p>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       <Testimonials />
