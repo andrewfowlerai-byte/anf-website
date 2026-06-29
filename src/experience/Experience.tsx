@@ -1,19 +1,20 @@
 import { Component, Suspense, useRef, type ReactNode } from 'react'
-import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { ScrollControls, Scroll, Float, Stars, MeshDistortMaterial } from '@react-three/drei'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { ScrollControls, Scroll, Float, Stars, Environment, Lightformer } from '@react-three/drei'
 import * as THREE from 'three'
 
 /**
- * ANF 3D experience: a cinematic, scroll-driven WebGL journey through the four
- * pillars (marketing, infrastructure, AI, education). Built with react-three-fiber
- * so it is fully ours, no builder lock-in. Standalone full-screen route at
- * /experience; the live homepage is untouched until this is promoted.
+ * ANF 3D experience: a quiet, premium, scroll-driven journey through the four
+ * pillars (marketing, infrastructure, AI, education). Built with react-three-fiber.
  *
- * Brand: midnight #0B1A33 / #060F1F base, flame #F26B1D accent, a restrained
- * per-pillar hue for variety. Tweak palette, copy, geometry, and pacing freely.
+ * Finesse direction: near-monochrome midnight, dark faceted "obsidian" forms that
+ * catch real environment reflections (no glowing plastic), one flame accent used
+ * sparingly, slow and weighty motion, editorial type with negative space. The
+ * opposite of saturated, fast, cartoon. Standalone full-screen route at /experience.
  */
 
 const PAGES = 6
+const OBSIDIAN = '#0a1626'
 
 export default function Experience() {
   return (
@@ -25,31 +26,38 @@ export default function Experience() {
 
 function ExperienceInner() {
   return (
-    <div className="fixed inset-0 bg-[#060F1F] text-white overflow-hidden">
-      {/* Fixed chrome, sits above the canvas and does not scroll */}
-      <div className="fixed top-0 inset-x-0 z-20 flex items-center justify-between px-6 py-4">
-        <a href="/" className="font-display text-sm font-semibold tracking-wide text-white/90 hover:text-white transition-colors">
+    <div className="fixed inset-0 bg-[#070d1a] text-white overflow-hidden">
+      {/* Fixed chrome */}
+      <div className="fixed top-0 inset-x-0 z-20 flex items-center justify-between px-6 sm:px-10 py-5">
+        <a href="/" className="font-display text-sm font-medium tracking-[0.05em] text-silver-200/90 hover:text-white transition-colors">
           ANF Consulting
         </a>
         <a
           href="/book"
-          className="text-[11px] uppercase tracking-widest px-4 py-2 rounded-full bg-flame-500 hover:bg-flame-600 text-white transition-colors shadow-[0_0_30px_-6px_rgba(242,107,29,0.7)]"
+          className="text-[10px] uppercase tracking-[0.25em] px-4 py-2 rounded-full border border-flame-500/40 text-flame-300 hover:bg-flame-500/10 transition-colors"
         >
           Book a call
         </a>
       </div>
 
-      <Canvas camera={{ position: [0, 0, 6], fov: 50 }} dpr={[1, 1.8]} gl={{ antialias: true }}>
-        <color attach="background" args={['#060F1F']} />
-        <fog attach="fog" args={['#060F1F', 9, 28]} />
+      <Canvas camera={{ position: [0, 0, 6], fov: 42 }} dpr={[1, 1.8]} gl={{ antialias: true }}>
+        <color attach="background" args={['#070d1a']} />
+        <fog attach="fog" args={['#070d1a', 9, 30]} />
         <Suspense fallback={null}>
-          <ambientLight intensity={0.45} />
-          <directionalLight position={[5, 6, 5]} intensity={1.1} />
-          <pointLight position={[-6, -3, 3]} intensity={40} color="#F26B1D" distance={24} />
-          <pointLight position={[6, 4, -3]} intensity={26} color="#38bdf8" distance={24} />
-          <Stars radius={90} depth={50} count={2600} factor={4} saturation={0} fade speed={0.6} />
+          <ambientLight intensity={0.18} />
+          {/* Studio reflections, composed from soft area lights so there is no
+              external HDRI dependency. This is what makes the metal read premium. */}
+          <Environment resolution={256}>
+            <Lightformer intensity={2.4} position={[0, 3, 5]} scale={[9, 9, 1]} color="#dbe4ff" />
+            <Lightformer intensity={2.2} position={[-5, 1, 3]} scale={[5, 6, 1]} color="#F26B1D" />
+            <Lightformer intensity={1.1} position={[5, -3, 2]} scale={[6, 6, 1]} color="#16233f" />
+            <Lightformer intensity={1.6} position={[0, -4, -4]} scale={[8, 4, 1]} color="#0e1830" />
+          </Environment>
+          <pointLight position={[-4, -2, 5]} intensity={14} color="#F26B1D" distance={22} />
+          <Stars radius={80} depth={42} count={800} factor={2.4} saturation={0} fade speed={0.35} />
 
-          <ScrollControls pages={PAGES} damping={0.28}>
+          <ScrollControls pages={PAGES} damping={0.3}>
+            <CameraRig />
             <ScrollObjects />
             <Scroll html style={{ width: '100%' }}>
               <Overlay />
@@ -57,95 +65,95 @@ function ExperienceInner() {
           </ScrollControls>
         </Suspense>
       </Canvas>
+
+      {/* Filmic edge darkening, kept in CSS so it never blocks the scroll text. */}
+      <div
+        className="pointer-events-none fixed inset-0 z-10"
+        style={{ background: 'radial-gradient(ellipse 75% 75% at 50% 45%, transparent 55%, rgba(3,7,15,0.78) 100%)' }}
+      />
     </div>
   )
+}
+
+// Subtle mouse parallax on the camera. Slow lerp, small magnitude, premium.
+function CameraRig() {
+  useFrame((state) => {
+    const p = state.pointer
+    state.camera.position.x += (p.x * 0.45 - state.camera.position.x) * 0.035
+    state.camera.position.y += (p.y * 0.28 - state.camera.position.y) * 0.035
+    state.camera.lookAt(0, 0, 0)
+  })
+  return null
 }
 
 // ─── 3D content that scrolls with the page ────────────────────────────────
 
 function ScrollObjects() {
-  const { height } = useThree((s) => s.viewport)
+  // Each page is one viewport tall. drei translates this group as you scroll, so
+  // an object at y = -i * VH centers when you reach page i.
+  const VH = 6.4
   return (
     <Scroll>
-      {/* Hero centerpiece */}
-      <Shape position={[0, 0, 0]} color="#F26B1D" distort={0.35} scale={1.15}>
-        <icosahedronGeometry args={[1.5, 12]} />
-      </Shape>
+      <FacetShape position={[0, 0, 0]} scale={1.55}>
+        <icosahedronGeometry args={[1.3, 0]} />
+      </FacetShape>
 
-      {/* Pillar objects, one per page, alternating sides */}
-      <Shape position={[2.3, -1 * height, 0]} color="#F26B1D">
-        <torusKnotGeometry args={[0.72, 0.24, 180, 28]} />
-      </Shape>
-      <Shape position={[-2.3, -2 * height, 0]} color="#38bdf8" wireframe>
-        <octahedronGeometry args={[1.3, 0]} />
-      </Shape>
-      <Shape position={[2.3, -3 * height, 0]} color="#a78bfa" wireframe>
-        <icosahedronGeometry args={[1.25, 1]} />
-      </Shape>
-      <Shape position={[-2.3, -4 * height, 0]} color="#f59e0b">
-        <dodecahedronGeometry args={[1.25, 0]} />
-      </Shape>
+      <FacetShape position={[2.1, -1 * VH, 0]} scale={1.05}>
+        <dodecahedronGeometry args={[1.2, 0]} />
+      </FacetShape>
+      <FacetShape position={[-2.1, -2 * VH, 0]} scale={1.1}>
+        <octahedronGeometry args={[1.35, 0]} />
+      </FacetShape>
+      <FacetShape position={[2.1, -3 * VH, 0]} scale={1.0}>
+        <icosahedronGeometry args={[1.3, 1]} />
+      </FacetShape>
+      <FacetShape position={[-2.1, -4 * VH, 0]} scale={1.05}>
+        <tetrahedronGeometry args={[1.6, 0]} />
+      </FacetShape>
 
-      {/* CTA centerpiece */}
-      <Shape position={[0, -5 * height, 0]} color="#F26B1D" distort={0.45} scale={1.05}>
-        <icosahedronGeometry args={[1.4, 12]} />
-      </Shape>
+      <FacetShape position={[0, -5 * VH, 0]} scale={1.4}>
+        <icosahedronGeometry args={[1.3, 0]} />
+      </FacetShape>
     </Scroll>
   )
 }
 
-function Shape({
-  position,
-  color,
-  scale = 1,
-  wireframe = false,
-  distort = 0,
-  children,
-}: {
-  position: [number, number, number]
-  color: string
-  scale?: number
-  wireframe?: boolean
-  distort?: number
-  children: ReactNode
-}) {
+function FacetShape({ position, scale = 1, children }: { position: [number, number, number]; scale?: number; children: ReactNode }) {
   const ref = useRef<THREE.Mesh>(null)
   useFrame((_, dt) => {
     if (!ref.current) return
-    ref.current.rotation.x += dt * 0.12
-    ref.current.rotation.y += dt * 0.18
+    ref.current.rotation.y += dt * 0.06
+    ref.current.rotation.x += dt * 0.025
   })
   return (
     <group position={position}>
-      <Float speed={2} rotationIntensity={0.5} floatIntensity={1.2}>
+      <Float speed={1.1} rotationIntensity={0.22} floatIntensity={0.55}>
         <mesh ref={ref} scale={scale}>
           {children}
-          {distort > 0 ? (
-            <MeshDistortMaterial color="#0B1A33" emissive={color} emissiveIntensity={0.85} roughness={0.15} metalness={0.6} distort={distort} speed={1.6} />
-          ) : (
-            <meshStandardMaterial color="#0B1A33" emissive={color} emissiveIntensity={1.05} roughness={0.22} metalness={0.5} wireframe={wireframe} />
-          )}
+          <meshStandardMaterial color={OBSIDIAN} metalness={1} roughness={0.17} flatShading envMapIntensity={1.35} />
         </mesh>
       </Float>
     </group>
   )
 }
 
-// ─── Scrolling HTML overlay ────────────────────────────────────────────────
+// ─── Scrolling HTML overlay (editorial, lots of negative space) ────────────
 
 function Overlay() {
   return (
     <div className="text-white">
       {/* Hero */}
       <section className="h-screen flex flex-col items-center justify-center text-center px-6">
-        <p className="text-[11px] sm:text-xs tracking-[0.4em] uppercase text-flame-400 mb-6">
-          Marketing <span className="text-flame-500/60">·</span> Infrastructure <span className="text-flame-500/60">·</span> AI <span className="text-flame-500/60">·</span> Education
+        <p className="font-display text-[10px] sm:text-xs tracking-[0.5em] uppercase text-flame-400/80 mb-7">
+          Marketing <span className="text-flame-500/50">/</span> Infrastructure <span className="text-flame-500/50">/</span> AI <span className="text-flame-500/50">/</span> Education
         </p>
-        <h1 className="font-display text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight leading-[0.95]">ANF Consulting</h1>
-        <p className="mt-6 max-w-xl text-base sm:text-lg text-silver-300/80 leading-relaxed">
+        <h1 className="font-display text-5xl sm:text-7xl md:text-[7.5rem] font-medium tracking-tight leading-[0.9] text-silver-100">
+          ANF Consulting
+        </h1>
+        <p className="mt-8 max-w-md text-base sm:text-lg text-silver-400 leading-relaxed font-light">
           Smart marketing. Modern infrastructure. Practical AI. Plus the education that makes it stick.
         </p>
-        <p className="mt-12 text-[10px] uppercase tracking-[0.3em] text-white/40 animate-pulse">Scroll to explore</p>
+        <p className="mt-16 text-[10px] uppercase tracking-[0.4em] text-white/25">Scroll</p>
       </section>
 
       <PillarSection side="left" num="01" title="Marketing" body="Content, social, and campaigns that compound. Built for your brand and your audience, not pulled from a template." />
@@ -155,15 +163,15 @@ function Overlay() {
 
       {/* CTA */}
       <section className="h-screen flex flex-col items-center justify-center text-center px-6">
-        <h2 className="font-display text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.0]">
+        <h2 className="font-display text-4xl sm:text-6xl md:text-7xl font-medium tracking-tight leading-[1.0] text-silver-100">
           One partner.<br />One roadmap.
         </h2>
-        <p className="mt-6 max-w-lg text-base sm:text-lg text-silver-300/80 leading-relaxed">
+        <p className="mt-7 max-w-lg text-base sm:text-lg text-silver-400 leading-relaxed font-light">
           All four pillars under one focused team. A 30-minute call, no pitch, just a real conversation about what you are building.
         </p>
         <a
           href="/book"
-          className="mt-10 inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-flame-500 hover:bg-flame-600 text-white font-medium transition-colors shadow-[0_0_40px_-8px_rgba(242,107,29,0.8)]"
+          className="mt-11 inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-flame-500/50 text-flame-200 hover:bg-flame-500/10 font-medium tracking-wide transition-colors"
         >
           Book a call
         </a>
@@ -174,20 +182,19 @@ function Overlay() {
 
 function PillarSection({ side, num, title, body }: { side: 'left' | 'right'; num: string; title: string; body: string }) {
   return (
-    <section className="h-screen flex items-center px-6 md:px-16">
-      <div className={`max-w-md ${side === 'left' ? 'mr-auto text-left' : 'ml-auto text-right'}`}>
-        <div className="inline-block rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 p-6 sm:p-8">
-          <p className="text-xs uppercase tracking-[0.3em] text-flame-400 mb-3">Pillar {num}</p>
-          <h2 className="font-display text-4xl md:text-6xl font-bold tracking-tight leading-[0.95]">{title}</h2>
-          <p className="mt-4 text-silver-300/80 text-base sm:text-lg leading-relaxed">{body}</p>
-        </div>
+    <section className="h-screen flex items-center px-8 md:px-20">
+      <div className={`max-w-sm ${side === 'left' ? 'mr-auto' : 'ml-auto'}`}>
+        <p className="font-display text-[10px] tracking-[0.5em] uppercase text-flame-400/80 mb-4">Pillar {num}</p>
+        <h2 className="font-display text-4xl md:text-6xl font-medium tracking-tight text-silver-100 leading-[0.98]">{title}</h2>
+        <div className="mt-5 h-px w-12 bg-flame-500/70" />
+        <p className="mt-5 text-silver-400 text-base leading-relaxed font-light">{body}</p>
       </div>
     </section>
   )
 }
 
 // Catches a mount/render crash in the scene so the page shows the actual error
-// instead of a blank screen or a cryptic "couldn't read this file".
+// instead of a blank screen.
 class ExperienceBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
   state: { error: Error | null } = { error: null }
   static getDerivedStateFromError(error: Error) {
@@ -199,7 +206,7 @@ class ExperienceBoundary extends Component<{ children: ReactNode }, { error: Err
   render() {
     if (this.state.error) {
       return (
-        <div className="fixed inset-0 bg-[#060F1F] text-white flex items-center justify-center p-8">
+        <div className="fixed inset-0 bg-[#070d1a] text-white flex items-center justify-center p-8">
           <div className="max-w-lg text-center">
             <p className="text-flame-400 text-xs uppercase tracking-[0.3em] mb-3">3D experience hit an error</p>
             <p className="text-silver-300/80 text-sm mb-4">It loaded, but something in the scene crashed. Here is the message so it can be fixed fast:</p>
