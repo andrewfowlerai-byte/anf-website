@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Lock, Loader2 } from 'lucide-react'
 import { unlockClass, type ClassMaterial as ClassMat } from '../lib/classMaterials'
 import GettingRealAiWorksheet from '../components/worksheets/GettingRealAiWorksheet'
+import GettingRealAiSothebysWorksheet from '../components/worksheets/GettingRealAiSothebysWorksheet'
 import ClassReviewGate from '../components/ClassReviewGate'
 
 export default function ClassMaterial() {
@@ -41,6 +42,7 @@ export default function ClassMaterial() {
       return <ClassReviewGate slug={material.slug} onDone={() => setReviewed(true)} />
     }
     if (material.slug === 'getting-real-ai') return <GettingRealAiWorksheet title={material.title} />
+    if (material.slug === 'getting-real-ai-sothebys') return <GettingRealAiSothebysWorksheet title={material.title} />
     return (
       <div className="grid min-h-screen place-items-center bg-slate-100 px-6 text-center">
         <div>
