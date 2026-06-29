@@ -331,8 +331,16 @@ function ParticleField() {
       ;(aTo.array as Float32Array).set(forms[i1]); aTo.needsUpdate = true
       idx.current.a = i0; idx.current.b = i1
     }
-    u.uBlend.value = i0 === i1 ? 1 : frac * frac * (3 - 2 * frac) // smoothstep
-    u.uMorphTurb.value = i0 === i1 ? 0 : Math.sin(frac * Math.PI) // peaks mid-transition
+    // Dwell: hold each form fully structured for most of the section, then morph
+    // quickly between holds. Without this the shape is only "whole" at the exact
+    // center and is mid-morph everywhere else, which reads as too quick.
+    const HOLD = 0.36 // share of the section that stays settled at each end
+    let t: number
+    if (frac < HOLD) t = 0
+    else if (frac > 1 - HOLD) t = 1
+    else { const m = (frac - HOLD) / (1 - 2 * HOLD); t = m * m * (3 - 2 * m) }
+    u.uBlend.value = i0 === i1 ? 1 : t
+    u.uMorphTurb.value = i0 === i1 ? 0 : Math.sin(t * Math.PI) // peaks mid-transition
 
     // Scale the cloud to the viewport so the wide "ANF" wordmark always fits, even
     // on a narrow portrait phone (where the horizontal field of view is small).
