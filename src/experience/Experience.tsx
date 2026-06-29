@@ -169,7 +169,6 @@ uniform float uMouseStrength;
 uniform float uSize;
 uniform float uScreenH;
 uniform float uReduced;
-uniform float uMorphTurb;
 attribute vec3 aFrom;
 attribute vec3 aTo;
 attribute float aRand;
@@ -187,12 +186,6 @@ void main() {
   pos.y += cos(uTime * 0.5 + pos.z * 1.4 + ph) * amp * (0.4 + aRand * 0.6);
   pos.z += sin(uTime * 0.7 + pos.x * 1.4 + ph) * amp * (0.4 + aRand * 0.6);
 
-  // Reassembly burst: particles scatter at the midpoint of a morph, then snap into
-  // the next form. Reads like the system recomputing itself.
-  float turb = uMorphTurb * mix(1.0, 0.35, uReduced);
-  vec3 sc = vec3(sin(aRand * 53.0), sin(aRand * 97.0 + 2.0), sin(aRand * 71.0 + 4.0));
-  pos += sc * turb * (0.35 + aRand * 0.5);
-
   // Part around the cursor (and ripple outward on click).
   vec2 toM = pos.xy - uMouse;
   float d2 = dot(toM, toM);
@@ -205,7 +198,7 @@ void main() {
   vec4 mv = modelViewMatrix * vec4(pos, 1.0);
   float dist = -mv.z;
   vFade = clamp((dist - 3.0) / 12.0, 0.0, 1.0);
-  float sz = uSize * (0.6 + aRand * 0.9) * (uScreenH / dist) * (1.0 + turb * 0.5);
+  float sz = uSize * (0.6 + aRand * 0.9) * (uScreenH / dist);
   gl_PointSize = clamp(sz, 1.0, 22.0);
   gl_Position = projectionMatrix * mv;
 }
@@ -229,8 +222,8 @@ void main() {
   vec3 col = mix(uColorA, uColorB, vMix);            // flame core, electric dust at the edges
   if (vRand > 0.95) col = uColorA * 1.6;             // flame embers
   else if (vRand > 0.90) col = uColorB * 1.7;        // cyan data sparks
-  col = mix(col, vec3(0.55, 0.85, 1.0), uMorphTurb * 0.4); // cyan flash while reassembling
-  a *= (1.0 - vFade * 0.55) * uOpacity * (1.0 + uMorphTurb * 0.25);
+  col = mix(col, vec3(0.6, 0.85, 1.0), uMorphTurb * 0.22); // subtle cyan tint through the morph
+  a *= (1.0 - vFade * 0.55) * uOpacity;
   gl_FragColor = vec4(col, a);
 }
 `
@@ -334,13 +327,16 @@ function ParticleField() {
     // Dwell: hold each form fully structured for most of the section, then morph
     // quickly between holds. Without this the shape is only "whole" at the exact
     // center and is mid-morph everywhere else, which reads as too quick.
-    const HOLD = 0.36 // share of the section that stays settled at each end
+    const HOLD = 0.35 // share of the section that stays settled at each end
     let t: number
     if (frac < HOLD) t = 0
     else if (frac > 1 - HOLD) t = 1
-    else { const m = (frac - HOLD) / (1 - 2 * HOLD); t = m * m * (3 - 2 * m) }
+    else {
+      const m = (frac - HOLD) / (1 - 2 * HOLD)
+      t = m * m * m * (m * (m * 6 - 15) + 10) // smootherstep: gentle ease in and out
+    }
     u.uBlend.value = i0 === i1 ? 1 : t
-    u.uMorphTurb.value = i0 === i1 ? 0 : Math.sin(t * Math.PI) // peaks mid-transition
+    u.uMorphTurb.value = i0 === i1 ? 0 : Math.sin(t * Math.PI) // subtle tint, peaks mid-morph
 
     // Scale the cloud to the viewport so the wide "ANF" wordmark always fits, even
     // on a narrow portrait phone (where the horizontal field of view is small).
