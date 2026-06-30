@@ -149,7 +149,7 @@ function sampleText(text: string, N: number): Float32Array {
   ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H)
   ctx.fillStyle = '#fff'
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
-  try { (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = '34px' } catch { /* older browsers */ }
+  try { (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = '15px' } catch { /* older browsers */ }
   ctx.font = '900 190px "Space Grotesk", system-ui, Arial, sans-serif'
   ctx.fillText(text, W / 2, H / 2 + 6)
   const data = ctx.getImageData(0, 0, W, H).data
