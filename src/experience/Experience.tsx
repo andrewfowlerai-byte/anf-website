@@ -1,6 +1,6 @@
 import { Component, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { ScrollControls, Scroll, useScroll, Stars, Text, Billboard } from '@react-three/drei'
+import { ScrollControls, Scroll, useScroll, Stars } from '@react-three/drei'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import * as THREE from 'three'
 
@@ -40,11 +40,10 @@ function morphAt(off: number) {
   return { i0, i1, t }
 }
 
-// Camera distance at each station. The wordmarks (0 and 5) sit at the framing the
-// cloud scale was tuned for (~6) so "ANF" stays readable and full on every screen;
-// the 3D shapes pull in close for an immersive, fly-into-it zoom (deepest on the AI
-// knot at station 3). The camera also pulls back through each transition.
-const STATION_DIST = [6.2, 4.8, 4.6, 4.4, 4.8, 6.2]
+// Camera distance at each station. Kept far enough that the whole pillar stays in
+// frame (no clipping); the shapes sit a touch closer than the wordmarks for a mild
+// zoom, but the real movement comes from orbiting around the center, not dollying in.
+const STATION_DIST = [6.4, 5.9, 5.8, 5.7, 5.9, 6.4]
 
 // ─── Form generators: each returns N*3 floats, a point cloud centered on origin ──
 
@@ -379,25 +378,29 @@ function ParticleField() {
 
 // ─── Camera + scroll plumbing ────────────────────────────────────────────────
 
-// Flies the camera through the scene on scroll: dollies in close on the 3D shapes
-// (and back out through each transition), orbits so you see their depth, and stays
-// pulled back and front-on for the readable wordmarks at the ends. Mouse adds a
-// little parallax on top. This is what makes it feel genuinely 3D.
+// Orbits the camera around the center as you scroll while keeping the pillar in
+// frame: it swings wide around the shapes (revealing their depth) and returns
+// front-on for the readable wordmarks at the ends, with a slow continuous circle
+// so it is always moving. Distance barely changes, so nothing gets clipped. The
+// spherical formula keeps the camera exactly `dist` from the center at every angle.
 function CameraRig() {
   const scroll = useScroll()
   useFrame((state, dt) => {
     const off = scroll.offset
     const { i0, i1, t } = morphAt(off)
-    const base = STATION_DIST[i0] + (STATION_DIST[i1] - STATION_DIST[i0]) * t
-    const dist = base + Math.sin(t * Math.PI) * 1.1 // pull back through the morph
+    const time = state.clock.elapsedTime
 
-    // Orbit: front-on (az 0) at the wordmark ends, swung around through the middle
-    // shapes so their volume reads. Gentle vertical drift too.
-    const az = Math.sin(off * Math.PI) * 0.7
-    const el = Math.sin(off * Math.PI * 2) * 0.13
-    const tx = Math.sin(az) * dist + state.pointer.x * 0.35
-    const tz = Math.cos(az) * dist
-    const ty = Math.sin(el) * dist + state.pointer.y * 0.3
+    const base = STATION_DIST[i0] + (STATION_DIST[i1] - STATION_DIST[i0]) * t
+    const dist = base + Math.sin(t * Math.PI) * 0.5 + Math.sin(time * 0.18) * 0.25 // gentle breathing
+
+    // Azimuth: front-on (0) at the wordmark ends, swung wide through the shapes,
+    // plus a slow continuous circle so the camera is always drifting around.
+    const az = Math.sin(off * Math.PI) * 1.05 + Math.sin(time * 0.25) * 0.12
+    const el = Math.sin(off * Math.PI * 2) * 0.22 + Math.sin(time * 0.2) * 0.05
+    const ce = Math.cos(el)
+    const tx = Math.sin(az) * ce * dist + state.pointer.x * 0.3
+    const ty = Math.sin(el) * dist + state.pointer.y * 0.25
+    const tz = Math.cos(az) * ce * dist
 
     const k = 1 - Math.exp(-3.5 * Math.min(dt, 0.05))
     const cam = state.camera
@@ -514,51 +517,6 @@ function Hud({ section }: { section: number }) {
   )
 }
 
-// A ring of client "prompts" that orbits the central cloud in 3D. Billboarded so
-// each one stays readable as it revolves, tilted and continuously spinning for
-// constant movement. The camera flies around this too, so it reads as part of the
-// object, not an overlay.
-const RING_PROMPTS = ['Build my site', 'Automate it', 'Capture leads', 'Put AI to work', 'Save hours', 'Train my team']
-
-function PromptRing() {
-  const grp = useRef<THREE.Group>(null)
-  const { size } = useThree()
-  useFrame((_, dt) => {
-    const g = grp.current
-    if (!g) return
-    g.rotation.y += Math.min(dt, 0.05) * 0.16
-    // Match the cloud's responsive scale so the ring sizes with it on every screen.
-    const aspect = size.width / Math.max(1, size.height)
-    g.scale.setScalar(THREE.MathUtils.clamp(aspect * 0.92, 0.42, 1))
-  })
-  const R = 3.0
-  const n = RING_PROMPTS.length
-  return (
-    <group ref={grp} rotation={[0.5, 0, 0]}>
-      {RING_PROMPTS.map((w, i) => {
-        const a = (i / n) * Math.PI * 2
-        return (
-          <Billboard key={w} position={[Math.cos(a) * R, Math.sin(a * 2) * 0.25, Math.sin(a) * R]}>
-            <Text
-              fontSize={0.2}
-              color="#a9c0ec"
-              anchorX="center"
-              anchorY="middle"
-              letterSpacing={0.06}
-              fillOpacity={0.5}
-              renderOrder={5}
-              material-depthTest={false}
-              material-transparent
-            >
-              {w}
-            </Text>
-          </Billboard>
-        )
-      })}
-    </group>
-  )
-}
-
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 export default function Experience() {
@@ -596,7 +554,6 @@ function ExperienceInner() {
           <SmoothWheel />
           <CameraRig />
           <ParticleField />
-          <PromptRing />
           {/* Deep starfield for parallax depth as the camera flies and orbits. */}
           <Stars radius={40} depth={50} count={coarse ? 400 : 1500} factor={3.5} saturation={0} fade speed={0.6} />
           <ScrollReporter onSection={setSection} />
