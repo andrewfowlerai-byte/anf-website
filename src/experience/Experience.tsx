@@ -581,6 +581,14 @@ function ExperienceInner() {
   )
 }
 
+// Strong text shadow + a soft dark scrim keep the copy readable over the moving,
+// glowing particle scene behind it.
+const SHADOW = '[text-shadow:_0_2px_18px_rgba(0,0,0,0.9)]'
+
+function Scrim({ className = '' }: { className?: string }) {
+  return <div aria-hidden className={`pointer-events-none absolute rounded-[2.5rem] bg-midnight-950/60 blur-2xl ${className}`} />
+}
+
 function Overlay() {
   return (
     // pointer-events-none so the cursor reaches the particles behind the text; the
@@ -590,14 +598,20 @@ function Overlay() {
 
       {/* Hero: the particles spell the name, so the text gets out of the way. */}
       <section className="h-screen flex flex-col items-center justify-between py-24 sm:py-28 text-center px-6">
-        <p className="font-display text-[10px] sm:text-xs tracking-[0.5em] uppercase text-flame-400/80">
-          Marketing <span className="text-flame-500/50">/</span> Infrastructure <span className="text-flame-500/50">/</span> AI <span className="text-flame-500/50">/</span> Education
-        </p>
-        <div className="max-w-md">
-          <p className="text-base sm:text-lg text-silver-400 leading-relaxed font-light">
-            Smart marketing. Modern infrastructure. Practical AI. Plus the education that makes it stick.
+        <div className="relative">
+          <Scrim className="-inset-x-10 -inset-y-6" />
+          <p className={`relative font-display text-[10px] sm:text-xs tracking-[0.5em] uppercase text-flame-300 ${SHADOW}`}>
+            Marketing <span className="text-flame-400/70">/</span> Infrastructure <span className="text-flame-400/70">/</span> AI <span className="text-flame-400/70">/</span> Education
           </p>
-          <p className="mt-10 text-[10px] uppercase tracking-[0.4em] text-white/30">Scroll. Move your cursor, or tap.</p>
+        </div>
+        <div className="relative max-w-md">
+          <Scrim className="-inset-x-8 -inset-y-8" />
+          <div className="relative">
+            <p className={`text-base sm:text-lg text-silver-100 leading-relaxed ${SHADOW}`}>
+              Smart marketing. Modern infrastructure. Practical AI. Plus the education that makes it stick.
+            </p>
+            <p className={`mt-10 text-[10px] uppercase tracking-[0.4em] text-silver-400 ${SHADOW}`}>Scroll. Move your cursor, or tap.</p>
+          </div>
         </div>
       </section>
 
@@ -608,18 +622,23 @@ function Overlay() {
 
       {/* CTA: the swarm re-forms the wordmark above, text sits low so it reads clean. */}
       <section className="h-screen flex flex-col items-center justify-end pb-24 text-center px-6">
-        <h2 className="font-display text-4xl sm:text-6xl md:text-7xl font-medium tracking-tight leading-[1.0] text-silver-100">
-          One partner.<br />One roadmap.
-        </h2>
-        <p className="mt-6 max-w-lg text-base sm:text-lg text-silver-400 leading-relaxed font-light">
-          All four pillars under one focused team. A 30-minute call, no pitch, just a real conversation about what you are building.
-        </p>
-        <a
-          href="/book"
-          className="pointer-events-auto mt-9 inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-flame-500/50 text-flame-200 hover:bg-flame-500/10 font-medium tracking-wide transition-colors"
-        >
-          Book a call
-        </a>
+        <div className="relative">
+          <Scrim className="-inset-x-10 -inset-y-10" />
+          <div className="relative flex flex-col items-center">
+            <h2 className={`font-display text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight leading-[1.0] text-white ${SHADOW}`}>
+              One partner.<br />One roadmap.
+            </h2>
+            <p className={`mt-6 max-w-lg text-base sm:text-lg text-silver-100 leading-relaxed ${SHADOW}`}>
+              All four pillars under one focused team. A 30-minute call, no pitch, just a real conversation about what you are building.
+            </p>
+            <a
+              href="/book"
+              className="pointer-events-auto mt-9 inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-flame-500/60 bg-midnight-950/40 text-flame-100 hover:bg-flame-500/15 font-medium tracking-wide transition-colors"
+            >
+              Book a call
+            </a>
+          </div>
+        </div>
       </section>
     </div>
   )
@@ -628,11 +647,14 @@ function Overlay() {
 function PillarSection({ side, num, title, body }: { side: 'left' | 'right'; num: string; title: string; body: string }) {
   return (
     <section className="h-screen flex items-center px-10 md:px-24">
-      <div className={`max-w-md ${side === 'left' ? 'mr-auto' : 'ml-auto'}`}>
-        <p className="font-display text-[10px] tracking-[0.5em] uppercase text-flame-400/80 mb-4">Pillar {num}</p>
-        <h2 className="font-display text-4xl md:text-6xl font-medium tracking-tight text-silver-100 leading-[0.98]">{title}</h2>
-        <div className="mt-5 h-px w-12 bg-flame-500/70" />
-        <p className="mt-5 text-silver-400 text-base leading-relaxed font-light">{body}</p>
+      <div className={`relative max-w-md ${side === 'left' ? 'mr-auto' : 'ml-auto'}`}>
+        <Scrim className="-inset-x-8 -inset-y-12" />
+        <div className="relative">
+          <p className={`font-display text-[10px] tracking-[0.5em] uppercase text-flame-300 mb-4 ${SHADOW}`}>Pillar {num}</p>
+          <h2 className={`font-display text-4xl md:text-6xl font-semibold tracking-tight text-white leading-[0.98] ${SHADOW}`}>{title}</h2>
+          <div className="mt-5 h-px w-12 bg-flame-500/80" />
+          <p className={`mt-5 text-silver-200 text-base md:text-lg leading-relaxed ${SHADOW}`}>{body}</p>
+        </div>
       </div>
     </section>
   )
