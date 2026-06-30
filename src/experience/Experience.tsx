@@ -1,6 +1,6 @@
 import { Component, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { ScrollControls, Scroll, useScroll, Stars, Text } from '@react-three/drei'
+import { ScrollControls, Scroll, useScroll, Stars } from '@react-three/drei'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import * as THREE from 'three'
 
@@ -140,47 +140,77 @@ function helixPositions(N: number, r: number): Float32Array {
 // Letter-spacing pulls the glyphs apart so they do not bleed together, and the
 // result is normalized to its own bounding box so the wordmark is a consistent
 // size and centered regardless of font metrics or spacing.
-function sampleText(text: string, N: number): Float32Array {
+function sampleText(text: string, N: number, tm = false): Float32Array {
   const W = 820, H = 340
   const cnv = document.createElement('canvas')
   cnv.width = W; cnv.height = H
   const ctx = cnv.getContext('2d')
   if (!ctx) return spherePositions(N, 1.9)
   const setSpacing = (px: string) => { try { (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = px } catch { /* older browsers */ } }
+  const readLit = (): number[] => {
+    const d = ctx.getImageData(0, 0, W, H).data
+    const pts: number[] = []
+    for (let y = 0; y < H; y += 1) for (let x = 0; x < W; x += 1) { if (d[(y * W + x) * 4] > 128) pts.push(x, y) }
+    return pts
+  }
+
+  // Pass 1: the word.
   ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H)
   ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
   setSpacing('10px')
-  ctx.font = '900 190px "Space Grotesk", system-ui, Arial, sans-serif'
+  const mainFont = 190
+  ctx.font = `900 ${mainFont}px "Space Grotesk", system-ui, Arial, sans-serif`
   ctx.fillText(text, W / 2, H / 2 + 6)
-  const data = ctx.getImageData(0, 0, W, H).data
-  const valid: number[] = []
+  const rightX = W / 2 + ctx.measureText(text).width / 2
+  const main = readLit()
+  if (main.length === 0) return spherePositions(N, 1.9)
+
+  // Pass 2: a small superscript trademark, sampled separately so it gets a fair
+  // share of dots. Right-aligned to the F's edge, sat just above the cap top.
+  let tmPts: number[] = []
+  if (tm) {
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H)
+    ctx.fillStyle = '#fff'; setSpacing('0px')
+    ctx.font = `900 40px "Space Grotesk", system-ui, Arial, sans-serif`
+    ctx.textAlign = 'right'; ctx.textBaseline = 'alphabetic'
+    ctx.fillText('TM', rightX - 6, H / 2 + 6 - mainFont * 0.44)
+    tmPts = readLit()
+  }
+
+  // Normalize the whole mark (word + TM) to its bounding box at a fixed world width.
   let minX = W, maxX = 0, minY = H, maxY = 0
-  for (let y = 0; y < H; y += 1) for (let x = 0; x < W; x += 1) {
-    if (data[(y * W + x) * 4] > 128) {
-      valid.push(x, y)
+  const extend = (arr: number[]) => {
+    for (let k = 0; k < arr.length; k += 2) {
+      const x = arr[k], y = arr[k + 1]
       if (x < minX) minX = x; if (x > maxX) maxX = x
       if (y < minY) minY = y; if (y > maxY) maxY = y
     }
   }
-  const count = valid.length / 2
-  if (count === 0) return spherePositions(N, 1.9)
-  // Normalize to the glyphs' bounding box, scaled to a fixed world width.
+  extend(main); extend(tmPts)
   const targetW = 4.7
   const s = targetW / Math.max(1, maxX - minX)
   const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2
+
   const out = new Float32Array(N * 3)
-  for (let i = 0; i < N; i += 1) {
-    const j = ((Math.random() * count) | 0) * 2
-    // Tight jitter + a shallow depth keep the letters crisp and legible.
-    out[3 * i] = (valid[j] - cx) * s + (Math.random() - 0.5) * 0.012
-    out[3 * i + 1] = -(valid[j + 1] - cy) * s + (Math.random() - 0.5) * 0.012
-    out[3 * i + 2] = (Math.random() - 0.5) * 0.3
+  const tmCount = tmPts.length ? Math.round(N * 0.04) : 0
+  const place = (arr: number[], start: number, num: number) => {
+    const c = arr.length / 2
+    for (let i = 0; i < num; i += 1) {
+      const j = ((Math.random() * c) | 0) * 2
+      const o = (start + i) * 3
+      // Tight jitter + a shallow depth keep the letters crisp and legible.
+      out[o] = (arr[j] - cx) * s + (Math.random() - 0.5) * 0.012
+      out[o + 1] = -(arr[j + 1] - cy) * s + (Math.random() - 0.5) * 0.012
+      out[o + 2] = (Math.random() - 0.5) * 0.3
+    }
   }
+  place(main, 0, N - tmCount)
+  if (tmCount) place(tmPts, N - tmCount, tmCount)
   return out
 }
 
 function buildForms(N: number): Float32Array[] {
-  const word = sampleText('ANF', N)
+  const word = sampleText('ANF', N, true)
   return [
     word,                       // 0 hero: the brand
     spherePositions(N, 1.9),    // 1 marketing: reach
@@ -322,7 +352,6 @@ function ParticleField() {
 
   const idx = useRef({ a: -1, b: -1 })
   const burst = useRef(0)
-  const tmGroup = useRef<THREE.Group>(null)
 
   useEffect(() => {
     if (coarse) return // cursor ripple is desktop-only; no global touch listener on mobile
@@ -370,14 +399,6 @@ function ParticleField() {
     points.rotation.y = Math.sin(u.uTime.value * 0.1) * 0.15 * swayK
     points.rotation.x = Math.sin(u.uTime.value * 0.13) * 0.06 * swayK
 
-    // Lock the crisp TM glyph to the wordmark's frame (same scale + sway), shown
-    // only while a wordmark form is on screen.
-    if (tmGroup.current) {
-      tmGroup.current.scale.copy(points.scale)
-      tmGroup.current.rotation.copy(points.rotation)
-      tmGroup.current.visible = u.uCrisp.value > 0.5
-    }
-
     // Fade in on first load.
     u.uOpacity.value += (1 - u.uOpacity.value) * (1 - Math.exp(-2.4 * d))
 
@@ -400,32 +421,7 @@ function ParticleField() {
     }
   })
 
-  if (!points) return null
-  return (
-    <>
-      <primitive object={points} />
-      {/* Crisp vector TM, locked to the wordmark's top-right (see useFrame). Real
-          SDF text reads cleanly at small size where glowing particles cannot. */}
-      <group ref={tmGroup} visible={false}>
-        <Text
-          position={[1.95, 1.0, 0]}
-          fontSize={0.34}
-          color="#f0631a"
-          outlineWidth="8%"
-          outlineColor="#2fb8f5"
-          outlineOpacity={0.9}
-          anchorX="center"
-          anchorY="middle"
-          letterSpacing={0.04}
-          renderOrder={10}
-          material-transparent
-          material-depthTest={false}
-        >
-          TM
-        </Text>
-      </group>
-    </>
-  )
+  return points ? <primitive object={points} /> : null
 }
 
 // ─── Camera + scroll plumbing ────────────────────────────────────────────────
