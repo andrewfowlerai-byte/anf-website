@@ -409,7 +409,7 @@ function ParticleField() {
         <Text
           position={[1.95, 1.0, 0]}
           fontSize={0.34}
-          color="#dbe4ff"
+          color="#f0631a"
           outlineWidth="10%"
           outlineColor="#05080f"
           outlineOpacity={0.85}
@@ -601,8 +601,9 @@ function ExperienceInner() {
       <Canvas camera={{ position: [0, 0, 6], fov: 42 }} dpr={coarse ? 1 : [1, 1.8]} gl={{ antialias: !coarse, alpha: false, powerPreference: 'high-performance' }}>
         <color attach="background" args={['#060d1a']} />
         {/* Lower damping on touch so the scene tracks the finger immediately. */}
-        <ScrollControls pages={PAGES} damping={coarse ? 0.05 : 0.12}>
-          <SmoothWheel />
+        <ScrollControls pages={PAGES} damping={coarse ? 0.08 : 0.12}>
+          {/* Desktop-only wheel momentum; on touch it fights native scroll. */}
+          {!coarse && <SmoothWheel />}
           <CameraRig />
           <ParticleField />
           {/* Deep starfield for parallax depth as the camera flies and orbits. */}
@@ -612,13 +613,16 @@ function ExperienceInner() {
             <Overlay />
           </Scroll>
         </ScrollControls>
-        {/* Bloom in its own Suspense so, if the composer is setting up, it never
-            blanks the scroll UI. The scene reads fine the instant before glow. */}
-        <Suspense fallback={null}>
-          <EffectComposer>
-            <Bloom mipmapBlur intensity={coarse ? 0.4 : 0.85} luminanceThreshold={0.15} luminanceSmoothing={0.4} radius={coarse ? 0.45 : 0.7} />
-          </EffectComposer>
-        </Suspense>
+        {/* Bloom is desktop-only: the multi-pass mipmap bloom is the biggest mobile
+            GPU cost, and the frame drops it caused made the scroll pause and jump.
+            Own Suspense so it never blanks the scroll UI while the composer sets up. */}
+        {!coarse && (
+          <Suspense fallback={null}>
+            <EffectComposer>
+              <Bloom mipmapBlur intensity={0.85} luminanceThreshold={0.15} luminanceSmoothing={0.4} radius={0.7} />
+            </EffectComposer>
+          </Suspense>
+        )}
       </Canvas>
 
       {/* Filmic edge darkening, kept in CSS so it never blocks the scroll text. */}
