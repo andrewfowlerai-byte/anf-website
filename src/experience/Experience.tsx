@@ -411,9 +411,9 @@ function ParticleField() {
           position={[1.95, 1.0, 0]}
           fontSize={0.34}
           color="#f0631a"
-          outlineWidth="10%"
-          outlineColor="#05080f"
-          outlineOpacity={0.85}
+          outlineWidth="8%"
+          outlineColor="#2fb8f5"
+          outlineOpacity={0.9}
           anchorX="center"
           anchorY="middle"
           letterSpacing={0.04}
