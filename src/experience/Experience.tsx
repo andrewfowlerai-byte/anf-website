@@ -519,10 +519,10 @@ function ScrollReporter({ onSection }: { onSection: (i: number) => void }) {
 
 const HUD_LABELS = [
   'ANF // INITIALIZE',
-  '01 / MARKETING',
-  '02 / INFRASTRUCTURE',
-  '03 / INTELLIGENCE',
-  '04 / EDUCATION',
+  '01 / GET FOUND',
+  '02 / MORE CUSTOMERS',
+  '03 / SAVE HOURS',
+  '04 / STAY ORGANIZED',
   'ANF // DEPLOY',
 ]
 
@@ -648,25 +648,25 @@ function Overlay() {
       <section className="h-screen flex flex-col items-center justify-between py-24 sm:py-28 text-center px-6">
         <div className="relative">
           <Scrim className="-inset-x-10 -inset-y-6" />
-          <p className={`relative font-display text-[10px] sm:text-xs tracking-[0.5em] uppercase text-flame-300 ${SHADOW}`}>
-            Marketing <span className="text-flame-400/70">/</span> Infrastructure <span className="text-flame-400/70">/</span> AI <span className="text-flame-400/70">/</span> Education
+          <p className={`relative font-display text-[10px] sm:text-xs tracking-[0.4em] uppercase text-flame-300 ${SHADOW}`}>
+            Get found <span className="text-flame-400/70">/</span> More customers <span className="text-flame-400/70">/</span> Save hours <span className="text-flame-400/70">/</span> Stay organized
           </p>
         </div>
         <div className="relative max-w-md">
           <Scrim className="-inset-x-8 -inset-y-8" />
           <div className="relative">
             <p className={`text-base sm:text-lg text-silver-100 leading-relaxed ${SHADOW}`}>
-              Smart marketing. Modern infrastructure. Practical AI. Plus the education that makes it stick.
+              The website, marketing, and AI that get you found, win you customers, and hand back your time. Whatever you do.
             </p>
             <p className={`mt-10 text-[10px] uppercase tracking-[0.4em] text-silver-400 ${SHADOW}`}>Scroll. Move your cursor, or tap.</p>
           </div>
         </div>
       </section>
 
-      <PillarSection side="left" num="01" title="Marketing" body="Content and campaigns that compound. Built for your brand and your audience, not pulled from a template." />
-      <PillarSection side="right" num="02" title="Infrastructure" body="Websites, CRMs, and the systems that run the business. Fast, yours, and built to last." />
-      <PillarSection side="left" num="03" title="AI" body="Practical AI woven into how you actually work. Custom tools and automations, not hype." />
-      <PillarSection side="right" num="04" title="Education" body="Workshops and Ohio real estate CE, built on real delivery, so your team can run it without us." />
+      <PillarSection side="left" num="01" title="Get found" body="A clean, fast website that makes people choose you, whether they are booking a nail appointment, picking a realtor, or hiring an HVAC crew." />
+      <PillarSection side="right" num="02" title="More customers" body="Marketing and instant follow-up that bring in new business and keep past customers coming back, without you chasing every lead." />
+      <PillarSection side="left" num="03" title="Save hours" body="AI and automation handle the repeat work, the replies, scheduling, and reminders, so your time goes to what only you can do." />
+      <PillarSection side="right" num="04" title="Stay organized" body="One simple system holds every customer, job, and follow-up in one place, so nothing slips through the cracks." />
 
       {/* CTA: the swarm re-forms the wordmark above, text sits low so it reads clean. */}
       <section className="h-screen flex flex-col items-center justify-end pb-24 text-center px-6">
@@ -677,7 +677,7 @@ function Overlay() {
               One partner.<br />One roadmap.
             </h2>
             <p className={`mt-6 max-w-lg text-base sm:text-lg text-silver-100 leading-relaxed ${SHADOW}`}>
-              All four pillars under one focused team. A 30-minute call, no pitch, just a real conversation about what you are building.
+              Found, chosen, automated, and organized. All of it built and run by one focused team. A 30-minute call, no pitch, just what would move the needle for you.
             </p>
             <a
               href="/book"
