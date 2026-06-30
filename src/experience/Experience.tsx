@@ -325,10 +325,11 @@ function ParticleField() {
   const tmGroup = useRef<THREE.Group>(null)
 
   useEffect(() => {
+    if (coarse) return // cursor ripple is desktop-only; no global touch listener on mobile
     const onDown = () => { burst.current = 1.4 }
     window.addEventListener('pointerdown', onDown)
     return () => window.removeEventListener('pointerdown', onDown)
-  }, [])
+  }, [coarse])
 
   useEffect(() => () => {
     if (!points) return
@@ -601,7 +602,13 @@ function ExperienceInner() {
       <Canvas camera={{ position: [0, 0, 6], fov: 42 }} dpr={coarse ? 1 : [1, 1.8]} gl={{ antialias: !coarse, alpha: false, powerPreference: 'high-performance' }}>
         <color attach="background" args={['#060d1a']} />
         {/* Lower damping on touch so the scene tracks the finger immediately. */}
-        <ScrollControls pages={PAGES} damping={coarse ? 0.08 : 0.12}>
+        <ScrollControls
+          pages={PAGES}
+          damping={coarse ? 0.08 : 0.12}
+          // Keep iOS momentum scrolling alive on the container (it stops accepting
+          // touches after it settles otherwise) and always allow vertical panning.
+          style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}
+        >
           {/* Desktop-only wheel momentum; on touch it fights native scroll. */}
           {!coarse && <SmoothWheel />}
           <CameraRig />
