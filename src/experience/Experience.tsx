@@ -140,18 +140,28 @@ function helixPositions(N: number, r: number): Float32Array {
 // Letter-spacing pulls the glyphs apart so they do not bleed together, and the
 // result is normalized to its own bounding box so the wordmark is a consistent
 // size and centered regardless of font metrics or spacing.
-function sampleText(text: string, N: number): Float32Array {
+function sampleText(text: string, N: number, tm = false): Float32Array {
   const W = 820, H = 340
   const cnv = document.createElement('canvas')
   cnv.width = W; cnv.height = H
   const ctx = cnv.getContext('2d')
   if (!ctx) return spherePositions(N, 1.9)
+  const setSpacing = (px: string) => { try { (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = px } catch { /* older browsers */ } }
   ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H)
   ctx.fillStyle = '#fff'
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
-  try { (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = '15px' } catch { /* older browsers */ }
-  ctx.font = '900 190px "Space Grotesk", system-ui, Arial, sans-serif'
+  setSpacing('15px')
+  const mainFont = 190
+  ctx.font = `900 ${mainFont}px "Space Grotesk", system-ui, Arial, sans-serif`
   ctx.fillText(text, W / 2, H / 2 + 6)
+  // Small superscript trademark at the top-right of the last letter.
+  if (tm) {
+    const rightX = W / 2 + ctx.measureText(text).width / 2
+    setSpacing('0px')
+    ctx.font = '700 44px "Space Grotesk", system-ui, Arial, sans-serif'
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top'
+    ctx.fillText('TM', rightX + 10, H / 2 + 6 - mainFont * 0.38)
+  }
   const data = ctx.getImageData(0, 0, W, H).data
   const valid: number[] = []
   let minX = W, maxX = 0, minY = H, maxY = 0
@@ -182,7 +192,7 @@ function sampleText(text: string, N: number): Float32Array {
 }
 
 function buildForms(N: number): Float32Array[] {
-  const word = sampleText('ANF', N)
+  const word = sampleText('ANF', N, true)
   return [
     word,                       // 0 hero: the brand
     spherePositions(N, 1.9),    // 1 marketing: reach
