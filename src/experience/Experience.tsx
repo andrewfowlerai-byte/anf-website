@@ -171,9 +171,10 @@ function sampleText(text: string, N: number, tm = false): Float32Array {
   if (tm) {
     ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H)
     ctx.fillStyle = '#fff'; setSpacing('0px')
-    ctx.font = `900 50px "Space Grotesk", system-ui, Arial, sans-serif`
-    ctx.textAlign = 'right'; ctx.textBaseline = 'top'
-    ctx.fillText('TM', rightX - 6, H / 2 + 6 - mainFont * 0.6)
+    ctx.font = `900 26px "Space Grotesk", system-ui, Arial, sans-serif`
+    ctx.textAlign = 'right'; ctx.textBaseline = 'alphabetic'
+    // Baseline sits well above the F's cap top so the small mark never touches it.
+    ctx.fillText('TM', rightX - 6, H / 2 + 6 - mainFont * 0.46)
     tmPts = readLit()
   }
 
@@ -192,7 +193,7 @@ function sampleText(text: string, N: number, tm = false): Float32Array {
   const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2
 
   const out = new Float32Array(N * 3)
-  const tmCount = tmPts.length ? Math.round(N * 0.06) : 0
+  const tmCount = tmPts.length ? Math.round(N * 0.035) : 0
   const place = (arr: number[], start: number, num: number) => {
     const c = arr.length / 2
     for (let i = 0; i < num; i += 1) {
