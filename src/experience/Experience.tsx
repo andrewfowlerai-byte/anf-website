@@ -523,10 +523,10 @@ function ScrollReporter({ onSection }: { onSection: (i: number) => void }) {
 
 const HUD_LABELS = [
   'ANF // INITIALIZE',
-  '01 / GET FOUND',
-  '02 / MORE CUSTOMERS',
-  '03 / SAVE HOURS',
-  '04 / STAY ORGANIZED',
+  '01 / FRONT DOOR',
+  '02 / FOLLOW-UP ENGINE',
+  '03 / AUTOPILOT',
+  '04 / HOME BASE',
   'ANF // DEPLOY',
 ]
 
@@ -662,25 +662,25 @@ function Overlay() {
       <section className="h-screen flex flex-col items-center justify-between py-24 sm:py-28 text-center px-6">
         <div className="relative">
           <Scrim className="-inset-x-10 -inset-y-6" />
-          <p className={`relative font-display text-[10px] sm:text-xs tracking-[0.4em] uppercase text-flame-300 ${SHADOW}`}>
-            Get found <span className="text-flame-400/70">/</span> More customers <span className="text-flame-400/70">/</span> Save hours <span className="text-flame-400/70">/</span> Stay organized
+          <p className={`relative font-display text-[10px] sm:text-xs tracking-[0.3em] uppercase text-flame-300 ${SHADOW}`}>
+            Front Door <span className="text-flame-400/70">/</span> Follow-Up <span className="text-flame-400/70">/</span> Autopilot <span className="text-flame-400/70">/</span> Home Base
           </p>
         </div>
         <div className="relative max-w-md">
           <Scrim className="-inset-x-8 -inset-y-8" />
           <div className="relative">
             <p className={`text-base sm:text-lg text-silver-100 leading-relaxed ${SHADOW}`}>
-              The website, marketing, and AI that get you found, win you customers, and hand back your time. Whatever you do.
+              Your work and your life run on sticky notes, three different apps, and a memory that is doing too much. ANF builds you one system that holds it all, so nothing slips and you stop carrying it in your head.
             </p>
-            <p className={`mt-10 text-[10px] uppercase tracking-[0.4em] text-silver-400 ${SHADOW}`}>Scroll. Move your cursor, or tap.</p>
+            <p className={`mt-10 text-[10px] uppercase tracking-[0.4em] text-silver-400 ${SHADOW}`}>Scroll to see your system</p>
           </div>
         </div>
       </section>
 
-      <PillarSection side="left" num="01" title="Get found" body="A clean, fast website that makes people choose you, whether they are booking a nail appointment, picking a realtor, or hiring an HVAC crew." />
-      <PillarSection side="right" num="02" title="More customers" body="Marketing and instant follow-up that bring in new business and keep past customers coming back, without you chasing every lead." />
-      <PillarSection side="left" num="03" title="Save hours" body="AI and automation handle the repeat work, the replies, scheduling, and reminders, so your time goes to what only you can do." />
-      <PillarSection side="right" num="04" title="Stay organized" body="One simple system holds every customer, job, and follow-up in one place, so nothing slips through the cracks." />
+      <PillarSection side="left" num="01" title="The Front Door" body="People look you up before they ever call, and right now they find a slow page, an old listing, or nothing at all, so they pick the next name on the list. We build the site, the local listings, and the reviews that make a stranger choose you, whether you sell homes, fix furnaces, or book nail appointments." />
+      <PillarSection side="right" num="02" title="The Follow-Up Engine" body="The lead you forgot to call back went with someone who called first, and the client you meant to check on quietly drifted away. We build the system that catches every inquiry, texts them back in a minute, books the appointment, and reminds the right person before anyone slips through the cracks." />
+      <PillarSection side="left" num="03" title="The Autopilot" body="Half your week disappears into the same typing: confirmations, reminders, invoices, the intake form you redo from scratch every time, and the double-booking that should never have happened. We hand that work to a system that runs it the same way every time, so the busywork stops eating your evenings." />
+      <PillarSection side="right" num="04" title="The Home Base" body="Your to-do list lives in three apps, the family calendar is on the fridge, and the thing you cannot forget is on a napkin somewhere. We put the business and the life in one calm place you can trust, so you open one screen and know exactly what today needs and what can wait." />
 
       {/* CTA: the swarm re-forms the wordmark above, text sits low so it reads clean. */}
       <section className="h-screen flex flex-col items-center justify-end pb-24 text-center px-6">
@@ -688,10 +688,10 @@ function Overlay() {
           <Scrim className="-inset-x-10 -inset-y-10" />
           <div className="relative flex flex-col items-center">
             <h2 className={`font-display text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight leading-[1.0] text-white ${SHADOW}`}>
-              One partner.<br />One roadmap.
+              One system.<br />Thirty minutes to map it.
             </h2>
             <p className={`mt-6 max-w-lg text-base sm:text-lg text-silver-100 leading-relaxed ${SHADOW}`}>
-              Found, chosen, automated, and organized. All of it built and run by one focused team. A 30-minute call, no pitch, just what would move the needle for you.
+              Book a 30-minute call and bring the mess as it is. No slides, no pitch. Tell me where the time and the leads are leaking, business or personal, and I will tell you plainly what a system could fix and what it would take to build. If it is a fit, we build it. If not, you still keep the map.
             </p>
             <a
               href="/book"
@@ -712,8 +712,10 @@ function PillarSection({ side, num, title, body }: { side: 'left' | 'right'; num
       <div className={`relative max-w-md ${side === 'left' ? 'mr-auto' : 'ml-auto'}`}>
         <Scrim className="-inset-x-8 -inset-y-12" />
         <div className="relative">
-          <p className={`font-display text-[10px] tracking-[0.5em] uppercase text-flame-300 mb-4 ${SHADOW}`}>Pillar {num}</p>
-          <h2 className={`font-display text-4xl md:text-6xl font-semibold tracking-tight text-white leading-[0.98] ${SHADOW}`}>{title}</h2>
+          <p className={`font-display text-[10px] tracking-[0.5em] uppercase text-flame-300 mb-4 ${SHADOW}`}>System {num}</p>
+          <h2 className={`font-display text-4xl md:text-6xl font-semibold tracking-tight text-white leading-[0.98] ${SHADOW}`}>
+            {title}<sup className="ml-1 align-top text-[0.34em] font-medium tracking-normal text-flame-300/90">&trade;</sup>
+          </h2>
           <div className="mt-5 h-px w-12 bg-flame-500/80" />
           <p className={`mt-5 text-silver-200 text-base md:text-lg leading-relaxed ${SHADOW}`}>{body}</p>
         </div>
