@@ -523,10 +523,10 @@ function ScrollReporter({ onSection }: { onSection: (i: number) => void }) {
 
 const HUD_LABELS = [
   'ANF // INITIALIZE',
-  '01 / FRONT DOOR',
-  '02 / FOLLOW-UP ENGINE',
-  '03 / AUTOPILOT',
-  '04 / HOME BASE',
+  '01 / FRONT DOOR™',
+  '02 / FOLLOW-UP ENGINE™',
+  '03 / AUTOPILOT™',
+  '04 / HOME BASE™',
   'ANF // DEPLOY',
 ]
 
@@ -663,7 +663,7 @@ function Overlay() {
         <div className="relative">
           <Scrim className="-inset-x-10 -inset-y-6" />
           <p className={`relative font-display text-[10px] sm:text-xs tracking-[0.3em] uppercase text-flame-300 ${SHADOW}`}>
-            Front Door <span className="text-flame-400/70">/</span> Follow-Up <span className="text-flame-400/70">/</span> Autopilot <span className="text-flame-400/70">/</span> Home Base
+            Front Door&trade; <span className="text-flame-400/70">/</span> Follow-Up&trade; <span className="text-flame-400/70">/</span> Autopilot&trade; <span className="text-flame-400/70">/</span> Home Base&trade;
           </p>
         </div>
         <div className="relative max-w-md">
