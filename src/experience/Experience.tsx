@@ -173,7 +173,7 @@ function sampleText(text: string, N: number, tm = false): Float32Array {
     ctx.fillStyle = '#fff'; setSpacing('0px')
     ctx.font = `900 50px "Space Grotesk", system-ui, Arial, sans-serif`
     ctx.textAlign = 'right'; ctx.textBaseline = 'top'
-    ctx.fillText('TM', rightX - 6, H / 2 + 6 - mainFont * 0.46)
+    ctx.fillText('TM', rightX - 6, H / 2 + 6 - mainFont * 0.6)
     tmPts = readLit()
   }
 
