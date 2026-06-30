@@ -1,6 +1,6 @@
 import { Component, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { ScrollControls, Scroll, useScroll } from '@react-three/drei'
+import { ScrollControls, Scroll, useScroll, Stars } from '@react-three/drei'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import * as THREE from 'three'
 
@@ -23,6 +23,28 @@ const WORLD = new THREE.Vector3()
 
 const NUM_FORMS = 6
 const PAGES = NUM_FORMS // one full-screen section per form
+const HOLD = 0.24 // share of each section that holds settled before the morph
+
+// Resolve a scroll position to which two forms we are between, and the eased
+// blend between them (with a dwell so each form holds before gliding to the next).
+// Shared by the particles and the camera so they move in lockstep.
+function morphAt(off: number) {
+  const p = Math.min(NUM_FORMS - 1, Math.max(0, off * PAGES - 0.5))
+  const i0 = Math.floor(p)
+  const i1 = Math.min(i0 + 1, NUM_FORMS - 1)
+  const frac = p - i0
+  let t: number
+  if (frac < HOLD) t = 0
+  else if (frac > 1 - HOLD) t = 1
+  else { const m = (frac - HOLD) / (1 - 2 * HOLD); t = m * m * (3 - 2 * m) }
+  return { i0, i1, t }
+}
+
+// Camera distance at each station. The wordmarks (0 and 5) sit at the framing the
+// cloud scale was tuned for (~6) so "ANF" stays readable and full on every screen;
+// the 3D shapes pull in close for an immersive, fly-into-it zoom (deepest on the AI
+// knot at station 3). The camera also pulls back through each transition.
+const STATION_DIST = [6.2, 4.8, 4.6, 4.4, 4.8, 6.2]
 
 // ─── Form generators: each returns N*3 floats, a point cloud centered on origin ──
 
@@ -142,7 +164,7 @@ function sampleText(text: string, N: number): Float32Array {
     const j = ((Math.random() * count) | 0) * 2
     out[3 * i] = (valid[j] / W - 0.5) * spanX + (Math.random() - 0.5) * 0.02
     out[3 * i + 1] = (0.5 - valid[j + 1] / H) * spanY + (Math.random() - 0.5) * 0.02
-    out[3 * i + 2] = (Math.random() - 0.5) * 0.5
+    out[3 * i + 2] = (Math.random() - 0.5) * 0.8
   }
   return out
 }
@@ -308,29 +330,14 @@ function ParticleField() {
     u.uTime.value += d
     u.uScreenH.value = size.height * viewport.dpr
 
-    // Morph progress: form i is fully settled when section i is centered.
-    const off = scroll.offset
-    const p = Math.min(NUM_FORMS - 1, Math.max(0, off * PAGES - 0.5))
-    const i0 = Math.floor(p)
-    const i1 = Math.min(i0 + 1, NUM_FORMS - 1)
-    const frac = p - i0
+    // Morph progress with a dwell so each form holds before gliding to the next.
+    const { i0, i1, t } = morphAt(scroll.offset)
     if (idx.current.a !== i0 || idx.current.b !== i1) {
       const aFrom = points.geometry.attributes.aFrom as THREE.BufferAttribute
       const aTo = points.geometry.attributes.aTo as THREE.BufferAttribute
       ;(aFrom.array as Float32Array).set(forms[i0]); aFrom.needsUpdate = true
       ;(aTo.array as Float32Array).set(forms[i1]); aTo.needsUpdate = true
       idx.current.a = i0; idx.current.b = i1
-    }
-    // Dwell: hold each form fully structured for most of the section, then morph
-    // quickly between holds. Without this the shape is only "whole" at the exact
-    // center and is mid-morph everywhere else, which reads as too quick.
-    const HOLD = 0.24 // share of the section that stays settled at each end
-    let t: number
-    if (frac < HOLD) t = 0
-    else if (frac > 1 - HOLD) t = 1
-    else {
-      const m = (frac - HOLD) / (1 - 2 * HOLD)
-      t = m * m * (3 - 2 * m) // smoothstep: eased ends, even pace through the middle
     }
     u.uBlend.value = i0 === i1 ? 1 : t
 
@@ -372,13 +379,32 @@ function ParticleField() {
 
 // ─── Camera + scroll plumbing ────────────────────────────────────────────────
 
-// Subtle mouse parallax on the camera. Slow lerp, small magnitude, premium.
+// Flies the camera through the scene on scroll: dollies in close on the 3D shapes
+// (and back out through each transition), orbits so you see their depth, and stays
+// pulled back and front-on for the readable wordmarks at the ends. Mouse adds a
+// little parallax on top. This is what makes it feel genuinely 3D.
 function CameraRig() {
-  useFrame((state) => {
-    const p = state.pointer
-    state.camera.position.x += (p.x * 0.5 - state.camera.position.x) * 0.035
-    state.camera.position.y += (p.y * 0.3 - state.camera.position.y) * 0.035
-    state.camera.lookAt(0, 0, 0)
+  const scroll = useScroll()
+  useFrame((state, dt) => {
+    const off = scroll.offset
+    const { i0, i1, t } = morphAt(off)
+    const base = STATION_DIST[i0] + (STATION_DIST[i1] - STATION_DIST[i0]) * t
+    const dist = base + Math.sin(t * Math.PI) * 1.1 // pull back through the morph
+
+    // Orbit: front-on (az 0) at the wordmark ends, swung around through the middle
+    // shapes so their volume reads. Gentle vertical drift too.
+    const az = Math.sin(off * Math.PI) * 0.7
+    const el = Math.sin(off * Math.PI * 2) * 0.13
+    const tx = Math.sin(az) * dist + state.pointer.x * 0.35
+    const tz = Math.cos(az) * dist
+    const ty = Math.sin(el) * dist + state.pointer.y * 0.3
+
+    const k = 1 - Math.exp(-3.5 * Math.min(dt, 0.05))
+    const cam = state.camera
+    cam.position.x += (tx - cam.position.x) * k
+    cam.position.y += (ty - cam.position.y) * k
+    cam.position.z += (tz - cam.position.z) * k
+    cam.lookAt(0, 0, 0)
   })
   return null
 }
@@ -525,6 +551,8 @@ function ExperienceInner() {
           <SmoothWheel />
           <CameraRig />
           <ParticleField />
+          {/* Deep starfield for parallax depth as the camera flies and orbits. */}
+          <Stars radius={40} depth={50} count={coarse ? 400 : 1500} factor={3.5} saturation={0} fade speed={0.6} />
           <ScrollReporter onSection={setSection} />
           <Scroll html style={{ width: '100%' }}>
             <Overlay />
