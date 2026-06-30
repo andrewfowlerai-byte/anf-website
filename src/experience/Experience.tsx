@@ -137,8 +137,11 @@ function helixPositions(N: number, r: number): Float32Array {
 }
 
 // Sample a word into points by rendering it to a canvas and reading filled pixels.
+// Letter-spacing pulls the glyphs apart so they do not bleed together, and the
+// result is normalized to its own bounding box so the wordmark is a consistent
+// size and centered regardless of font metrics or spacing.
 function sampleText(text: string, N: number): Float32Array {
-  const W = 640, H = 320
+  const W = 820, H = 340
   const cnv = document.createElement('canvas')
   cnv.width = W; cnv.height = H
   const ctx = cnv.getContext('2d')
@@ -146,24 +149,33 @@ function sampleText(text: string, N: number): Float32Array {
   ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H)
   ctx.fillStyle = '#fff'
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
-  ctx.font = '900 210px "Space Grotesk", system-ui, Arial, sans-serif'
+  try { (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = '34px' } catch { /* older browsers */ }
+  ctx.font = '900 190px "Space Grotesk", system-ui, Arial, sans-serif'
   ctx.fillText(text, W / 2, H / 2 + 6)
   const data = ctx.getImageData(0, 0, W, H).data
   const valid: number[] = []
+  let minX = W, maxX = 0, minY = H, maxY = 0
   for (let y = 0; y < H; y += 1) {
     for (let x = 0; x < W; x += 1) {
-      if (data[(y * W + x) * 4] > 128) { valid.push(x, y) }
+      if (data[(y * W + x) * 4] > 128) {
+        valid.push(x, y)
+        if (x < minX) minX = x; if (x > maxX) maxX = x
+        if (y < minY) minY = y; if (y > maxY) maxY = y
+      }
     }
   }
   const count = valid.length / 2
   if (count === 0) return spherePositions(N, 1.9)
+  // Normalize to the glyphs' bounding box, scaled to a fixed world width.
+  const targetW = 4.7
+  const s = targetW / Math.max(1, maxX - minX)
+  const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2
   const out = new Float32Array(N * 3)
-  const spanX = 4.6, spanY = (spanX * H) / W
   for (let i = 0; i < N; i++) {
     const j = ((Math.random() * count) | 0) * 2
     // Tight jitter + a shallow depth keep the letters crisp and legible.
-    out[3 * i] = (valid[j] / W - 0.5) * spanX + (Math.random() - 0.5) * 0.012
-    out[3 * i + 1] = (0.5 - valid[j + 1] / H) * spanY + (Math.random() - 0.5) * 0.012
+    out[3 * i] = (valid[j] - cx) * s + (Math.random() - 0.5) * 0.012
+    out[3 * i + 1] = -(valid[j + 1] - cy) * s + (Math.random() - 0.5) * 0.012
     out[3 * i + 2] = (Math.random() - 0.5) * 0.3
   }
   return out
@@ -191,6 +203,7 @@ uniform float uMouseStrength;
 uniform float uSize;
 uniform float uScreenH;
 uniform float uReduced;
+uniform float uCrisp;
 attribute vec3 aFrom;
 attribute vec3 aTo;
 attribute float aRand;
@@ -201,8 +214,9 @@ varying float vFade;
 void main() {
   vec3 pos = mix(aFrom, aTo, uBlend);
 
-  // Constant gentle curl so the cloud is never frozen.
-  float amp = mix(0.12, 0.04, uReduced);
+  // Constant gentle curl so the cloud is never frozen. uCrisp (high on the ANF
+  // wordmark) nearly freezes it so the letters stay sharp and do not bleed.
+  float amp = mix(0.12, 0.04, uReduced) * (1.0 - uCrisp * 0.9);
   float ph = aRand * 6.2831;
   pos.x += sin(uTime * 0.6 + pos.y * 1.4 + ph) * amp * (0.4 + aRand * 0.6);
   pos.y += cos(uTime * 0.5 + pos.z * 1.4 + ph) * amp * (0.4 + aRand * 0.6);
@@ -220,7 +234,7 @@ void main() {
   vec4 mv = modelViewMatrix * vec4(pos, 1.0);
   float dist = -mv.z;
   vFade = clamp((dist - 3.0) / 12.0, 0.0, 1.0);
-  float sz = uSize * (0.6 + aRand * 0.9) * (uScreenH / dist);
+  float sz = uSize * (0.6 + aRand * 0.9) * (uScreenH / dist) * (1.0 - uCrisp * 0.28);
   gl_PointSize = clamp(sz, 1.0, 22.0);
   gl_Position = projectionMatrix * mv;
 }
@@ -290,6 +304,7 @@ function ParticleField() {
         uSize: { value: coarse ? 0.016 : 0.011 },
         uScreenH: { value: 1 },
         uReduced: { value: reduced ? 1 : 0 },
+        uCrisp: { value: 0 },
         uOpacity: { value: 0 },
         uColorA: { value: new THREE.Color('#f0631a') },
         uColorB: { value: new THREE.Color('#2fb8f5') },
@@ -340,6 +355,9 @@ function ParticleField() {
       idx.current.a = i0; idx.current.b = i1
     }
     u.uBlend.value = i0 === i1 ? 1 : t
+    // Crispen the wordmark forms (index 0 and 5) so the letters do not bleed.
+    const isWord = (k: number) => (k === 0 || k === NUM_FORMS - 1 ? 1 : 0)
+    u.uCrisp.value = (1 - t) * isWord(i0) + t * isWord(i1)
 
     // Scale the cloud to the viewport so the wide "ANF" wordmark always fits, even
     // on a narrow portrait phone (where the horizontal field of view is small).
