@@ -43,7 +43,7 @@ function morphAt(off: number) {
 // Camera distance at each station. Kept far enough that the whole pillar stays in
 // frame (no clipping); the shapes sit a touch closer than the wordmarks for a mild
 // zoom, but the real movement comes from orbiting around the center, not dollying in.
-const STATION_DIST = [6.4, 5.9, 5.8, 5.7, 5.9, 6.4]
+const STATION_DIST = [6.0, 5.9, 5.8, 5.7, 5.9, 6.0]
 
 // ─── Form generators: each returns N*3 floats, a point cloud centered on origin ──
 
@@ -161,9 +161,10 @@ function sampleText(text: string, N: number): Float32Array {
   const spanX = 4.6, spanY = (spanX * H) / W
   for (let i = 0; i < N; i++) {
     const j = ((Math.random() * count) | 0) * 2
-    out[3 * i] = (valid[j] / W - 0.5) * spanX + (Math.random() - 0.5) * 0.02
-    out[3 * i + 1] = (0.5 - valid[j + 1] / H) * spanY + (Math.random() - 0.5) * 0.02
-    out[3 * i + 2] = (Math.random() - 0.5) * 0.8
+    // Tight jitter + a shallow depth keep the letters crisp and legible.
+    out[3 * i] = (valid[j] / W - 0.5) * spanX + (Math.random() - 0.5) * 0.012
+    out[3 * i + 1] = (0.5 - valid[j + 1] / H) * spanY + (Math.random() - 0.5) * 0.012
+    out[3 * i + 2] = (Math.random() - 0.5) * 0.3
   }
   return out
 }
