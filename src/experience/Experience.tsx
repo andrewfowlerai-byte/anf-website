@@ -1,6 +1,6 @@
 import { Component, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { ScrollControls, Scroll, useScroll, Stars } from '@react-three/drei'
+import { ScrollControls, Scroll, useScroll, Stars, Text, Billboard } from '@react-three/drei'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import * as THREE from 'three'
 
@@ -514,6 +514,51 @@ function Hud({ section }: { section: number }) {
   )
 }
 
+// A ring of client "prompts" that orbits the central cloud in 3D. Billboarded so
+// each one stays readable as it revolves, tilted and continuously spinning for
+// constant movement. The camera flies around this too, so it reads as part of the
+// object, not an overlay.
+const RING_PROMPTS = ['Build my site', 'Automate it', 'Capture leads', 'Put AI to work', 'Save hours', 'Train my team']
+
+function PromptRing() {
+  const grp = useRef<THREE.Group>(null)
+  const { size } = useThree()
+  useFrame((_, dt) => {
+    const g = grp.current
+    if (!g) return
+    g.rotation.y += Math.min(dt, 0.05) * 0.16
+    // Match the cloud's responsive scale so the ring sizes with it on every screen.
+    const aspect = size.width / Math.max(1, size.height)
+    g.scale.setScalar(THREE.MathUtils.clamp(aspect * 0.92, 0.42, 1))
+  })
+  const R = 3.0
+  const n = RING_PROMPTS.length
+  return (
+    <group ref={grp} rotation={[0.5, 0, 0]}>
+      {RING_PROMPTS.map((w, i) => {
+        const a = (i / n) * Math.PI * 2
+        return (
+          <Billboard key={w} position={[Math.cos(a) * R, Math.sin(a * 2) * 0.25, Math.sin(a) * R]}>
+            <Text
+              fontSize={0.2}
+              color="#a9c0ec"
+              anchorX="center"
+              anchorY="middle"
+              letterSpacing={0.06}
+              fillOpacity={0.5}
+              renderOrder={5}
+              material-depthTest={false}
+              material-transparent
+            >
+              {w}
+            </Text>
+          </Billboard>
+        )
+      })}
+    </group>
+  )
+}
+
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 export default function Experience() {
@@ -551,6 +596,7 @@ function ExperienceInner() {
           <SmoothWheel />
           <CameraRig />
           <ParticleField />
+          <PromptRing />
           {/* Deep starfield for parallax depth as the camera flies and orbits. */}
           <Stars radius={40} depth={50} count={coarse ? 400 : 1500} factor={3.5} saturation={0} fade speed={0.6} />
           <ScrollReporter onSection={setSection} />
