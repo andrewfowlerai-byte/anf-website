@@ -147,47 +147,65 @@ function sampleText(text: string, N: number, tm = false): Float32Array {
   const ctx = cnv.getContext('2d')
   if (!ctx) return spherePositions(N, 1.9)
   const setSpacing = (px: string) => { try { (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = px } catch { /* older browsers */ } }
+  const readLit = (): number[] => {
+    const data = ctx.getImageData(0, 0, W, H).data
+    const pts: number[] = []
+    for (let y = 0; y < H; y += 1) for (let x = 0; x < W; x += 1) { if (data[(y * W + x) * 4] > 128) pts.push(x, y) }
+    return pts
+  }
+
+  // Pass 1: the word.
   ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H)
-  ctx.fillStyle = '#fff'
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
-  setSpacing('15px')
+  ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
+  setSpacing('10px')
   const mainFont = 190
   ctx.font = `900 ${mainFont}px "Space Grotesk", system-ui, Arial, sans-serif`
   ctx.fillText(text, W / 2, H / 2 + 6)
-  // Small superscript trademark at the top-right of the last letter.
+  const rightX = W / 2 + ctx.measureText(text).width / 2
+  const main = readLit()
+  if (main.length === 0) return spherePositions(N, 1.9)
+
+  // Pass 2: the trademark, sampled separately so it gets enough particles to read.
+  // Right-aligned to the F's edge so it never extends past it, sat up as a superscript.
+  let tmPts: number[] = []
   if (tm) {
-    const rightX = W / 2 + ctx.measureText(text).width / 2
-    setSpacing('0px')
-    ctx.font = '700 44px "Space Grotesk", system-ui, Arial, sans-serif'
-    ctx.textAlign = 'left'; ctx.textBaseline = 'top'
-    ctx.fillText('TM', rightX + 10, H / 2 + 6 - mainFont * 0.38)
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H)
+    ctx.fillStyle = '#fff'; setSpacing('0px')
+    ctx.font = `900 50px "Space Grotesk", system-ui, Arial, sans-serif`
+    ctx.textAlign = 'right'; ctx.textBaseline = 'top'
+    ctx.fillText('TM', rightX - 6, H / 2 + 6 - mainFont * 0.46)
+    tmPts = readLit()
   }
-  const data = ctx.getImageData(0, 0, W, H).data
-  const valid: number[] = []
+
+  // Normalize the whole mark (word + TM) to its bounding box at a fixed world width.
   let minX = W, maxX = 0, minY = H, maxY = 0
-  for (let y = 0; y < H; y += 1) {
-    for (let x = 0; x < W; x += 1) {
-      if (data[(y * W + x) * 4] > 128) {
-        valid.push(x, y)
-        if (x < minX) minX = x; if (x > maxX) maxX = x
-        if (y < minY) minY = y; if (y > maxY) maxY = y
-      }
+  const extend = (arr: number[]) => {
+    for (let k = 0; k < arr.length; k += 2) {
+      const x = arr[k], y = arr[k + 1]
+      if (x < minX) minX = x; if (x > maxX) maxX = x
+      if (y < minY) minY = y; if (y > maxY) maxY = y
     }
   }
-  const count = valid.length / 2
-  if (count === 0) return spherePositions(N, 1.9)
-  // Normalize to the glyphs' bounding box, scaled to a fixed world width.
+  extend(main); extend(tmPts)
   const targetW = 4.7
   const s = targetW / Math.max(1, maxX - minX)
   const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2
+
   const out = new Float32Array(N * 3)
-  for (let i = 0; i < N; i++) {
-    const j = ((Math.random() * count) | 0) * 2
-    // Tight jitter + a shallow depth keep the letters crisp and legible.
-    out[3 * i] = (valid[j] - cx) * s + (Math.random() - 0.5) * 0.012
-    out[3 * i + 1] = -(valid[j + 1] - cy) * s + (Math.random() - 0.5) * 0.012
-    out[3 * i + 2] = (Math.random() - 0.5) * 0.3
+  const tmCount = tmPts.length ? Math.round(N * 0.06) : 0
+  const place = (arr: number[], start: number, num: number) => {
+    const c = arr.length / 2
+    for (let i = 0; i < num; i += 1) {
+      const j = ((Math.random() * c) | 0) * 2
+      const o = (start + i) * 3
+      // Tight jitter + a shallow depth keep the letters crisp and legible.
+      out[o] = (arr[j] - cx) * s + (Math.random() - 0.5) * 0.012
+      out[o + 1] = -(arr[j + 1] - cy) * s + (Math.random() - 0.5) * 0.012
+      out[o + 2] = (Math.random() - 0.5) * 0.3
+    }
   }
+  place(main, 0, N - tmCount)
+  if (tmCount) place(tmPts, N - tmCount, tmCount)
   return out
 }
 
