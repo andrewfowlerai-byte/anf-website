@@ -408,8 +408,11 @@ function ParticleField() {
       <group ref={tmGroup} visible={false}>
         <Text
           position={[1.95, 1.0, 0]}
-          fontSize={0.3}
+          fontSize={0.34}
           color="#dbe4ff"
+          outlineWidth="10%"
+          outlineColor="#05080f"
+          outlineOpacity={0.85}
           anchorX="center"
           anchorY="middle"
           letterSpacing={0.04}
