@@ -82,6 +82,10 @@ export default function ClassReviewGate({
       setError('Please add a valid email so we can notify you about events.')
       return
     }
+    if (email.trim() && !EMAIL_RE.test(email.trim())) {
+      setError('That email does not look right. Double-check it or leave it blank.')
+      return
+    }
     setSubmitting(true)
     try {
       await submitClassReview({
@@ -216,6 +220,18 @@ export default function ClassReviewGate({
             </span>
           </label>
 
+          <div>
+            <Field
+              label={notify ? 'Your email' : 'Your email (optional)'}
+              type="email"
+              value={email}
+              onChange={setEmail}
+              placeholder="you@email.com"
+              required={notify}
+            />
+            <p className="mt-1 text-xs text-slate-400">So Andrew can say thank you. Never shared, never spammed.</p>
+          </div>
+
           <label className="flex items-start gap-2.5 text-sm text-slate-600">
             <input
               type="checkbox"
@@ -225,17 +241,6 @@ export default function ClassReviewGate({
             />
             <span>Notify me when ANF Consulting hosts more events.</span>
           </label>
-
-          {notify && (
-            <Field
-              label="Your email"
-              type="email"
-              value={email}
-              onChange={setEmail}
-              placeholder="you@email.com"
-              required
-            />
-          )}
 
           <button
             type="submit"
