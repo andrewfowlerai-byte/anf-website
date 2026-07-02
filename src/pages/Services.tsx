@@ -1,6 +1,12 @@
+import { useEffect, useState } from 'react'
 import { BookCallButton } from '../components/BookCallButton'
+import { pricingSection } from '../lib/siteContent'
 
-const overview = [
+// Fallback copy: shown immediately and used whenever a section has not been
+// live-edited yet in the CRM's Site Settings page (migration 0116). Editing a
+// price there takes over from these within a minute; these never need a code
+// change to update again, they are just the safety net.
+const FALLBACK_OVERVIEW = [
   { service: 'Complete Platform', format: 'Website + CRM bundle', starting: '$4,000', anchor: 'platform' },
   { service: 'Website Development', format: 'Flat project fee', starting: '$1,500', anchor: 'website' },
   { service: 'Proof-of-Work Marketing System', format: 'Build + monthly', starting: '$4,000', anchor: 'proof-of-work' },
@@ -11,7 +17,7 @@ const overview = [
   { service: 'Corporate Workshops', format: 'Flat per event', starting: '$500', anchor: 'education' },
 ]
 
-const websiteTiers = [
+const FALLBACK_WEBSITE_TIERS = [
   {
     name: 'Simple',
     price: '$1,500',
@@ -32,7 +38,7 @@ const websiteTiers = [
   },
 ]
 
-const platformTiers = [
+const FALLBACK_PLATFORM_TIERS = [
   {
     name: 'Starter',
     price: '$4,000',
@@ -62,14 +68,14 @@ const proofOfWorkIncluded = [
   'Hosting, content generation, and review management handled for you every month',
 ]
 
-const coachingPackages = [
+const FALLBACK_COACHING_PACKAGES = [
   { name: 'Single Session', price: '$229', includes: 'One 60-minute coaching session. Topic of your choice: strategy, tool selection, hands-on training.', rate: '$229/session' },
   { name: 'Monthly', price: '$450/mo', includes: '2 coaching sessions per month. Ideal for ongoing skill-building or implementation support.', rate: '$225/session' },
   { name: '3-Month', price: '$1,200', includes: '6 sessions (2 per month over 3 months). Structured curriculum or fully custom.', rate: '$200/session' },
   { name: '6-Month', price: '$2,400', includes: '12 sessions (2 per month over 6 months). Deepest engagement with measurable outcomes.', rate: '$200/session' },
 ]
 
-const strategyOfferings = [
+const FALLBACK_STRATEGY_OFFERINGS = [
   {
     name: 'AI Possibilities Session',
     price: '$229',
@@ -84,7 +90,7 @@ const strategyOfferings = [
   },
 ]
 
-const implementationPackages = [
+const FALLBACK_IMPLEMENTATION_PACKAGES = [
   {
     name: 'Custom GPT Build',
     price: '$1,500',
@@ -105,17 +111,17 @@ const implementationPackages = [
   },
 ]
 
-const implementationAddons = [
+const FALLBACK_IMPLEMENTATION_ADDONS = [
   { addon: 'GPT Maintenance Retainer', price: '$150/mo', includes: 'Quarterly prompt tune-ups, up to 2 new conversation starters or knowledge refreshes per quarter, bug fixes for platform changes, 30-minute quarterly review call.' },
   { addon: 'Additional Custom GPT', price: '+$1,200', includes: 'Each additional GPT added to an existing engagement (reduced from $1,500 standalone).' },
 ]
 
-const ceChannels = [
+const FALLBACK_CE_CHANNELS = [
   { channel: 'Open Enrollment', price: '$39/seat', format: 'Public registration. Virtual or in-person sessions scheduled throughout the year. Includes 3 hours of approved Ohio Real Estate CE credit.' },
   { channel: 'Private Brokerage Booking', price: '$1,200 flat', format: '3-hour private session delivered to your brokerage’s agents. The brokerage pays one flat fee; agents attend at no cost as a team benefit. Ideal for recruiting and retention.' },
 ]
 
-const corporateFormats = [
+const FALLBACK_CORPORATE_FORMATS = [
   { format: '1-Hour Lunch-and-Learn', price: '$500', includes: 'Single-topic AI briefing. Great for introducing a team to AI capabilities or covering one specific use case in depth.' },
   { format: 'Half-Day Workshop (3 hrs)', price: '$1,500', includes: 'Interactive workshop combining education and hands-on exercises. Most-requested format.' },
   { format: 'Full-Day Workshop (6 hrs)', price: '$2,500', includes: 'Comprehensive training covering multiple AI use cases with practical implementation exercises. Includes follow-up materials and 30-day Q&A access.' },
@@ -172,6 +178,34 @@ const faqs = [
 ]
 
 export function Services() {
+  // Live pricing: starts as the fallback copy above (renders immediately, no
+  // flash of empty content), then swaps in whatever is live-edited in the
+  // CRM's Site Settings. A section that has never been edited there keeps
+  // showing its fallback, since the API returns nothing for it.
+  const [overview, setOverview] = useState(FALLBACK_OVERVIEW)
+  const [websiteTiers, setWebsiteTiers] = useState(FALLBACK_WEBSITE_TIERS)
+  const [platformTiers, setPlatformTiers] = useState(FALLBACK_PLATFORM_TIERS)
+  const [coachingPackages, setCoachingPackages] = useState(FALLBACK_COACHING_PACKAGES)
+  const [strategyOfferings, setStrategyOfferings] = useState(FALLBACK_STRATEGY_OFFERINGS)
+  const [implementationPackages, setImplementationPackages] = useState(FALLBACK_IMPLEMENTATION_PACKAGES)
+  const [implementationAddons, setImplementationAddons] = useState(FALLBACK_IMPLEMENTATION_ADDONS)
+  const [ceChannels, setCeChannels] = useState(FALLBACK_CE_CHANNELS)
+  const [corporateFormats, setCorporateFormats] = useState(FALLBACK_CORPORATE_FORMATS)
+
+  useEffect(() => {
+    let cancelled = false
+    pricingSection('overview', FALLBACK_OVERVIEW).then((v) => { if (!cancelled) setOverview(v) })
+    pricingSection('website_tiers', FALLBACK_WEBSITE_TIERS).then((v) => { if (!cancelled) setWebsiteTiers(v) })
+    pricingSection('platform_tiers', FALLBACK_PLATFORM_TIERS).then((v) => { if (!cancelled) setPlatformTiers(v) })
+    pricingSection('coaching_packages', FALLBACK_COACHING_PACKAGES).then((v) => { if (!cancelled) setCoachingPackages(v) })
+    pricingSection('strategy_offerings', FALLBACK_STRATEGY_OFFERINGS).then((v) => { if (!cancelled) setStrategyOfferings(v) })
+    pricingSection('implementation_packages', FALLBACK_IMPLEMENTATION_PACKAGES).then((v) => { if (!cancelled) setImplementationPackages(v) })
+    pricingSection('implementation_addons', FALLBACK_IMPLEMENTATION_ADDONS).then((v) => { if (!cancelled) setImplementationAddons(v) })
+    pricingSection('ce_channels', FALLBACK_CE_CHANNELS).then((v) => { if (!cancelled) setCeChannels(v) })
+    pricingSection('corporate_formats', FALLBACK_CORPORATE_FORMATS).then((v) => { if (!cancelled) setCorporateFormats(v) })
+    return () => { cancelled = true }
+  }, [])
+
   return (
     <>
       <section className="relative overflow-hidden">
