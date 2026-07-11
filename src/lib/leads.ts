@@ -22,3 +22,30 @@ export async function submitLead(input: LeadInput): Promise<void> {
   })
   if (error) throw error
 }
+
+/**
+ * Full speed-to-lead intake: posts to the CRM's inbound-lead endpoint, which
+ * creates the contact, fires an instant AI acknowledgement to the lead, drops an
+ * Inbox card, and pushes Andrew's phone. Falls back to a direct Prospect insert
+ * so a lead is never lost if the endpoint is unreachable.
+ */
+export async function submitRequest(input: LeadInput): Promise<void> {
+  try {
+    const res = await fetch('https://crm.anfconsult.com/api/inbound-lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: input.contact_name,
+        email: input.email,
+        phone: input.phone,
+        business: input.business_name,
+        message: input.notes,
+        source: input.source ?? 'website-experience',
+      }),
+    })
+    if (res.ok) return
+  } catch {
+    /* fall through to the direct insert */
+  }
+  await submitLead(input)
+}

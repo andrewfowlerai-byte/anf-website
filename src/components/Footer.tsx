@@ -30,7 +30,7 @@ export function Footer() {
             <img src="/anf-wordmark.png" alt="ANF Consulting" className="h-10 w-auto" />
           </Link>
           <p className="mt-4 text-sm text-silver-500 leading-relaxed">
-            Clarity <span className="text-flame-500">·</span> Structure <span className="text-flame-500">·</span> Confidence.<br />
+            Clarity <span className="text-flame-500">·</span> Integration <span className="text-flame-500">·</span> Automation.<br />
             One partner, one roadmap, one team.
           </p>
         </div>

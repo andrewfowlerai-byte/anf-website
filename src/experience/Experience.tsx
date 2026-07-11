@@ -3,7 +3,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { ScrollControls, Scroll, useScroll, Stars } from '@react-three/drei'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import * as THREE from 'three'
-import { submitLead } from '../lib/leads'
+import { submitRequest } from '../lib/leads'
 
 // Scratch vectors reused each frame to map the cursor onto the cloud's plane
 // without per-frame allocation (single ParticleField instance).
@@ -684,21 +684,20 @@ function Overlay() {
 
 function RequestCTA() {
   const [name, setName] = useState('')
-  const [contact, setContact] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<'idle' | 'sending' | 'done' | 'error'>('idle')
 
   const submit = async (e: FormEvent) => {
     e.preventDefault()
-    if (!name.trim() || !message.trim() || status === 'sending') return
+    if (!name.trim() || !email.trim() || !phone.trim() || !message.trim() || status === 'sending') return
     setStatus('sending')
     try {
-      const c = contact.trim()
-      const isEmail = c.includes('@')
-      await submitLead({
+      await submitRequest({
         contact_name: name.trim(),
-        email: isEmail ? c : undefined,
-        phone: !isEmail && c ? c : undefined,
+        email: email.trim(),
+        phone: phone.trim(),
         notes: message.trim(),
         source: 'website-experience',
       })
@@ -734,7 +733,10 @@ function RequestCTA() {
               </p>
               <form onSubmit={submit} className="mt-8 w-full space-y-3 text-left">
                 <input className={field} value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" autoComplete="name" required />
-                <input className={field} value={contact} onChange={(e) => setContact(e.target.value)} placeholder="Email or phone" required />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <input className={field} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" autoComplete="email" required />
+                  <input className={field} type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" autoComplete="tel" required />
+                </div>
                 <textarea className={`${field} resize-y min-h-[110px]`} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="What's slowing you down?" required />
                 <button
                   type="submit"
