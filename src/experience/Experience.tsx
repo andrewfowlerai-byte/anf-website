@@ -1,8 +1,9 @@
-import { Component, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { Component, Suspense, useEffect, useMemo, useRef, useState, type ReactNode, type FormEvent } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { ScrollControls, Scroll, useScroll, Stars } from '@react-three/drei'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import * as THREE from 'three'
+import { submitLead } from '../lib/leads'
 
 // Scratch vectors reused each frame to map the cursor onto the cloud's plane
 // without per-frame allocation (single ParticleField instance).
@@ -587,12 +588,9 @@ function ExperienceInner() {
         <a href="/" className="font-display text-sm font-medium tracking-[0.05em] text-silver-200/90 hover:text-white transition-colors">
           ANF Consulting
         </a>
-        <a
-          href="/book"
-          className="text-[10px] uppercase tracking-[0.25em] px-4 py-2 rounded-full border border-flame-500/40 text-flame-300 hover:bg-flame-500/10 transition-colors"
-        >
-          Book a call
-        </a>
+        <span className="hidden sm:block text-[10px] uppercase tracking-[0.28em] text-flame-300/90">
+          Clarity. Integration. Automation.
+        </span>
       </div>
 
       <Canvas camera={{ position: [0, 0, 6], fov: 42 }} dpr={coarse ? 1 : [1, 1.8]} gl={{ antialias: !coarse, alpha: false, powerPreference: 'high-performance' }}>
@@ -673,32 +671,87 @@ function Overlay() {
         </div>
       </section>
 
-      <PillarSection side="left" num="01" title="The Front Door" body="People look you up before they ever call, and right now they find a slow page, an old listing, or nothing at all, so they pick the next name on the list. We build the site, the local listings, and the reviews that make a stranger choose you, whether you sell homes, fix furnaces, or book nail appointments." />
-      <PillarSection side="right" num="02" title="The Follow-Up Engine" body="The lead you forgot to call back went with someone who called first, and the client you meant to check on quietly drifted away. We build the system that catches every inquiry, texts them back in a minute, books the appointment, and reminds the right person before anyone slips through the cracks." />
-      <PillarSection side="left" num="03" title="The Autopilot" body="Half your week disappears into the same typing: confirmations, reminders, invoices, the intake form you redo from scratch every time, and the double-booking that should never have happened. We hand that work to a system that runs it the same way every time, so the busywork stops eating your evenings." />
+      <PillarSection side="left" num="01" title="The Front Door" body="People look you up before they ever reach out, and right now they find a slow page, an old profile, or nothing at all, so they move on to the next name. We build the site, the presence, and the proof that makes a stranger choose you. Whether you run a business, work for yourself, or just want to be taken seriously online." />
+      <PillarSection side="right" num="02" title="The Follow-Up Engine" body="The message you meant to answer sat too long, and the person you meant to get back to quietly moved on. We build the system that catches every message, replies in a minute, books the time, and reminds the right person before anything slips through the cracks. Leads, clients, or the people in your life." />
+      <PillarSection side="left" num="03" title="The Autopilot" body="Half your week disappears into the same small tasks: the reminders, the forms, the scheduling, the message you retype from scratch every time, the thing you keep meaning to get to. We hand that work to a system that runs it the same way every time, so the busywork stops eating your evenings." />
       <PillarSection side="right" num="04" title="The Home Base" body="Your to-do list lives in three apps, the family calendar is on the fridge, and the thing you cannot forget is on a napkin somewhere. We put the business and the life in one calm place you can trust, so you open one screen and know exactly what today needs and what can wait." />
 
-      {/* CTA: the swarm re-forms the wordmark above, text sits low so it reads clean. */}
-      <section className="h-screen flex flex-col items-center justify-end pb-24 text-center px-6">
-        <div className="relative">
-          <Scrim className="-inset-x-10 -inset-y-10" />
-          <div className="relative flex flex-col items-center">
-            <h2 className={`font-display text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight leading-[1.0] text-white ${SHADOW}`}>
-              One system.<br />Thirty minutes to map it.
-            </h2>
-            <p className={`mt-6 max-w-lg text-base sm:text-lg text-silver-100 leading-relaxed ${SHADOW}`}>
-              Book a 30-minute call and bring the mess as it is. No slides, no pitch. Tell me where the time and the leads are leaking, business or personal, and I will tell you plainly what a system could fix and what it would take to build. If it is a fit, we build it. If not, you still keep the map.
-            </p>
-            <a
-              href="/book"
-              className="pointer-events-auto mt-9 inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-flame-500/60 bg-midnight-950/40 text-flame-100 hover:bg-flame-500/15 font-medium tracking-wide transition-colors"
-            >
-              Book a call
-            </a>
-          </div>
-        </div>
-      </section>
+      {/* CTA: the swarm re-forms the wordmark above; a short request form, no call. */}
+      <RequestCTA />
     </div>
+  )
+}
+
+function RequestCTA() {
+  const [name, setName] = useState('')
+  const [contact, setContact] = useState('')
+  const [message, setMessage] = useState('')
+  const [status, setStatus] = useState<'idle' | 'sending' | 'done' | 'error'>('idle')
+
+  const submit = async (e: FormEvent) => {
+    e.preventDefault()
+    if (!name.trim() || !message.trim() || status === 'sending') return
+    setStatus('sending')
+    try {
+      const c = contact.trim()
+      const isEmail = c.includes('@')
+      await submitLead({
+        contact_name: name.trim(),
+        email: isEmail ? c : undefined,
+        phone: !isEmail && c ? c : undefined,
+        notes: message.trim(),
+        source: 'website-experience',
+      })
+      setStatus('done')
+    } catch {
+      setStatus('error')
+    }
+  }
+
+  const field =
+    'w-full rounded-xl border border-white/12 bg-midnight-950/50 px-4 py-3 text-sm text-silver-100 placeholder:text-silver-400/70 outline-none focus:border-flame-500/60 transition-colors'
+
+  return (
+    <section className="min-h-screen flex flex-col items-center justify-center py-24 text-center px-6">
+      <div className="relative w-full max-w-lg pointer-events-auto">
+        <Scrim className="-inset-x-10 -inset-y-10" />
+        <div className="relative flex flex-col items-center">
+          <p className={`font-display text-[10px] sm:text-xs tracking-[0.35em] uppercase text-flame-300 ${SHADOW}`}>
+            Clarity. Integration. Automation.
+          </p>
+          <h2 className={`mt-4 font-display text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight leading-[1.02] text-white ${SHADOW}`}>
+            Tell me what's<br />slowing you down.
+          </h2>
+
+          {status === 'done' ? (
+            <p className={`mt-6 max-w-md text-base sm:text-lg text-silver-100 leading-relaxed ${SHADOW}`}>
+              Got it. I read every one of these myself, and I will be in touch soon. Thank you.
+            </p>
+          ) : (
+            <>
+              <p className={`mt-6 max-w-md text-base sm:text-lg text-silver-100 leading-relaxed ${SHADOW}`}>
+                No call to schedule, no pitch. Tell me where the time or the mess is piling up, in your work or your life, and I will tell you plainly what a system could fix. Business or personal, anyone is welcome.
+              </p>
+              <form onSubmit={submit} className="mt-8 w-full space-y-3 text-left">
+                <input className={field} value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" autoComplete="name" required />
+                <input className={field} value={contact} onChange={(e) => setContact(e.target.value)} placeholder="Email or phone" required />
+                <textarea className={`${field} resize-y min-h-[110px]`} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="What's slowing you down?" required />
+                <button
+                  type="submit"
+                  disabled={status === 'sending'}
+                  className="w-full inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full border border-flame-500/60 bg-flame-500/15 text-flame-100 hover:bg-flame-500/25 font-medium tracking-wide transition-colors disabled:opacity-60"
+                >
+                  {status === 'sending' ? 'Sending...' : 'Send my request'}
+                </button>
+                {status === 'error' && (
+                  <p className="text-sm text-red-300 text-center">Something went wrong. Try again, or email hello@anfconsult.com.</p>
+                )}
+              </form>
+            </>
+          )}
+        </div>
+      </div>
+    </section>
   )
 }
 
