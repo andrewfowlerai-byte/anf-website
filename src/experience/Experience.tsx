@@ -24,6 +24,14 @@ const WORLD = new THREE.Vector3()
 
 const NUM_FORMS = 6
 const PAGES = NUM_FORMS // one full-screen section per form
+
+// Weak-device detection: low RAM or few CPU cores. Budget phones choke on the
+// additive particle fill rate, so we drop the particle count and starfield
+// further for them while keeping the full scene on capable hardware.
+const IS_LOW_END =
+  typeof navigator !== 'undefined' &&
+  (((navigator as unknown as { deviceMemory?: number }).deviceMemory ?? 8) <= 4 ||
+    (navigator.hardwareConcurrency ?? 8) <= 4)
 const HOLD = 0.24 // share of each section that holds settled before the morph
 
 // Resolve a scroll position to which two forms we are between, and the eased
@@ -298,7 +306,7 @@ function ParticleField() {
   const { size, viewport, camera } = useThree()
   const reduced = useMemo(() => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches, [])
   const coarse = useMemo(() => typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches, [])
-  const N = coarse ? 9000 : 38000
+  const N = coarse ? (IS_LOW_END ? 4000 : 6500) : 38000
 
   // Build the cloud only once the brand font is ready, so the "ANF" wordmark is
   // sampled in Space Grotesk and not whatever fallback happened to be loaded.
@@ -608,7 +616,7 @@ function ExperienceInner() {
           <CameraRig />
           <ParticleField />
           {/* Deep starfield for parallax depth as the camera flies and orbits. */}
-          <Stars radius={40} depth={50} count={coarse ? 400 : 1500} factor={3.5} saturation={0} fade speed={0.6} />
+          <Stars radius={40} depth={50} count={coarse ? (IS_LOW_END ? 150 : 300) : 1500} factor={3.5} saturation={0} fade speed={0.6} />
           <ScrollReporter onSection={setSection} />
           <Scroll html style={{ width: '100%' }}>
             <Overlay />
