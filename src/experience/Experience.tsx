@@ -719,33 +719,33 @@ function RequestCTA() {
     'w-full rounded-xl border border-white/12 bg-midnight-950/50 px-4 py-3 text-sm text-silver-100 placeholder:text-silver-400/70 outline-none focus:border-flame-500/60 transition-colors'
 
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center py-24 text-center px-6">
+    <section className="min-h-screen flex flex-col items-center justify-center py-10 sm:py-24 text-center px-6">
       <div className="relative w-full max-w-lg pointer-events-auto">
         <Scrim className="-inset-x-10 -inset-y-10" />
         <div className="relative flex flex-col items-center">
           <p className={`font-display text-[10px] sm:text-xs tracking-[0.35em] uppercase text-flame-300 ${SHADOW}`}>
             Clarity. Integration. Automation.
           </p>
-          <h2 className={`mt-4 font-display text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight leading-[1.02] text-white ${SHADOW}`}>
+          <h2 className={`mt-3 sm:mt-4 font-display text-3xl sm:text-5xl md:text-6xl font-semibold tracking-tight leading-[1.05] sm:leading-[1.02] text-white ${SHADOW}`}>
             Tell me what's<br />slowing you down.
           </h2>
 
           {status === 'done' ? (
-            <p className={`mt-6 max-w-md text-base sm:text-lg text-silver-100 leading-relaxed ${SHADOW}`}>
+            <p className={`mt-4 sm:mt-6 max-w-md text-base sm:text-lg text-silver-100 leading-relaxed ${SHADOW}`}>
               Got it. I read every one of these myself, and I will be in touch soon. Thank you.
             </p>
           ) : (
             <>
-              <p className={`mt-6 max-w-md text-base sm:text-lg text-silver-100 leading-relaxed ${SHADOW}`}>
+              <p className={`mt-4 sm:mt-6 max-w-md text-base sm:text-lg text-silver-100 leading-relaxed ${SHADOW}`}>
                 No call to schedule, no pitch. Tell me where the time or the mess is piling up, in your work or your life, and I will tell you plainly what a system could fix. Business or personal, anyone is welcome.
               </p>
-              <form onSubmit={submit} className="mt-8 w-full space-y-3 text-left">
+              <form onSubmit={submit} className="mt-6 sm:mt-8 w-full space-y-2.5 sm:space-y-3 text-left">
                 <input className={field} value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" autoComplete="name" required />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <input className={field} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" autoComplete="email" required />
                   <input className={field} type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" autoComplete="tel" required />
                 </div>
-                <textarea className={`${field} resize-y min-h-[110px]`} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="What's slowing you down?" required />
+                <textarea className={`${field} resize-y min-h-[84px] sm:min-h-[110px]`} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="What's slowing you down?" required />
                 <button
                   type="submit"
                   disabled={status === 'sending'}
