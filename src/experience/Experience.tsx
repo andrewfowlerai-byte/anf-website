@@ -605,7 +605,12 @@ function ExperienceInner() {
         <color attach="background" args={['#060d1a']} />
         {/* Lower damping on touch so the scene tracks the finger immediately. */}
         <ScrollControls
-          pages={PAGES}
+          // A little extra scroll length on phones so the tall final request
+          // section can be scrolled fully into view above the mobile address bar
+          // (inside this fixed-height scroll there is otherwise no room to reach
+          // its bottom). The particle morph clamps on the last form, so the small
+          // trailing stretch just holds the wordmark.
+          pages={coarse ? PAGES + 0.6 : PAGES}
           damping={coarse ? 0.08 : 0.12}
           // Keep iOS momentum scrolling alive on the container (it stops accepting
           // touches after it settles otherwise) and always allow vertical panning.
