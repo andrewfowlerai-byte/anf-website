@@ -21,6 +21,23 @@ export function Events() {
     return () => { cancelled = true }
   }, [])
 
+  // Deep link: /events?code=XXXX auto-unlocks the private event, so a shared
+  // invite link opens straight to the event details and RSVP.
+  useEffect(() => {
+    const c = new URLSearchParams(window.location.search).get('code')
+    if (!c || !c.trim()) return
+    const trimmed = c.trim().toUpperCase()
+    setCode(trimmed)
+    setUnlocking(true)
+    setCodeError(null)
+    lookupPrivateEvent(trimmed)
+      .then((ev) => {
+        if (ev) setUnlockedEvent(ev)
+        else setCodeError("That code doesn't match a current private event. Double-check it with whoever invited you.")
+      })
+      .finally(() => setUnlocking(false))
+  }, [])
+
   const handleUnlock = async (e: FormEvent) => {
     e.preventDefault()
     if (!code.trim()) return

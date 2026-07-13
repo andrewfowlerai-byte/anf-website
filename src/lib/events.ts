@@ -64,10 +64,13 @@ export interface EventRsvpInput {
   website?: string // honeypot, must stay empty
 }
 
-/** Capture an event RSVP. Public events use a direct anon insert (RLS allows
- *  public upcoming events). Private events go through the rsvp_to_event
- *  security-definer function with the unlock code, since anon can't see them
- *  directly. The honeypot is checked before we ever hit the DB. */
+const RSVP_ENDPOINT = 'https://crm.anfconsult.com/api/event-rsvp'
+
+/** Capture an event RSVP. Preferred path is the CRM endpoint, which records the
+ *  RSVP, emails the guest a confirmation, and alerts Andrew. If that endpoint is
+ *  unreachable, we fall back to the direct DB path so the RSVP is never lost
+ *  (public events insert openly; private events use the coded security-definer
+ *  function). The honeypot is checked before anything. */
 export async function createRsvp(
   eventId: string,
   input: EventRsvpInput,
@@ -78,8 +81,27 @@ export async function createRsvp(
   const email = input.email?.trim() || null
   const guests = input.guests && input.guests > 0 ? input.guests : 1
 
+  // Preferred: the CRM endpoint (adds the confirmation email + Andrew alert).
+  try {
+    const res = await fetch(RSVP_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ eventId, name, email, guests, code, website: input.website ?? '' }),
+    })
+    if (res.ok) return
+    // A 4xx (bad code, full, closed) is a real answer, not a reason to fall back.
+    if (res.status >= 400 && res.status < 500) {
+      const data = (await res.json().catch(() => ({}))) as { error?: string }
+      throw new Error(data.error || 'Could not RSVP.')
+    }
+    // 5xx / unexpected: fall through to the direct DB path below.
+  } catch (err) {
+    if (err instanceof Error && err.message && err.message !== 'Failed to fetch') throw err
+    // network error: fall through to the direct DB path.
+  }
+
+  // Fallback: write straight to the database so the RSVP still records.
   if (code) {
-    // Private event: validated server-side against the event's code.
     const { error } = await supabase.rpc('rsvp_to_event', {
       p_event_id: eventId,
       p_name: name,
@@ -90,7 +112,6 @@ export async function createRsvp(
     if (error) throw error
     return
   }
-
   const { error } = await supabase.from('event_rsvps').insert({
     event_id: eventId,
     name,
