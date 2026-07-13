@@ -1,6 +1,8 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
 import { PageHero } from '../components/PageHero'
+import { listShowcaseProjects, type ShowcaseProject } from '../lib/showcase'
 
 type Project = {
   name: string
@@ -10,9 +12,12 @@ type Project = {
   /** External site (full URL) or internal route (starts with "/"). Optional. */
   link?: string
   linkLabel?: string
+  image?: string
 }
 
-const projects: Project[] = [
+// Fallback content, shown only if the CRM-managed list is empty or unreachable,
+// so /work is never blank. The live list is managed from the CRM (Showcase).
+const FALLBACK: Project[] = [
   {
     name: 'ANF Consulting',
     category: 'Brand & Website',
@@ -32,15 +37,6 @@ const projects: Project[] = [
     linkLabel: 'See the portal',
   },
   {
-    name: 'Getting Real With AI',
-    category: 'Education',
-    summary:
-      'A continuing-education course we created and teach for real estate professionals. How to actually talk to AI, which tools are worth your time, and how to stay visible as AI reshapes the way people search.',
-    tags: ['Education', 'AI', 'Real Estate'],
-    link: '/events',
-    linkLabel: 'View upcoming dates',
-  },
-  {
     name: 'Everlee',
     category: 'Product & SaaS',
     summary:
@@ -49,23 +45,19 @@ const projects: Project[] = [
     link: 'https://useeverlee.com',
     linkLabel: 'Visit Everlee',
   },
-  {
-    name: 'AI Lead Responder',
-    category: 'AI & Web App',
-    summary:
-      'An embeddable assistant that answers and qualifies inbound leads around the clock, then routes them to the right person in seconds. Built so no lead goes cold while you sleep.',
-    tags: ['AI', 'Lead Gen', 'Web App'],
-  },
-  {
-    name: 'Real Estate Websites & CRMs',
-    category: 'Web App & Infrastructure',
-    summary:
-      'Listing-ready websites paired with team CRMs, built for agents and brokerages who want one system instead of four disconnected tools. Designed around how a real estate team actually works.',
-    tags: ['Real Estate', 'Website', 'CRM'],
-    link: '/realtors',
-    linkLabel: 'For realtors',
-  },
 ]
+
+function toProject(p: ShowcaseProject): Project {
+  return {
+    name: p.title,
+    category: p.category ?? '',
+    summary: p.blurb ?? '',
+    tags: p.tags ?? [],
+    link: p.live_url ?? undefined,
+    linkLabel: p.link_label ?? undefined,
+    image: p.image_url ?? undefined,
+  }
+}
 
 function ProjectLink({ link, label }: { link: string; label: string }) {
   const classes =
@@ -90,12 +82,22 @@ function ProjectLink({ link, label }: { link: string; label: string }) {
 }
 
 export function Work() {
+  const [projects, setProjects] = useState<Project[]>(FALLBACK)
+
+  useEffect(() => {
+    let cancelled = false
+    listShowcaseProjects()
+      .then((rows) => { if (!cancelled && rows.length) setProjects(rows.map(toProject)) })
+      .catch(() => { /* keep the fallback */ })
+    return () => { cancelled = true }
+  }, [])
+
   return (
     <>
       <PageHero
         eyebrow="Portfolio"
-        title="Selected Work"
-        subtitle="A look at projects we have designed, built, and run. From brands and websites to the systems and AI behind them, plus the education we deliver along the way. Every engagement is built to be clear, delivered, and accountable."
+        title="Things we've built"
+        subtitle="A look at projects we have designed, built, and run. Many are live with sample data, so you can click in and look around. From brands and websites to the systems and AI behind them, every one is built to be clear, delivered, and accountable."
       />
 
       <section className="max-w-5xl mx-auto px-6 py-8">
@@ -105,23 +107,28 @@ export function Work() {
               key={p.name}
               className="group relative flex flex-col rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.05] to-white/[0.01] overflow-hidden transition-colors hover:border-flame-500/40"
             >
-              <div className="h-1.5 w-full bg-gradient-to-r from-flame-600/50 via-flame-400 to-flame-500" />
-              <div className="p-6 md:p-7 flex flex-col flex-1">
-                <p className="text-xs tracking-[0.25em] uppercase text-flame-500 mb-2">
-                  {p.category}
-                </p>
-                <h3 className="text-xl md:text-2xl font-display text-silver-100 mb-3">{p.name}</h3>
-                <p className="text-silver-400 leading-relaxed mb-5">{p.summary}</p>
-                <div className="flex flex-wrap gap-2 mb-5">
-                  {p.tags.map((t) => (
-                    <span
-                      key={t}
-                      className="text-xs px-2.5 py-1 rounded-full border border-midnight-700/60 text-silver-400"
-                    >
-                      {t}
-                    </span>
-                  ))}
+              {p.image ? (
+                <div className="aspect-[16/9] w-full overflow-hidden bg-midnight-950 border-b border-white/[0.06]">
+                  <img src={p.image} alt="" loading="lazy" className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]" />
                 </div>
+              ) : (
+                <div className="h-1.5 w-full bg-gradient-to-r from-flame-600/50 via-flame-400 to-flame-500" />
+              )}
+              <div className="p-6 md:p-7 flex flex-col flex-1">
+                {p.category && (
+                  <p className="text-xs tracking-[0.25em] uppercase text-flame-500 mb-2">{p.category}</p>
+                )}
+                <h3 className="text-xl md:text-2xl font-display text-silver-100 mb-3">{p.name}</h3>
+                {p.summary && <p className="text-silver-400 leading-relaxed mb-5">{p.summary}</p>}
+                {p.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-5">
+                    {p.tags.map((t) => (
+                      <span key={t} className="text-xs px-2.5 py-1 rounded-full border border-midnight-700/60 text-silver-400">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 {p.link && <ProjectLink link={p.link} label={p.linkLabel ?? 'View project'} />}
               </div>
             </article>
