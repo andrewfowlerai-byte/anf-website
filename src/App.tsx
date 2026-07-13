@@ -50,6 +50,9 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/book" element={<Book />} />
           <Route path="/events" element={<Events />} />
+          {/* Short shareable links that open a specific event with its RSVP ready. */}
+          <Route path="/lunch" element={<Events focusCode="CBWESTLAKE" />} />
+          <Route path="/rsvp" element={<Events focusCode="CBWESTLAKE" />} />
         </Route>
         {/* Standalone route (no marketing layout) — select-all copy on the
             signature shouldn't pull in the site header / footer. */}

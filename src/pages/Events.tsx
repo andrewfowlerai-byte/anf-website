@@ -1,12 +1,15 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { Calendar, MapPin, Lock, Ticket, Loader2, BookOpen, Check } from 'lucide-react'
 import { listUpcomingPublicEvents, lookupPrivateEvent, createRsvp, type AnfEvent } from '../lib/events'
 import { PageHero } from '../components/PageHero'
 
-export function Events() {
+/** focusCode: a short-link matcher (an event's private_code) used by routes like
+ *  /lunch to open that specific public event with its RSVP form ready. */
+export function Events({ focusCode }: { focusCode?: string } = {}) {
   const [publicEvents, setPublicEvents] = useState<AnfEvent[]>([])
   const [loadingPublic, setLoadingPublic] = useState(true)
+  const [autoOpenId, setAutoOpenId] = useState<string | null>(null)
 
   const [code, setCode] = useState('')
   const [unlockedEvent, setUnlockedEvent] = useState<AnfEvent | null>(null)
@@ -16,10 +19,20 @@ export function Events() {
   useEffect(() => {
     let cancelled = false
     listUpcomingPublicEvents()
-      .then((data) => { if (!cancelled) setPublicEvents(data) })
+      .then((data) => {
+        if (cancelled) return
+        setPublicEvents(data)
+        // Short-link deep open: find the event this link points at and mark it
+        // to auto-open its RSVP. Matches on the private_code slug we set.
+        if (focusCode) {
+          const target = focusCode.trim().toLowerCase()
+          const match = data.find((e) => (e.private_code ?? '').trim().toLowerCase() === target)
+          if (match) setAutoOpenId(match.id)
+        }
+      })
       .finally(() => { if (!cancelled) setLoadingPublic(false) })
     return () => { cancelled = true }
-  }, [])
+  }, [focusCode])
 
   // Deep link: /events?code=XXXX auto-unlocks the private event, so a shared
   // invite link opens straight to the event details and RSVP.
@@ -86,7 +99,7 @@ export function Events() {
           <div className="flex flex-wrap justify-center gap-6">
             {publicEvents.map((ev) => (
               <div key={ev.id} className="w-full md:w-[calc(50%-0.75rem)] max-w-xl">
-                <EventCard event={ev} />
+                <EventCard event={ev} autoOpen={autoOpenId === ev.id} />
               </div>
             ))}
           </div>
@@ -141,7 +154,8 @@ export function Events() {
 
 // ─── Event Card ──────────────────────────────────────────────────────────
 
-function EventCard({ event, highlight = false, code }: { event: AnfEvent; highlight?: boolean; code?: string }) {
+function EventCard({ event, highlight = false, code, autoOpen = false }: { event: AnfEvent; highlight?: boolean; code?: string; autoOpen?: boolean }) {
+  const cardRef = useRef<HTMLElement>(null)
   const start = new Date(event.starts_at)
   const dateLine = start.toLocaleDateString(undefined, {
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
@@ -169,6 +183,15 @@ function EventCard({ event, highlight = false, code }: { event: AnfEvent; highli
   const [rsvpDone, setRsvpDone] = useState(false)
   const [rsvpError, setRsvpError] = useState<string | null>(null)
 
+  // Short-link deep open: reveal this card's RSVP form and scroll it into view.
+  useEffect(() => {
+    if (autoOpen && nativeRsvp) {
+      setRsvpOpen(true)
+      cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoOpen, nativeRsvp])
+
   const submitRsvp = async (e: FormEvent) => {
     e.preventDefault()
     setRsvpError(null)
@@ -188,6 +211,7 @@ function EventCard({ event, highlight = false, code }: { event: AnfEvent; highli
 
   return (
     <article
+      ref={cardRef}
       className={`relative overflow-hidden rounded-2xl border bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors ${
         highlight
           ? 'border-flame-500/60 shadow-[0_0_40px_-10px_rgba(242,107,29,0.45)]'
