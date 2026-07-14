@@ -7,7 +7,6 @@ import { About } from './pages/About'
 import { Book } from './pages/Book'
 import { Events } from './pages/Events'
 import { Work } from './pages/Work'
-import { Realtors } from './pages/Realtors'
 import { Demos } from './pages/Demos'
 import { Demo } from './pages/Demo'
 import { RealEstateDemo } from './demos/RealEstateDemo'
@@ -41,7 +40,8 @@ function App() {
           <Route path="/demos/creators" element={<CreatorDeskDemo />} />
           <Route path="/demos/home-services" element={<ServiceFlowDemo />} />
           <Route path="/demos/:slug" element={<Demo />} />
-          <Route path="/realtors" element={<Realtors />} />
+          {/* Retired: the realtors landing overlapped Work and Demos. Redirect kept so old links still land somewhere useful. */}
+          <Route path="/realtors" element={<Navigate to="/demos" replace />} />
           <Route path="/audit" element={<Audit />} />
           {/* Unlisted investor page (no header nav link); Andrew shares the URL directly. */}
           <Route path="/invest" element={<Invest />} />

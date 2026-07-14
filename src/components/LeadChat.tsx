@@ -10,7 +10,6 @@ const ENDPOINT = 'https://crm.anfconsult.com/api/lead-chat'
 // at, then doubles as the assistant's first message once the chat opens.
 const DEFAULT_OPENER = 'Quick question: what are you hoping to build or fix in your business?'
 const OPENERS: { match: (p: string) => boolean; q: string }[] = [
-  { match: (p) => p.startsWith('/realtors'), q: "Curious how AI could handle your lead follow-up while you're out showing homes?" },
   { match: (p) => p.startsWith('/services'), q: 'Want help figuring out which system would move the needle first for you?' },
   { match: (p) => p.startsWith('/work') || p.startsWith('/demos'), q: 'Want to see what something like this could look like for your business?' },
   { match: (p) => p.startsWith('/audit'), q: 'Want a quick read on what your website could be doing better?' },

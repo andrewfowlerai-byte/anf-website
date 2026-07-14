@@ -1,4 +1,7 @@
 {
+  "redirects": [
+    { "source": "/realtors", "destination": "/demos", "permanent": false }
+  ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/" }
   ]
