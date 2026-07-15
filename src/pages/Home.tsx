@@ -68,7 +68,7 @@ export function Home() {
             <span className="w-1.5 h-1.5 rounded-full bg-flame-500" /> Marketing · Infrastructure · AI · Education
           </div>
           <h1 className="text-[2.6rem] sm:text-6xl md:text-7xl font-display font-medium text-silver-100 leading-[1.02] tracking-tight">
-            Smart marketing.<br />Modern infrastructure.<br /><span className="text-flame-400">Practical AI.</span>
+            Clarity.<br />Integration.<br /><span className="text-flame-400">Automation.</span>
           </h1>
           <p className="mt-7 max-w-2xl mx-auto text-lg md:text-xl text-silver-400 leading-relaxed">
             One focused partner for the whole stack. The marketing that grows you, the systems that run you, the AI woven into how you work, and the training that makes it stick.
