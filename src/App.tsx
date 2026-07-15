@@ -16,6 +16,7 @@ import { StudioFlowDemo } from './demos/StudioFlowDemo'
 import { CreatorDeskDemo } from './demos/CreatorDeskDemo'
 import { ServiceFlowDemo } from './demos/ServiceFlowDemo'
 import { Audit } from './pages/Audit'
+import { Refer } from './pages/Refer'
 import { Invest } from './pages/Invest'
 import { Start } from './pages/Start'
 import { Signature } from './pages/Signature'
@@ -43,6 +44,8 @@ function App() {
           {/* Retired: the realtors landing overlapped Work and Demos. Redirect kept so old links still land somewhere useful. */}
           <Route path="/realtors" element={<Navigate to="/demos" replace />} />
           <Route path="/audit" element={<Audit />} />
+          {/* Referral intake: warm intros land in the CRM ledger + Inbox. */}
+          <Route path="/refer" element={<Refer />} />
           {/* Unlisted investor page (no header nav link); Andrew shares the URL directly. */}
           <Route path="/invest" element={<Invest />} />
           {/* Code-gated client onboarding intake; Andrew shares the URL + a code. */}
