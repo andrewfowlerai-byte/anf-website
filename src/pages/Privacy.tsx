@@ -83,6 +83,7 @@ export function Privacy() {
           <ul className="list-disc pl-6 space-y-2">
             <li>Meta (Facebook and Instagram) for publishing posts and reels you approve.</li>
             <li>Google (Calendar and YouTube) for calendar sync and video publishing you enable.</li>
+            <li>TikTok for publishing videos you approve to your connected account.</li>
             <li>Supabase for database, authentication, and file storage.</li>
             <li>Stripe for payments and invoicing.</li>
             <li>Vercel for hosting.</li>
@@ -117,6 +118,15 @@ export function Privacy() {
             , including the Limited Use requirements. We use this data only to provide and improve the features you
             asked for, we do not transfer it to others except as needed to provide those features or as required by
             law, and we do not use it for advertising.
+          </p>
+        </Section>
+
+        <Section title="TikTok">
+          <p>
+            When you connect a TikTok account, we store the access token that connection provides and use it only to
+            publish videos you created and approved in our app to that account, with the caption and privacy setting
+            you chose. We do not read your other TikTok data or post without your action. You can disconnect at any
+            time, which removes the stored token. Our use of TikTok follows TikTok's Developer Terms and content policies.
           </p>
         </Section>
 
