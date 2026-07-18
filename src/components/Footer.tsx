@@ -61,6 +61,7 @@ export function Footer() {
         <span>© {new Date().getFullYear()} ANF Consulting LLC. All rights reserved.</span>
         <span className="flex items-center gap-4">
           <Link to="/privacy" className="hover:text-flame-400">Privacy Policy</Link>
+          <Link to="/terms" className="hover:text-flame-400">Terms</Link>
           <span>Invoicing via Stripe.</span>
         </span>
       </div>

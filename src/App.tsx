@@ -21,6 +21,7 @@ import { Invest } from './pages/Invest'
 import { Start } from './pages/Start'
 import { Signature } from './pages/Signature'
 import { Privacy } from './pages/Privacy'
+import { Terms } from './pages/Terms'
 import ClassMaterial from './pages/ClassMaterial'
 
 // Heavy WebGL bundle, code-split so it only loads on /experience.
@@ -53,6 +54,7 @@ function App() {
           <Route path="/start" element={<Start />} />
           <Route path="/about" element={<About />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
           <Route path="/book" element={<Book />} />
           <Route path="/events" element={<Events />} />
           {/* Short shareable links that open a specific event with its RSVP ready. */}
