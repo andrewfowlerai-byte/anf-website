@@ -20,6 +20,7 @@ import { Refer } from './pages/Refer'
 import { Invest } from './pages/Invest'
 import { Start } from './pages/Start'
 import { Signature } from './pages/Signature'
+import { Privacy } from './pages/Privacy'
 import ClassMaterial from './pages/ClassMaterial'
 
 // Heavy WebGL bundle, code-split so it only loads on /experience.
@@ -51,6 +52,7 @@ function App() {
           {/* Code-gated client onboarding intake; Andrew shares the URL + a code. */}
           <Route path="/start" element={<Start />} />
           <Route path="/about" element={<About />} />
+          <Route path="/privacy" element={<Privacy />} />
           <Route path="/book" element={<Book />} />
           <Route path="/events" element={<Events />} />
           {/* Short shareable links that open a specific event with its RSVP ready. */}

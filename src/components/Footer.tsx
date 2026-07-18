@@ -59,7 +59,10 @@ export function Footer() {
 
       <div className="max-w-6xl mx-auto px-6 pb-8 pt-6 border-t border-midnight-700/30 flex flex-col md:flex-row justify-between gap-3 text-xs text-silver-500">
         <span>© {new Date().getFullYear()} ANF Consulting LLC. All rights reserved.</span>
-        <span>Invoicing via Stripe.</span>
+        <span className="flex items-center gap-4">
+          <Link to="/privacy" className="hover:text-flame-400">Privacy Policy</Link>
+          <span>Invoicing via Stripe.</span>
+        </span>
       </div>
     </footer>
   )
