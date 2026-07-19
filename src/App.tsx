@@ -22,6 +22,7 @@ import { Start } from './pages/Start'
 import { Signature } from './pages/Signature'
 import { Privacy } from './pages/Privacy'
 import { Terms } from './pages/Terms'
+import { Reviews } from './pages/Reviews'
 import ClassMaterial from './pages/ClassMaterial'
 
 // Heavy WebGL bundle, code-split so it only loads on /experience.
@@ -53,6 +54,9 @@ function App() {
           {/* Code-gated client onboarding intake; Andrew shares the URL + a code. */}
           <Route path="/start" element={<Start />} />
           <Route path="/about" element={<About />} />
+          {/* Guided client review form (Andrew shares the link after a project). */}
+          <Route path="/reviews" element={<Reviews />} />
+          <Route path="/review" element={<Navigate to="/reviews" replace />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/book" element={<Book />} />
