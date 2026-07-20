@@ -12,6 +12,8 @@ type Project = {
   linkLabel?: string
   image?: string
   domain?: string
+  accessCode?: string
+  accessNote?: string
 }
 
 // Fallback, shown only if the CRM-managed list is empty or unreachable, so the
@@ -54,6 +56,8 @@ function toProject(p: ShowcaseProject): Project {
     linkLabel: p.link_label ?? undefined,
     image: p.image_url ?? undefined,
     domain: domainOf(p.live_url ?? undefined),
+    accessCode: p.access_code ?? undefined,
+    accessNote: p.access_note ?? undefined,
   }
 }
 
@@ -122,6 +126,14 @@ function BrowserFrame({ p }: { p: Project }) {
 function FeatureRow({ p, i }: { p: Project; i: number }) {
   const ref = useReveal<HTMLDivElement>()
   const isLive = p.link && !p.link.startsWith('/')
+  const [copied, setCopied] = useState(false)
+  const copyCode = () => {
+    if (!p.accessCode) return
+    navigator.clipboard?.writeText(p.accessCode).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1600)
+    }).catch(() => {})
+  }
   return (
     <div className={`wk-row ${i % 2 ? 'wk-rev' : ''}`} ref={ref}>
       <div className="wk-media">
@@ -139,6 +151,17 @@ function FeatureRow({ p, i }: { p: Project; i: number }) {
         <h2 className="wk-title">{p.name}</h2>
         {p.summary && <p className="wk-sum">{p.summary}</p>}
         {p.tags.length > 0 && <p className="wk-tags">{p.tags.join('  ·  ')}</p>}
+        {p.accessCode ? (
+          <div className="wk-access">
+            <span className="wk-access-k">Password to explore</span>
+            <button type="button" className="wk-access-code" onClick={copyCode} title="Copy the demo password">
+              <span>{p.accessCode}</span>
+              <span className="wk-access-copy">{copied ? 'copied' : 'copy'}</span>
+            </button>
+          </div>
+        ) : p.accessNote ? (
+          <p className="wk-access-note">{p.accessNote}</p>
+        ) : null}
         {p.link && (
           isLive ? (
             <a className="wk-go" href={p.link} target="_blank" rel="noreferrer">{p.linkLabel ?? 'See it live'} <span aria-hidden>&rarr;</span></a>
@@ -172,8 +195,8 @@ export function Work() {
         <p className="wk-eyebrow">Selected Work</p>
         <h1 className="wk-h1"><span>Things</span> <span>we&rsquo;ve</span> <span className="wk-flame">built.</span></h1>
         <p className="wk-lede">
-          Real projects we designed, built, and run. Many are live with sample data, so you can
-          click straight in and look around.
+          Real projects we designed, built, and run. Most are live with sample data, and the
+          password to walk in is right on the card. Click straight in and look around.
         </p>
       </section>
 
@@ -261,6 +284,17 @@ const WK_CSS = `
   text-decoration:none;text-transform:uppercase;letter-spacing:0.03em}
 .wk-go span{transition:transform .25s ease}
 .wk-go:hover span{transform:translateX(5px)}
+
+.wk-access{display:flex;align-items:center;gap:12px;margin:0 0 18px;flex-wrap:wrap}
+.wk-access-k{font-family:ui-monospace,Consolas,monospace;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#8493ad}
+.wk-access-code{display:inline-flex;align-items:center;gap:12px;font-family:ui-monospace,Consolas,monospace;font-size:14px;font-weight:600;
+  color:#f4f5f8;background:#13233c;border:1px solid rgba(242,107,29,0.35);border-radius:8px;padding:7px 12px;cursor:pointer;
+  transition:border-color .2s ease,background .2s ease}
+.wk-access-code:hover{border-color:rgba(242,107,29,0.75);background:#182b48}
+.wk-access-copy{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#f2833f}
+.wk-access-note{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;letter-spacing:0.06em;color:#8493ad;margin:0 0 18px;
+  display:inline-flex;align-items:center;gap:9px}
+.wk-access-note::before{content:'';width:7px;height:7px;border-radius:50%;background:#3a4a6b;flex:none}
 
 .wk-cta{max-width:760px;margin:0 auto;padding:80px 24px 110px;text-align:center}
 .wk-cta-h{font-family:'Space Grotesk',system-ui,sans-serif;font-weight:700;font-size:clamp(30px,4vw,44px);
