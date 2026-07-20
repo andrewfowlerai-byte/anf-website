@@ -17,27 +17,43 @@ function Stars({ n }: { n: number }) {
  * Renders nothing until there is at least one, so the page never shows an empty
  * shell.
  */
-export function Testimonials() {
+export function Testimonials({
+  fiveStarOnly = false,
+  limit = 6,
+  eyebrow = 'In their words',
+  title = 'What clients say',
+  hideHeader = false,
+}: {
+  fiveStarOnly?: boolean
+  limit?: number
+  eyebrow?: string
+  title?: string
+  hideHeader?: boolean
+} = {}) {
   const [reviews, setReviews] = useState<PublicReview[]>([])
 
   useEffect(() => {
     let on = true
     fetchPublicReviews().then((r) => {
-      if (on) setReviews(r.slice(0, 6))
+      if (!on) return
+      const kept = fiveStarOnly ? r.filter((x) => (x.rating ?? 0) >= 5) : r
+      setReviews(kept.slice(0, limit))
     })
     return () => {
       on = false
     }
-  }, [])
+  }, [fiveStarOnly, limit])
 
   if (reviews.length === 0) return null
 
   return (
     <section className="max-w-6xl mx-auto px-6 py-16 md:py-24">
-      <div className="text-center mb-12">
-        <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">In their words</p>
-        <h2 className="text-3xl md:text-4xl font-display text-silver-100">What clients say</h2>
-      </div>
+      {!hideHeader && (
+        <div className="text-center mb-12">
+          <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">{eyebrow}</p>
+          <h2 className="text-3xl md:text-4xl font-display text-silver-100">{title}</h2>
+        </div>
+      )}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {reviews.map((r, i) => (
           <figure

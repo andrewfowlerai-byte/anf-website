@@ -48,6 +48,7 @@ export function Footer() {
           <ul className="space-y-2 text-sm">
             <li><Link to="/start" className="text-silver-300 hover:text-flame-400">Start a project</Link></li>
             <li><Link to="/services" className="text-silver-300 hover:text-flame-400">Services</Link></li>
+            <li><Link to="/reviews" className="text-silver-300 hover:text-flame-400">Reviews</Link></li>
             <li><Link to="/about" className="text-silver-300 hover:text-flame-400">About</Link></li>
             <li><Link to="/book" className="text-silver-300 hover:text-flame-400">Book a discovery call</Link></li>
             <li><Link to="/audit" className="text-silver-300 hover:text-flame-400">Free website audit</Link></li>

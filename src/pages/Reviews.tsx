@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { PageHero } from '../components/PageHero'
+import { Testimonials } from '../components/Testimonials'
 import { useLocalDraft, clearLocalDrafts } from '../hooks/useLocalDraft'
 import { submitClientReview } from '../lib/reviews'
 
@@ -118,11 +119,27 @@ export function Reviews() {
   return (
     <>
       <PageHero
-        eyebrow="How did we do?"
-        title="Leave a review"
-        subtitle="A few quick prompts. Two minutes, tops, and a real help to us."
-      />
-      <section className="max-w-2xl mx-auto px-6 pb-20">
+        eyebrow="Reviews"
+        title="What our clients say"
+        subtitle="Real words from people we've worked with. Read a few, or leave your own below."
+      >
+        <a
+          href="#leave"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-flame-500 hover:bg-flame-400 text-midnight-950 font-semibold px-6 py-3 transition-colors"
+        >
+          Leave a review
+        </a>
+      </PageHero>
+
+      {/* Auto-wired 5-star reviews (consented public reviews, pulled from the CRM). */}
+      <Testimonials fiveStarOnly limit={30} hideHeader />
+
+      <section id="leave" className="max-w-2xl mx-auto px-6 pb-20 scroll-mt-24">
+        <div className="text-center mb-7">
+          <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-2">Your turn</p>
+          <h2 className="text-3xl md:text-4xl font-display text-silver-100">Leave a review</h2>
+          <p className="mt-3 text-silver-400">A few quick prompts. Two minutes, tops, and a real help to us.</p>
+        </div>
         <form
           onSubmit={onSubmit}
           className="space-y-5 rounded-2xl border border-white/[0.07] bg-gradient-to-b from-white/[0.05] to-white/[0.01] p-6 md:p-8"
