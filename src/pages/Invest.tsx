@@ -96,35 +96,42 @@ export function Invest() {
         </div>
       </section>
 
-      {/* Referral partnership: back ANF with introductions instead of cash. */}
+      {/* Partner programs: referral (one-time) and royalty (ongoing), matching the CRM briefs. */}
       <section className="max-w-5xl mx-auto px-6 py-10 md:py-14">
         <div className="text-center mb-9">
           <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">Another way in</p>
-          <h2 className="text-3xl md:text-4xl font-display text-silver-100">Back us with referrals, not cash</h2>
+          <h2 className="text-3xl md:text-4xl font-display text-silver-100">Partner with us instead of investing</h2>
           <p className="mt-5 max-w-2xl mx-auto text-lg text-silver-400 leading-relaxed">
-            Not everyone wants to write a check, and we do not always need one. If you know business owners who could use what we build, introduce them and earn a share of the business you create. No money up front, no equity, just aligned incentives.
+            Not everyone wants to write a check, and we do not always need one. If you know business owners who could use what we build, send them our way and share in the business you help create. No money up front, no equity. Pick whichever fits you.
           </p>
         </div>
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          {[
-            { n: '1', title: 'Introduce', body: 'You connect us with a business that could use a website, a CRM, practical AI, or the systems to run on.' },
-            { n: '2', title: 'They sign', body: 'When that introduction becomes a paying client, you earn a share of their first project.' },
-            { n: '3', title: 'You keep earning', body: 'You also earn an ongoing share of what that client keeps paying us, so your upside grows as they do.' },
-          ].map((s) => (
-            <div key={s.n} className="border border-midnight-700/30 rounded-2xl p-7 bg-midnight-900/40">
-              <p className="text-flame-400 font-display text-2xl mb-2">{s.n}</p>
-              <h3 className="text-xl font-display text-silver-100 mb-2">{s.title}</h3>
-              <p className="text-silver-400 leading-relaxed">{s.body}</p>
-            </div>
-          ))}
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="border border-flame-500/30 rounded-2xl p-7 md:p-8 bg-midnight-900/40">
+            <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">Referral</p>
+            <h3 className="text-2xl font-display text-silver-100 mb-3">Earn on the introduction</h3>
+            <p className="text-silver-400 leading-relaxed mb-4">
+              Introduce a business that becomes a client, and you earn a one-time reward when they sign. Paid once, simple and clean.
+            </p>
+            <p className="text-silver-300 text-lg">
+              <span className="text-silver-100">[10%]</span> of their first project when they sign.
+            </p>
+            <p className="text-silver-500 text-sm mt-3">Best for people who want a straightforward finder's reward.</p>
+          </div>
+          <div className="border border-flame-500/30 rounded-2xl p-7 md:p-8 bg-midnight-900/40">
+            <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">Royalty</p>
+            <h3 className="text-2xl font-display text-silver-100 mb-3">Earn on the relationship</h3>
+            <p className="text-silver-400 leading-relaxed mb-4">
+              Introduce a business that becomes a client, and earn an ongoing share of what they keep paying us. Your upside grows as they do.
+            </p>
+            <p className="text-silver-300 text-lg">
+              <span className="text-silver-100">[5%]</span> of what that client pays us for <span className="text-silver-100">[the first 12 months]</span>. Paid as they pay us.
+            </p>
+            <p className="text-silver-500 text-sm mt-3">Best for connectors who would rather build a stream of passive income.</p>
+          </div>
         </div>
-        <div className="max-w-3xl mx-auto border border-flame-500/30 rounded-2xl p-7 md:p-9 bg-midnight-900/40 text-center">
-          <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">The split</p>
-          <p className="text-silver-300 text-lg leading-relaxed">
-            <span className="text-silver-100">[10%]</span> of the first project when they sign, plus <span className="text-silver-100">[5%]</span> of what that client pays us for the next <span className="text-silver-100">[12 months]</span>. Paid to you as they pay us.
-          </p>
-          <p className="text-silver-500 text-sm mt-3">Best for people with a network of business owners: fellow consultants, agencies, realtors, and community connectors who would rather build alongside us than invest cash.</p>
-        </div>
+        <p className="text-center text-silver-500 text-sm mt-6 max-w-2xl mx-auto">
+          For people with a network of business owners: fellow consultants, agencies, realtors, and community connectors who would rather build alongside us than invest cash.
+        </p>
       </section>
 
       <section className="max-w-3xl mx-auto px-6 py-12 md:py-20 text-center">
