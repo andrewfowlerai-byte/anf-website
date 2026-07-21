@@ -229,13 +229,14 @@ export function Services() {
             Everything we do, <span className="text-flame-400">priced in the open</span>
           </h1>
           <p className="text-lg md:text-xl text-silver-400 leading-relaxed">
-            A complete menu of services and engagement options. Every package is built to be clear, delivered, and accountable. Where pricing varies, ranges are shown. Where pricing is fixed, the number is what you will see on the invoice.
+            A complete menu of services and engagement options. Each is a starting point we shape around your business, not a box you squeeze into. And it is priced in the open: where pricing varies you see the range, where it is fixed you see the exact number you will be invoiced.
           </p>
         </div>
       </section>
 
       <section className="max-w-5xl mx-auto px-6 py-12">
-        <h2 className="text-center text-xs tracking-[0.3em] uppercase text-flame-500 mb-6">At a glance</h2>
+        <h2 className="text-center text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">At a glance</h2>
+        <p className="text-center text-silver-400 text-sm max-w-2xl mx-auto mb-6">Every number here is a starting point. The final build is shaped around your business, your workflow, and your goals.</p>
         <div className="overflow-hidden border border-white/[0.07] rounded-2xl bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors hover:border-flame-500/30">
           <table className="w-full text-left text-sm">
             <thead className="bg-midnight-900/80 text-silver-100">
@@ -436,7 +437,7 @@ export function Services() {
         title="Education & Workshops"
         blurb="ANF Consulting delivers continuing education and corporate training built on real-world AI experience. Andrew Fowler is a certified Ohio Real Estate Continuing Education provider and an active practitioner. Every session reflects how AI is actually being used today, not theoretical frameworks."
       >
-        <SubBlock title={<>Ohio Real Estate CE &mdash; <em className="text-silver-300 not-italic font-normal">Getting Real With AI</em></>}>
+        <SubBlock title={<>Ohio Real Estate CE: <em className="text-silver-300 not-italic font-normal">Getting Real With AI</em></>}>
           <p className="text-sm text-silver-400 leading-relaxed mb-4">
             A 3-hour approved Ohio Real Estate CE course covering practical AI applications for residential and commercial agents. Available as open enrollment sessions or as a private booking for brokerages.
           </p>
