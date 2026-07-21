@@ -71,7 +71,7 @@ export function Home() {
             Clarity.<br />Integration.<br /><span className="text-flame-400">Automation.</span>
           </h1>
           <p className="mt-7 max-w-2xl mx-auto text-lg md:text-xl text-silver-400 leading-relaxed">
-            One focused partner for the whole stack. The marketing that grows you, the systems that run you, the AI woven into how you work, and the training that makes it stick.
+            Custom programs built around your life and your business, not templates you bend to fit. One partner for the marketing that grows you, the systems that run you, and the AI woven into how you actually work.
           </p>
           <div className="mt-9 flex flex-col sm:flex-row gap-3 justify-center items-center">
             <BookCallButton size="lg" label="Book a discovery call" className="!rounded-full" />
@@ -106,6 +106,33 @@ export function Home() {
       </section>
 
       <Reveal><ProductShowcase /></Reveal>
+
+      {/* BUILT AROUND YOU — the differentiator */}
+      <section className="max-w-6xl mx-auto px-6 py-16 md:py-24">
+        <SectionHeader
+          eyebrow="What sets us apart"
+          title="Built around you, not a template you adapt to"
+          subtitle="Most programs hand everyone the same thing and make you bend your business to fit it. We do the opposite. We build the system around how you actually work: your clients, your tools, your day."
+        />
+        <Reveal className="grid md:grid-cols-3 gap-5">
+          {[
+            { h: 'We start with your day', b: 'How you actually operate, who your clients are, and the tools you already use. The build begins from your reality, not a stock playbook.' },
+            { h: 'A system shaped to you', b: 'Your workflow, your brand, your language. A custom surface on a proven core, so it fits you exactly without the custom-software price or wait.' },
+            { h: 'It grows with you', b: 'As your business changes, the system changes with it. You are not locked into a generic tool you outgrow in a year and have to replace.' },
+          ].map((c) => (
+            <div key={c.h} className={`${cardClass} p-8 hover:border-flame-500/30`}>
+              <h3 className="text-xl font-display text-silver-100 mb-3">{c.h}</h3>
+              <p className="text-silver-400 leading-relaxed">{c.b}</p>
+            </div>
+          ))}
+        </Reveal>
+        <div className="text-center mt-10">
+          <p className="text-silver-400 max-w-2xl mx-auto mb-5">Every build in our work is a one-of-one for that business. None of it is handed out as a template.</p>
+          <Link to="/work" className="text-flame-400 hover:text-flame-300 text-sm uppercase tracking-widest font-medium">
+            See custom builds we have shipped →
+          </Link>
+        </div>
+      </section>
 
       {/* WHO WE WORK WITH */}
       <section className="max-w-6xl mx-auto px-6 py-16 md:py-24">
@@ -194,7 +221,7 @@ export function Home() {
             <div aria-hidden className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-flame-500/20 blur-2xl" />
             <p className="text-flame-300 font-semibold mb-2">ANF Consulting</p>
             <p className="text-silver-200 text-sm leading-relaxed">
-              One partner across marketing, infrastructure, AI, and education. A small roster, so you are never a number, and you own what we build.
+              One partner across marketing, infrastructure, AI, and education. A small roster, so you are never a number, and a system built around your business, not a template with your logo on it.
             </p>
           </div>
         </Reveal>

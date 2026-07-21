@@ -195,8 +195,9 @@ export function Work() {
         <p className="wk-eyebrow">Selected Work</p>
         <h1 className="wk-h1"><span>Things</span> <span>we&rsquo;ve</span> <span className="wk-flame">built.</span></h1>
         <p className="wk-lede">
-          Real projects we designed, built, and run. Most are live with sample data, and the
-          password to walk in is right on the card. Click straight in and look around.
+          Every one was built around a specific business, not pulled from a template. Real projects
+          we designed, built, and run, most live with sample data and the password to walk in right
+          on the card. Click straight in and look around.
         </p>
       </section>
 
