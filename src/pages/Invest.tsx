@@ -28,10 +28,10 @@ export function Invest() {
         />
         <p className="text-xs md:text-sm tracking-[0.3em] uppercase text-flame-500">Invest in ANF Consulting</p>
         <h1 className="mt-5 text-4xl md:text-6xl font-display font-medium text-silver-100 leading-[1.05] tracking-tight">
-          We build the systems small businesses run on.<br className="hidden sm:block" /> Now we are turning that into a product.
+          We build the systems people run their businesses and their lives on.<br className="hidden sm:block" /> Now we are turning that into a product.
         </h1>
         <p className="mt-6 max-w-2xl mx-auto text-lg md:text-xl text-silver-400 leading-relaxed">
-          ANF builds websites, CRMs, client portals, and AI tools for small businesses. The next step is turning each build into a repeatable, recurring-revenue platform. Here is where we are and where this goes.
+          ANF builds websites, CRMs, client portals, AI tools, and personal life-management systems, for small businesses and the people who run them. The next step is turning each build into a repeatable, recurring-revenue platform. Here is where we are and where this goes.
         </p>
       </section>
 
