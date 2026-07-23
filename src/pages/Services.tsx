@@ -7,8 +7,10 @@ import { pricingSection } from '../lib/siteContent'
 // price there takes over from these within a minute; these never need a code
 // change to update again, they are just the safety net.
 const FALLBACK_OVERVIEW = [
-  { service: 'Complete Platform', format: 'Website + CRM bundle', starting: '$2,200', anchor: 'platform' },
-  { service: 'Website Development', format: 'Flat project fee', starting: '$1,500', anchor: 'website' },
+  // "Website + CRM bundle" misdescribed the entry price: Starter is the website
+  // on the platform, and the CRM arrives at Growth. Say the range instead.
+  { service: 'Complete Platform', format: 'Website, CRM, and client portal tiers', starting: '$2,200', anchor: 'platform' },
+  { service: 'Website Development', format: 'Flat project fee, complex builds quoted', starting: '$1,500', anchor: 'website' },
   { service: 'Proof-of-Work Marketing System', format: 'Build + monthly', starting: '$4,000', anchor: 'proof-of-work' },
   { service: 'AI Coaching & Integration', format: 'Per session or retainer', starting: '$229', anchor: 'coaching' },
   { service: 'AI Strategy', format: 'Flat package', starting: '$229', anchor: 'strategy' },
