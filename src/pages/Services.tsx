@@ -268,7 +268,7 @@ export function Services() {
         id="website"
         kicker="Websites"
         title="Website Development"
-        blurb="Modern, mobile-first websites built for performance and conversion. ANF Consulting designs and develops websites that match your brand, load fast, rank well, and turn visitors into leads."
+        blurb="Modern, mobile-first websites built for performance and conversion. ANF Consulting designs and develops websites that match your brand, load fast, rank well, and turn visitors into leads. This is the website on its own: a one-time build, priced by how big and how custom it needs to be, and yours when it ships. If you also want a CRM, a client portal, or automation running behind it, start with the platforms below instead."
       >
         <div className="grid md:grid-cols-3 gap-4">
           {websiteTiers.map((t) => (
@@ -291,7 +291,7 @@ export function Services() {
         id="platform"
         kicker="Complete platform"
         title="Done-for-you platforms"
-        blurb="Most businesses do not want to buy pieces. These are complete platforms: a website, a CRM, and the tools to run them, built as one system that is yours. Each is a starting point we tailor to you."
+        blurb="Most businesses do not want to buy pieces. These are complete platforms: a website, a CRM, and the tools to run them, built as one system that is yours. Each is a starting point we tailor to you. The difference from a standalone website is what sits behind it. Everything runs on one system, so the CRM, the client portal, and the AI assistant can be turned on as you grow instead of paying to rebuild later. Hosting, support, and ongoing iteration are included monthly rather than bolted on."
       >
         <div className="grid md:grid-cols-3 gap-4">
           {platformTiers.map((t) => (
