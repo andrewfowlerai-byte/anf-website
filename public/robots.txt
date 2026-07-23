@@ -1,4 +1,15 @@
 User-agent: *
 Allow: /
 
+# Unlisted or gated. These are shared by direct link with a code, so there is no
+# reason for them to appear in search results. The pages also carry a noindex tag
+# from src/lib/pageSeo.ts; this is the belt to that suspenders.
+Disallow: /start
+Disallow: /invest
+Disallow: /class
+Disallow: /sign
+Disallow: /signature
+Disallow: /lunch
+Disallow: /rsvp
+
 Sitemap: https://anfconsult.com/sitemap.xml
