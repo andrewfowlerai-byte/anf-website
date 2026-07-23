@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchSiteContent } from '../lib/siteContent'
 
-const FALLBACK_EMAIL = 'anfaiconsulting@gmail.com'
+const FALLBACK_EMAIL = 'admin@anfconsult.com'
 const FALLBACK_PHONE_DISPLAY = '(573) 276-9756'
 const FALLBACK_PHONE_TEL = '+15732769756'
 

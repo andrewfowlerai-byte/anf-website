@@ -24,7 +24,7 @@ const SIGNATURE_HTML = `<table cellpadding="0" cellspacing="0" border="0" style=
         &nbsp;<span style="color: #CBD5E1;">|</span>&nbsp;
         <a href="tel:+15732769756" style="color: #1F2937; text-decoration: none;">(573) 276-9756</a>
         &nbsp;<span style="color: #CBD5E1;">|</span>&nbsp;
-        <a href="mailto:anfaiconsulting@gmail.com" style="color: #1F2937; text-decoration: none;">anfaiconsulting@gmail.com</a>
+        <a href="mailto:admin@anfconsult.com" style="color: #1F2937; text-decoration: none;">admin@anfconsult.com</a>
       </div>
       <div style="font-size: 10px; color: #6B7280; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 500;">
         Marketing<span style="color: #F26B1D;"> · </span>Infrastructure<span style="color: #F26B1D;"> · </span>AI<span style="color: #F26B1D;"> · </span>Education
@@ -47,7 +47,7 @@ export function Signature() {
         const plain = new Blob(
           // Separators match the rendered HTML above (pipes, not dashes) so the
           // plaintext fallback reads the same in clients that strip rich text.
-          ['Andrew Fowler | Founder, ANF Consulting | anfconsult.com | (573) 276-9756 | anfaiconsulting@gmail.com'],
+          ['Andrew Fowler | Founder, ANF Consulting | anfconsult.com | (573) 276-9756 | admin@anfconsult.com'],
           { type: 'text/plain' },
         )
         await navigator.clipboard.write([

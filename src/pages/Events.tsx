@@ -170,7 +170,7 @@ function EventCard({ event, highlight = false, code, autoOpen = false }: { event
     ? event.payment_link_url
     : event.rsvp_url
     ? event.rsvp_url
-    : 'mailto:anfaiconsulting@gmail.com?subject=Event RSVP'
+    : 'mailto:admin@anfconsult.com?subject=Event RSVP'
 
   // Native RSVP capture for free events. Public events RSVP openly; an unlocked
   // private event RSVPs with its code. Paid events keep their Stripe checkout.

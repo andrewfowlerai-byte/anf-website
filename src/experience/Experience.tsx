@@ -759,7 +759,7 @@ function RequestCTA() {
                   {status === 'sending' ? 'Sending...' : 'Send my request'}
                 </button>
                 {status === 'error' && (
-                  <p className="text-sm text-red-300 text-center">Something went wrong. Try again, or email hello@anfconsult.com.</p>
+                  <p className="text-sm text-red-300 text-center">Something went wrong. Try again, or email admin@anfconsult.com.</p>
                 )}
               </form>
             </>

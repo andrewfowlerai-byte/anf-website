@@ -113,7 +113,7 @@ export function Audit() {
       clearAll()
     } catch {
       setStatus('idle')
-      setErr('Something went wrong. Please email andrew@anfconsult.com and we will sort it out.')
+      setErr('Something went wrong. Please email admin@anfconsult.com and we will sort it out.')
     }
   }
 

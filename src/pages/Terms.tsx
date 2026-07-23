@@ -125,7 +125,7 @@ export function Terms() {
         <Section title="Contact">
           <p>
             ANF Consulting LLC<br />
-            Email: anfaiconsulting@gmail.com
+            Email: admin@anfconsult.com
           </p>
         </Section>
       </div>

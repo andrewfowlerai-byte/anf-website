@@ -127,7 +127,7 @@ function ContactForm() {
       {state === 'error' && (
         <p className="text-sm text-flame-400">
           Couldn&rsquo;t send your message: {errorMsg}. Try emailing{' '}
-          <a href="mailto:anfaiconsulting@gmail.com" className="underline">anfaiconsulting@gmail.com</a> directly.
+          <a href="mailto:admin@anfconsult.com" className="underline">admin@anfconsult.com</a> directly.
         </p>
       )}
 
@@ -141,7 +141,7 @@ function ContactForm() {
 
       <p className="text-xs text-silver-500 text-center pt-2">
         Or reach out directly:{' '}
-        <a href="mailto:anfaiconsulting@gmail.com" className="text-silver-300 hover:text-flame-400">anfaiconsulting@gmail.com</a>
+        <a href="mailto:admin@anfconsult.com" className="text-silver-300 hover:text-flame-400">admin@anfconsult.com</a>
         {' · '}
         <a href="tel:+15732769756" className="text-silver-300 hover:text-flame-400">(573) 276-9756</a>
       </p>

@@ -36,7 +36,7 @@ export function Privacy() {
             ANF Consulting LLC ("ANF," "we," "us") builds websites, client management systems, and automation
             tools for small businesses. This policy covers anfconsult.com, our client portal and CRM at
             crm.anfconsult.com, and the applications we build and operate for our own business and on behalf of
-            our clients. If you have any questions, reach us at anfaiconsulting@gmail.com.
+            our clients. If you have any questions, reach us at admin@anfconsult.com.
           </p>
         </Section>
 
@@ -134,7 +134,7 @@ export function Privacy() {
           <p>
             You are in control of your information. You can disconnect any linked account at any time from the
             relevant screen in your app, which deletes the stored credentials for that connection. To request that
-            we delete the rest of the information we hold about you, email us at anfaiconsulting@gmail.com with the
+            we delete the rest of the information we hold about you, email us at admin@anfconsult.com with the
             subject line "Data deletion." We will confirm and complete the request, usually within 30 days, except
             where we are required to keep certain records for legal or tax reasons.
           </p>
@@ -171,7 +171,7 @@ export function Privacy() {
         <Section title="Contact">
           <p>
             ANF Consulting LLC<br />
-            Email: anfaiconsulting@gmail.com
+            Email: admin@anfconsult.com
           </p>
         </Section>
       </div>

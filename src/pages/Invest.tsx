@@ -141,8 +141,8 @@ export function Invest() {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <BookCallButton size="lg" />
-          <a href="mailto:anfaiconsulting@gmail.com" className="text-flame-400 hover:text-flame-300 text-sm uppercase tracking-widest font-medium">
-            anfaiconsulting@gmail.com
+          <a href="mailto:admin@anfconsult.com" className="text-flame-400 hover:text-flame-300 text-sm uppercase tracking-widest font-medium">
+            admin@anfconsult.com
           </a>
         </div>
       </section>
