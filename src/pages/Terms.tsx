@@ -56,6 +56,21 @@ export function Terms() {
           </ul>
         </Section>
 
+        <Section title="Pricing">
+          <p>
+            Prices published on this site are starting points, not quotes or offers. Every project is different, and
+            the scope, integrations, and support a given business needs vary widely. Your actual price depends on
+            what your project requires and is set in a written proposal or service agreement.
+          </p>
+          <p className="mt-4">
+            Published prices are subject to change at any time without notice and are not guaranteed. A change to
+            published pricing applies only to new work and new agreements. It never applies retroactively to an
+            agreement already signed. Once you sign, the price in that agreement is the price you pay, and a monthly
+            rate stays where it is for as long as the agreement is active and the scope is unchanged. If you later add
+            features or expand scope, the added work is quoted at the prices in effect at that time.
+          </p>
+        </Section>
+
         <Section title="Fees and payment">
           <p>
             Fees are set in your proposal or service agreement. Invoices and payments are handled through Stripe.

@@ -139,7 +139,10 @@ const paymentTerms = [
   'Retainer services billed monthly in advance.',
   'Project work billed 50% on signing, 50% on completion (or as scoped in proposal).',
   'Educational and workshop offerings billed on confirmation of booking.',
-  'All pricing in USD. Pricing valid through December 2026 unless otherwise noted.',
+  'All pricing in USD.',
+  'Every project is different. The prices here are starting points based on typical scope, not quotes. What your build actually needs may cost more or less, and you will have a firm number in writing before any work begins.',
+  'Published prices are subject to change at any time and are not guaranteed.',
+  'Once you sign, your price is locked. Later changes to our published pricing never apply to work already agreed, and a monthly rate stays where it is unless you add features.',
 ]
 
 const faqs = [
@@ -229,7 +232,7 @@ export function Services() {
             Everything we do, <span className="text-flame-400">priced in the open</span>
           </h1>
           <p className="text-lg md:text-xl text-silver-400 leading-relaxed">
-            A complete menu of services and engagement options. Each is a starting point we shape around your business, not a box you squeeze into. And it is priced in the open: where pricing varies you see the range, where it is fixed you see the exact number you will be invoiced.
+            A complete menu of services and engagement options. Each is a starting point we shape around your business, not a box you squeeze into. And it is priced in the open: where pricing varies you see the range, where it is fixed you see the number. These are starting points rather than quotes, because every project is different. You get a firm price in writing before any work begins.
           </p>
         </div>
       </section>
