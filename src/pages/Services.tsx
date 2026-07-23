@@ -32,7 +32,9 @@ const FALLBACK_WEBSITE_TIERS = [
   },
   {
     name: 'Complex',
-    price: '$7,000+',
+    // No number here on purpose. A figure in this slot sat just under the $8,000
+    // Platform tier while delivering less, which invited the wrong comparison.
+    price: 'Quoted per project',
     idealFor: 'Established businesses, e-commerce, multi-functional platforms',
     scope: '15+ pages or custom functionality. Full custom design with advanced UI/UX. Comprehensive SEO strategy with competitive analysis. E-commerce (cart, payment gateway) or membership/portal functionality. Advanced integrations (CRM, automation tools, APIs).',
   },
