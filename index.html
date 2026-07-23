@@ -24,6 +24,62 @@
     <meta name="twitter:description" content="Smart marketing, modern infrastructure, and practical AI. One partner, one roadmap, one team." />
     <meta name="twitter:image" content="https://anfconsult.com/anf-logo.png" />
 
+    <!--
+      Structured data. Tells Google what this business is, where it works, and how
+      to reach it, which is what powers the knowledge panel and local results.
+      Lives in index.html (not the React app) so crawlers see it without running JS.
+      No street address is claimed here because ANF works remotely across the region.
+    -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      "@id": "https://anfconsult.com/#business",
+      "name": "ANF Consulting",
+      "url": "https://anfconsult.com",
+      "logo": "https://anfconsult.com/anf-logo.png",
+      "image": "https://anfconsult.com/anf-logo.png",
+      "slogan": "Clarity. Integration. Automation.",
+      "description": "ANF Consulting builds custom business systems: websites, CRMs, client portals, automation, and practical AI training, designed around how each business actually works.",
+      "telephone": "+1-573-276-9756",
+      "email": "hello@anfconsult.com",
+      "priceRange": "$$",
+      "founder": {
+        "@type": "Person",
+        "name": "Andrew Fowler",
+        "jobTitle": "Founder"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressRegion": "OH",
+        "addressCountry": "US"
+      },
+      "areaServed": [
+        { "@type": "State", "name": "Ohio" },
+        { "@type": "Country", "name": "United States" }
+      ],
+      "knowsAbout": [
+        "Custom CRM development",
+        "Small business websites",
+        "Client portals",
+        "Business process automation",
+        "Practical AI training",
+        "Real estate technology",
+        "Field service software"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Services",
+        "itemListElement": [
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Website design and build" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Custom CRM and client portal" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Business automation" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "AI training and education" } }
+        ]
+      }
+    }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />

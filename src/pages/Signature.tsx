@@ -45,7 +45,9 @@ export function Signature() {
       if (typeof ClipboardItem !== 'undefined' && navigator.clipboard?.write) {
         const blob = new Blob([SIGNATURE_HTML], { type: 'text/html' })
         const plain = new Blob(
-          ['Andrew Fowler — Founder, ANF Consulting — anfconsult.com — (573) 276-9756 — anfaiconsulting@gmail.com'],
+          // Separators match the rendered HTML above (pipes, not dashes) so the
+          // plaintext fallback reads the same in clients that strip rich text.
+          ['Andrew Fowler | Founder, ANF Consulting | anfconsult.com | (573) 276-9756 | anfaiconsulting@gmail.com'],
           { type: 'text/plain' },
         )
         await navigator.clipboard.write([
