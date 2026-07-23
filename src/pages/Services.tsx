@@ -7,7 +7,7 @@ import { pricingSection } from '../lib/siteContent'
 // price there takes over from these within a minute; these never need a code
 // change to update again, they are just the safety net.
 const FALLBACK_OVERVIEW = [
-  { service: 'Complete Platform', format: 'Website + CRM bundle', starting: '$4,000', anchor: 'platform' },
+  { service: 'Complete Platform', format: 'Website + CRM bundle', starting: '$2,200', anchor: 'platform' },
   { service: 'Website Development', format: 'Flat project fee', starting: '$1,500', anchor: 'website' },
   { service: 'Proof-of-Work Marketing System', format: 'Build + monthly', starting: '$4,000', anchor: 'proof-of-work' },
   { service: 'AI Coaching & Integration', format: 'Per session or retainer', starting: '$229', anchor: 'coaching' },
@@ -41,19 +41,19 @@ const FALLBACK_WEBSITE_TIERS = [
 const FALLBACK_PLATFORM_TIERS = [
   {
     name: 'Starter',
-    price: '$4,000',
+    price: '$2,200',
     idealFor: 'A clean, professional presence and the essentials',
     scope: 'A custom marketing website with SEO, built to load fast and convert. Your own design, on your own domain.',
   },
   {
     name: 'Growth',
-    price: '$7,500',
+    price: '$4,500',
     idealFor: 'A website plus a CRM to actually run the business',
     scope: 'Everything in Starter, plus a custom CRM, social scheduling, and automated follow-ups so leads never slip.',
   },
   {
     name: 'Platform',
-    price: '$14,000',
+    price: '$8,000',
     idealFor: 'The full operation: site, CRM, portal, and AI',
     scope: 'Everything in Growth, plus a client login portal and a built-in AI assistant. One system that runs your whole business.',
   },
