@@ -48,11 +48,17 @@ export function Footer() {
           <ul className="space-y-2 text-sm">
             <li><Link to="/start" className="text-silver-300 hover:text-flame-400">Start a project</Link></li>
             <li><Link to="/services" className="text-silver-300 hover:text-flame-400">Services</Link></li>
+            <li><Link to="/work" className="text-silver-300 hover:text-flame-400">Our work</Link></li>
+            <li><Link to="/demos" className="text-silver-300 hover:text-flame-400">Live demos</Link></li>
             <li><Link to="/reviews" className="text-silver-300 hover:text-flame-400">Reviews</Link></li>
             <li><Link to="/about" className="text-silver-300 hover:text-flame-400">About</Link></li>
             <li><Link to="/book" className="text-silver-300 hover:text-flame-400">Book a discovery call</Link></li>
             <li><Link to="/audit" className="text-silver-300 hover:text-flame-400">Free website audit</Link></li>
             <li><Link to="/refer" className="text-silver-300 hover:text-flame-400">Refer a business</Link></li>
+            {/* Class attendees are told to find these on the site, so they need a
+                link they can actually click rather than a URL to retype. */}
+            <li><Link to="/events" className="text-silver-300 hover:text-flame-400">Events and classes</Link></li>
+            <li><Link to="/handouts" className="text-silver-300 hover:text-flame-400">Class handouts</Link></li>
             <li><a href="https://crm.anfconsult.com/portal" className="text-silver-300 hover:text-flame-400">Client login</a></li>
           </ul>
         </div>

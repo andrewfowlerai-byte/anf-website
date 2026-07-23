@@ -9,12 +9,6 @@ import { Events } from './pages/Events'
 import { Work } from './pages/Work'
 import { Demos } from './pages/Demos'
 import { Demo } from './pages/Demo'
-import { RealEstateDemo } from './demos/RealEstateDemo'
-import { CoachFlowDemo } from './demos/CoachFlowDemo'
-import { FamilyHqDemo } from './demos/FamilyHqDemo'
-import { StudioFlowDemo } from './demos/StudioFlowDemo'
-import { CreatorDeskDemo } from './demos/CreatorDeskDemo'
-import { ServiceFlowDemo } from './demos/ServiceFlowDemo'
 import { Audit } from './pages/Audit'
 import { Refer } from './pages/Refer'
 import { Invest } from './pages/Invest'
@@ -28,6 +22,17 @@ import ClassMaterial from './pages/ClassMaterial'
 
 // Heavy WebGL bundle, code-split so it only loads on /experience.
 const Experience = lazy(() => import('./experience/Experience'))
+
+// The six industry demos are large interactive mockups. Statically imported they
+// rode along in the main bundle, so every visitor paid to download all six even
+// though most never open one. Lazy so each downloads only when its route is hit.
+// (Layout wraps <Outlet /> in Suspense, which covers these.)
+const RealEstateDemo = lazy(() => import('./demos/RealEstateDemo').then((m) => ({ default: m.RealEstateDemo })))
+const CoachFlowDemo = lazy(() => import('./demos/CoachFlowDemo').then((m) => ({ default: m.CoachFlowDemo })))
+const FamilyHqDemo = lazy(() => import('./demos/FamilyHqDemo').then((m) => ({ default: m.FamilyHqDemo })))
+const StudioFlowDemo = lazy(() => import('./demos/StudioFlowDemo').then((m) => ({ default: m.StudioFlowDemo })))
+const CreatorDeskDemo = lazy(() => import('./demos/CreatorDeskDemo').then((m) => ({ default: m.CreatorDeskDemo })))
+const ServiceFlowDemo = lazy(() => import('./demos/ServiceFlowDemo').then((m) => ({ default: m.ServiceFlowDemo })))
 
 function App() {
   return (

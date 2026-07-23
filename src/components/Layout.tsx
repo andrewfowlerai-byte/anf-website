@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { Header } from './Header'
 import { Footer } from './Footer'
@@ -19,7 +20,12 @@ export function Layout() {
       <ScrollToTop />
       <Header />
       <main className="flex-1">
-        <Outlet />
+        {/* Covers the lazily-loaded demo routes. The fallback is a plain spacer
+            rather than a spinner: these chunks land in a few hundred ms and a
+            flashing spinner reads worse than a brief hold on the current frame. */}
+        <Suspense fallback={<div className="min-h-[60vh]" />}>
+          <Outlet />
+        </Suspense>
       </main>
       <Footer />
       <LeadChat />
