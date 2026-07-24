@@ -95,6 +95,11 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     description:
       'Quick-start sheets for Gemini Pro and Canva AI from AI You Can Actually Use, Class 1. Read them here or print a copy to keep at your desk.',
   },
+  '/free-class': {
+    title: 'Free AI Class for Business Owners',
+    description:
+      'Getting Real With AI: a free, practical, plain-English class on actually using AI in your business. No hype, no coding. In person in Northeast Ohio or virtual from anywhere.',
+  },
   '/events': {
     title: 'Events and Classes',
     description:

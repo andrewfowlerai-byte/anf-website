@@ -57,6 +57,7 @@ export function Footer() {
             <li><Link to="/refer" className="text-silver-300 hover:text-flame-400">Refer a business</Link></li>
             {/* Class attendees are told to find these on the site, so they need a
                 link they can actually click rather than a URL to retype. */}
+            <li><Link to="/free-class" className="text-silver-300 hover:text-flame-400">Free AI class</Link></li>
             <li><Link to="/events" className="text-silver-300 hover:text-flame-400">Events and classes</Link></li>
             <li><Link to="/handouts" className="text-silver-300 hover:text-flame-400">Class handouts</Link></li>
             <li><a href="https://crm.anfconsult.com/portal" className="text-silver-300 hover:text-flame-400">Client login</a></li>

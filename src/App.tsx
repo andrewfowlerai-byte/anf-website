@@ -18,6 +18,7 @@ import { Privacy } from './pages/Privacy'
 import { Terms } from './pages/Terms'
 import { Reviews } from './pages/Reviews'
 import { Handouts } from './pages/Handouts'
+import { FreeClass } from './pages/FreeClass'
 import ClassMaterial from './pages/ClassMaterial'
 
 // Heavy WebGL bundle, code-split so it only loads on /experience.
@@ -63,6 +64,9 @@ function App() {
           {/* Guided client review form (Andrew shares the link after a project). */}
           <Route path="/reviews" element={<Reviews />} />
           <Route path="/handouts" element={<Handouts />} />
+          {/* Public free-class landing + signup. The front door for the class funnel. */}
+          <Route path="/free-class" element={<FreeClass />} />
+          <Route path="/class-signup" element={<Navigate to="/free-class" replace />} />
           <Route path="/review" element={<Navigate to="/reviews" replace />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
