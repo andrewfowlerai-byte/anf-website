@@ -150,7 +150,7 @@ export function LeadChat() {
               </button>
             </div>
 
-            <div ref={scroller} className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
+            <div ref={scroller} role="log" aria-live="polite" className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
               {msgs.map((m, i) => (
                 <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-3.5 py-2 text-[14px] leading-relaxed ${m.role === 'user' ? 'bg-flame-500 text-white' : 'bg-white/[0.06] text-silver-300'}`}>
@@ -177,6 +177,7 @@ export function LeadChat() {
                   onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); void send() } }}
                   rows={1}
                   placeholder="Type your message..."
+                  aria-label="Type your message"
                   className="flex-1 resize-none rounded-xl border border-white/10 bg-midnight-950/60 px-3.5 py-2.5 text-[14px] text-silver-100 placeholder-silver-500 focus:border-flame-500/60 focus:outline-none"
                 />
                 <button
@@ -188,7 +189,7 @@ export function LeadChat() {
                   {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                 </button>
               </div>
-              <p className="mt-1.5 text-center text-[10px] text-silver-700">Powered by ANF Consulting</p>
+              <p className="mt-1.5 text-center text-[10px] text-silver-500">Powered by ANF Consulting</p>
             </div>
           </div>
         </div>

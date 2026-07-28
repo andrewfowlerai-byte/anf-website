@@ -273,7 +273,7 @@ export function Reviews() {
             </span>
           </label>
 
-          {err && <p className="text-sm text-flame-400">{err}</p>}
+          {err && <p role="alert" className="text-sm text-flame-400">{err}</p>}
 
           <button
             type="submit"

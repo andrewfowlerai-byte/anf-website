@@ -14,7 +14,7 @@ interface Props {
   label?: string
 }
 
-export function BookCallButton({ size = 'md', className = '', label = 'Book a Discovery Call' }: Props) {
+export function BookCallButton({ size = 'md', className = '', label = 'Book a discovery call' }: Props) {
   return (
     <Link
       to="/book"

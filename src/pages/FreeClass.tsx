@@ -144,6 +144,7 @@ export function FreeClass() {
                     key={f.value}
                     type="button"
                     onClick={() => setFormat(f.value)}
+                    aria-pressed={format === f.value}
                     className={`rounded-xl border px-2 py-2.5 text-center transition-colors ${
                       format === f.value
                         ? 'border-flame-500 bg-flame-500/10 text-silver-100'
@@ -168,7 +169,7 @@ export function FreeClass() {
               />
             </label>
 
-            {err && <p className="text-sm text-flame-400">{err}</p>}
+            {err && <p role="alert" className="text-sm text-flame-400">{err}</p>}
             <button
               type="submit"
               disabled={status === 'sending'}

@@ -212,7 +212,7 @@ export function Start() {
             >
               {checking ? 'Checking...' : 'Apply'}
             </button>
-            {gateError && <p className="w-full text-sm text-flame-400">{gateError}</p>}
+            {gateError && <p role="alert" className="w-full text-sm text-flame-400">{gateError}</p>}
           </div>
         ) : (
           <button onClick={() => setShowCode(true)} className="mt-4 text-sm text-flame-400 hover:text-flame-300">
@@ -240,6 +240,7 @@ export function Start() {
                 <button
                   key={t.key}
                   onClick={() => toggleIn(setPrograms, t.key)}
+                  aria-pressed={on}
                   className={`px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors ${on ? 'border-flame-500/60 bg-flame-500/10 text-silver-100' : 'border-midnight-700/40 bg-midnight-900/30 text-silver-300 hover:border-midnight-700/70'}`}
                 >
                   {t.label}
@@ -395,7 +396,7 @@ export function Start() {
             {submitting ? 'Sending...' : 'Submit'}
           </button>
         </div>
-        {submitError && <p className="px-4 md:px-5 pb-2 text-[11px] text-flame-400">{submitError}</p>}
+        {submitError && <p role="alert" className="px-4 md:px-5 pb-2 text-[11px] text-flame-400">{submitError}</p>}
         {!canSubmit && !submitting && <p className="px-4 md:px-5 pb-2 text-[11px] text-silver-600">Add your name and email to submit.</p>}
       </div>
     </div>

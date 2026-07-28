@@ -217,7 +217,7 @@ export function Audit() {
             className="w-full rounded-xl border border-midnight-700/60 bg-midnight-900/60 px-4 py-2.5 text-silver-100 placeholder-silver-600 focus:border-flame-500 focus:outline-none"
           />
         </label>
-        {err && <p className="text-sm text-flame-400">{err}</p>}
+        {err && <p role="alert" className="text-sm text-flame-400">{err}</p>}
         <button
           type="submit"
           disabled={status === 'sending'}

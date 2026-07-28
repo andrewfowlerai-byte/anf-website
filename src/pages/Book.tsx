@@ -119,7 +119,7 @@ function ContactForm() {
       <Field label="What are you looking for?" name="message" textarea />
 
       {state === 'error' && (
-        <p className="text-sm text-flame-400">
+        <p role="alert" className="text-sm text-flame-400">
           Couldn&rsquo;t send your message: {errorMsg}. Try emailing{' '}
           <a href="mailto:admin@anfconsult.com" className="underline">admin@anfconsult.com</a> directly.
         </p>
