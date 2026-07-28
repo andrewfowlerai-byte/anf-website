@@ -21,6 +21,13 @@
     background: rgba(242, 107, 29, 0.4);
     color: #F5F7FA;
   }
+  /* Visible keyboard focus ring. Many controls use focus:outline-none for mouse
+     users; this restores a clear indicator for keyboard navigation. */
+  :focus-visible {
+    outline: 2px solid #F26B1D;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 }
 
 @layer utilities {
@@ -69,4 +76,5 @@
   html { scroll-behavior: auto; }
   .reveal { opacity: 1; transform: none; transition: none; }
   .anf-drift, .anf-float, .anf-pulse, .anf-pop { animation: none; }
+  .animate-ping, .animate-bounce, .animate-spin { animation: none; }
 }

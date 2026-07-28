@@ -2,23 +2,28 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Layout } from './components/Layout'
 import { Home } from './pages/Home'
-import { Services } from './pages/Services'
-import { About } from './pages/About'
-import { Book } from './pages/Book'
-import { Events } from './pages/Events'
-import { Work } from './pages/Work'
-import { Demos } from './pages/Demos'
-import { Audit } from './pages/Audit'
-import { Refer } from './pages/Refer'
-import { Invest } from './pages/Invest'
-import { Start } from './pages/Start'
 import { Signature } from './pages/Signature'
-import { Privacy } from './pages/Privacy'
-import { Terms } from './pages/Terms'
-import { Reviews } from './pages/Reviews'
-import { Handouts } from './pages/Handouts'
-import { FreeClass } from './pages/FreeClass'
 import ClassMaterial from './pages/ClassMaterial'
+import { NotFound } from './pages/NotFound'
+
+// Route-level code splitting: Home and the shell load eagerly; every other page
+// (and the Supabase client + Cal.com embed some of them pull in) loads on demand,
+// which keeps the initial JS bundle small. Layout already wraps <Outlet/> in Suspense.
+const Services = lazy(() => import('./pages/Services').then((m) => ({ default: m.Services })))
+const About = lazy(() => import('./pages/About').then((m) => ({ default: m.About })))
+const Book = lazy(() => import('./pages/Book').then((m) => ({ default: m.Book })))
+const Events = lazy(() => import('./pages/Events').then((m) => ({ default: m.Events })))
+const Work = lazy(() => import('./pages/Work').then((m) => ({ default: m.Work })))
+const Demos = lazy(() => import('./pages/Demos').then((m) => ({ default: m.Demos })))
+const Audit = lazy(() => import('./pages/Audit').then((m) => ({ default: m.Audit })))
+const Refer = lazy(() => import('./pages/Refer').then((m) => ({ default: m.Refer })))
+const Invest = lazy(() => import('./pages/Invest').then((m) => ({ default: m.Invest })))
+const Start = lazy(() => import('./pages/Start').then((m) => ({ default: m.Start })))
+const Privacy = lazy(() => import('./pages/Privacy').then((m) => ({ default: m.Privacy })))
+const Terms = lazy(() => import('./pages/Terms').then((m) => ({ default: m.Terms })))
+const Reviews = lazy(() => import('./pages/Reviews').then((m) => ({ default: m.Reviews })))
+const Handouts = lazy(() => import('./pages/Handouts').then((m) => ({ default: m.Handouts })))
+const FreeClass = lazy(() => import('./pages/FreeClass').then((m) => ({ default: m.FreeClass })))
 
 // Heavy WebGL bundle, code-split so it only loads on /experience.
 const Experience = lazy(() => import('./experience/Experience'))
@@ -75,6 +80,8 @@ function App() {
           {/* Short shareable links that open a specific event with its RSVP ready. */}
           <Route path="/lunch" element={<Events focusCode="CBWESTLAKE" />} />
           <Route path="/rsvp" element={<Events focusCode="CBWESTLAKE" />} />
+          {/* Real 404, inside the marketing layout with noindex SEO. */}
+          <Route path="*" element={<NotFound />} />
         </Route>
         {/* Standalone route (no marketing layout) — select-all copy on the
             signature shouldn't pull in the site header / footer. */}
@@ -90,8 +97,6 @@ function App() {
             </Suspense>
           }
         />
-        {/* Anything else lands on the home page instead of a blank screen. */}
-        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )
