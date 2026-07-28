@@ -35,7 +35,7 @@ export function About() {
         <div className="grid md:grid-cols-[auto_1fr] gap-10 md:gap-12 items-start max-w-5xl mx-auto">
           <div className="md:w-72 mx-auto md:mx-0">
             <img
-              src="/founder.png"
+              src="/founder.webp"
               alt="Andrew Fowler, founder of ANF Consulting"
               width={1536}
               height={1024}
@@ -141,7 +141,7 @@ export function About() {
             </div>
             <div className="bg-midnight-950/40 p-6 md:p-8 flex items-center justify-center border-t md:border-t-0 md:border-l border-midnight-700/30">
               <img
-                src="/everlee-home.png"
+                src="/everlee-home.webp"
                 alt="Everlee app showing daily content, streak tracking, and posting checklist"
                 width={1320}
                 height={2871}

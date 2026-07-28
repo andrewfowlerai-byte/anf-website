@@ -21,7 +21,7 @@ export function Header() {
 
       <nav className="max-w-6xl mx-auto px-5 sm:px-6 h-16 flex items-center justify-between gap-4">
         <Link to="/" aria-label="ANF Consulting home" className="flex items-center shrink-0">
-          <img src="/anf-wordmark.png" alt="ANF Consulting" className="h-8 md:h-9 w-auto" />
+          <img src="/anf-wordmark.webp" alt="ANF Consulting" className="h-8 md:h-9 w-auto" />
         </Link>
 
         {/* Desktop nav with an animated underline. */}
