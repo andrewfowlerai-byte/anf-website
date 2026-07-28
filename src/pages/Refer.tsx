@@ -19,11 +19,11 @@ function Field({
   placeholder?: string
 }) {
   return (
-    <div>
-      <label className="block text-sm text-silver-300 mb-1.5">
+    <label className="block">
+      <span className="block text-sm text-silver-300 mb-1.5">
         {label}
         {required && <span className="text-flame-500"> *</span>}
-      </label>
+      </span>
       <input
         type={type}
         value={value}
@@ -31,7 +31,7 @@ function Field({
         placeholder={placeholder}
         className="w-full rounded-xl border border-midnight-700/60 bg-midnight-900/60 px-4 py-2.5 text-silver-100 placeholder-silver-600 focus:border-flame-500 focus:outline-none"
       />
-    </div>
+    </label>
   )
 }
 
@@ -125,8 +125,8 @@ export function Refer() {
             <Field label="Their contact person" value={contactName} onChange={setContactName} placeholder="Owner or manager" />
             <Field label="Their email or phone" value={contactInfo} onChange={setContactInfo} placeholder="So Andrew can reach them" />
           </div>
-          <div>
-            <label className="block text-sm text-silver-300 mb-1.5">Why did you think of them?</label>
+          <label className="block">
+            <span className="block text-sm text-silver-300 mb-1.5">Why did you think of them?</span>
             <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
@@ -134,7 +134,7 @@ export function Refer() {
               placeholder="Their website is ten years old, they track jobs on paper, they keep missing calls..."
               className="w-full rounded-xl border border-midnight-700/60 bg-midnight-900/60 px-4 py-2.5 text-silver-100 placeholder-silver-600 focus:border-flame-500 focus:outline-none"
             />
-          </div>
+          </label>
           {err && <p className="text-sm text-flame-400">{err}</p>}
           <button
             type="submit"

@@ -17,11 +17,11 @@ function Field({
   type?: string; required?: boolean; placeholder?: string
 }) {
   return (
-    <div>
-      <label className="block text-sm text-silver-300 mb-1.5">
+    <label className="block">
+      <span className="block text-sm text-silver-300 mb-1.5">
         {label}
         {required && <span className="text-flame-500"> *</span>}
-      </label>
+      </span>
       <input
         type={type}
         value={value}
@@ -29,7 +29,7 @@ function Field({
         placeholder={placeholder}
         className="w-full rounded-xl border border-midnight-700/60 bg-midnight-900/60 px-4 py-2.5 text-silver-100 placeholder-silver-600 focus:border-flame-500 focus:outline-none"
       />
-    </div>
+    </label>
   )
 }
 
@@ -157,8 +157,8 @@ export function FreeClass() {
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm text-silver-300 mb-1.5">Anything you are hoping to get out of it?</label>
+            <label className="block">
+              <span className="block text-sm text-silver-300 mb-1.5">Anything you are hoping to get out of it?</span>
               <textarea
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
@@ -166,7 +166,7 @@ export function FreeClass() {
                 placeholder="Optional. Helps Andrew tailor the session."
                 className="w-full rounded-xl border border-midnight-700/60 bg-midnight-900/60 px-4 py-2.5 text-silver-100 placeholder-silver-600 focus:border-flame-500 focus:outline-none"
               />
-            </div>
+            </label>
 
             {err && <p className="text-sm text-flame-400">{err}</p>}
             <button

@@ -4,8 +4,6 @@ import { submitLead } from '../lib/leads'
 import { PageHero } from '../components/PageHero'
 
 // ─── Cal.com setup ────────────────────────────────────────────────────────────
-// To enable inline booking, set CAL_USERNAME to your Cal.com username.
-// (Sign up free at https://cal.com, your booking URL will be cal.com/<username>.)
 // CAL_EVENT_SLUG is the event-type URL slug for the discovery call.
 const CAL_USERNAME: string = 'andrew-fowler'
 const CAL_EVENT_SLUG = 'discovery-call'
@@ -39,16 +37,12 @@ export function Book() {
         </div>
       </section>
 
-      {CAL_USERNAME && (
-        <section className="max-w-4xl mx-auto px-6 py-8">
-          <CalBooking />
-        </section>
-      )}
+      <section className="max-w-4xl mx-auto px-6 py-8">
+        <CalBooking />
+      </section>
 
       <section className="max-w-2xl mx-auto px-6 pb-24">
-        {CAL_USERNAME && (
-          <p className="text-center text-sm text-silver-500 mb-6">or send a note instead</p>
-        )}
+        <p className="text-center text-sm text-silver-500 mb-6">or send a note instead</p>
         <ContactForm />
       </section>
     </>

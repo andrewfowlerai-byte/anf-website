@@ -426,7 +426,7 @@ export function RealEstateDemo() {
             {listing && (
               <>
                 <div className="h-44 bg-slate-200" style={{ background: `linear-gradient(135deg, ${NAVY}, #2b4a7a)` }}>
-                  <img src={listing.photo} alt="" className="w-full h-full object-cover" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
+                  <img src={listing.photo} alt="" className="w-full h-full object-cover" loading="lazy" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
                 </div>
                 <div className="p-6">
                   <div className="flex items-start justify-between gap-3">

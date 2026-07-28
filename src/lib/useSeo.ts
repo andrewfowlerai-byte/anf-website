@@ -17,7 +17,7 @@ const ORIGIN = 'https://anfconsult.com'
 
 /** Falls back to these whenever a page unmounts, so no route inherits another route's title. */
 const DEFAULTS = {
-  title: 'ANF Consulting · Clarity · Integration · Automation',
+  title: 'ANF Consulting · Clarity. Integration. Automation.',
   description:
     'ANF Consulting is a growth partner for professionals and small businesses ready to invest in smart marketing, modern infrastructure, and practical AI. One partner, one roadmap, one team.',
 }

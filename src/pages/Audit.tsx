@@ -21,11 +21,11 @@ function Field({
   placeholder?: string
 }) {
   return (
-    <div>
-      <label className="block text-sm text-silver-300 mb-1.5">
+    <label className="block">
+      <span className="block text-sm text-silver-300 mb-1.5">
         {label}
         {required && <span className="text-flame-500"> *</span>}
-      </label>
+      </span>
       <input
         type={type}
         value={value}
@@ -33,7 +33,7 @@ function Field({
         placeholder={placeholder}
         className="w-full rounded-xl border border-midnight-700/60 bg-midnight-900/60 px-4 py-2.5 text-silver-100 placeholder-silver-600 focus:border-flame-500 focus:outline-none"
       />
-    </div>
+    </label>
   )
 }
 
@@ -207,8 +207,8 @@ export function Audit() {
         <Field label="Business name" value={business} onChange={setBusiness} />
         <Field label="Email" value={email} onChange={setEmail} type="email" required />
         <Field label="Website (if you have one)" value={website} onChange={setWebsite} placeholder="yourbusiness.com" />
-        <div>
-          <label className="block text-sm text-silver-300 mb-1.5">What are you hoping to improve?</label>
+        <label className="block">
+          <span className="block text-sm text-silver-300 mb-1.5">What are you hoping to improve?</span>
           <textarea
             value={goal}
             onChange={(e) => setGoal(e.target.value)}
@@ -216,7 +216,7 @@ export function Audit() {
             placeholder="More leads, a better site, a CRM to stay organized..."
             className="w-full rounded-xl border border-midnight-700/60 bg-midnight-900/60 px-4 py-2.5 text-silver-100 placeholder-silver-600 focus:border-flame-500 focus:outline-none"
           />
-        </div>
+        </label>
         {err && <p className="text-sm text-flame-400">{err}</p>}
         <button
           type="submit"

@@ -37,6 +37,8 @@ export function About() {
             <img
               src="/founder.png"
               alt="Andrew Fowler, founder of ANF Consulting"
+              width={1536}
+              height={1024}
               loading="lazy"
               decoding="async"
               className="w-full rounded-2xl border border-midnight-700/40 shadow-lg"
@@ -141,6 +143,8 @@ export function About() {
               <img
                 src="/everlee-home.png"
                 alt="Everlee app showing daily content, streak tracking, and posting checklist"
+                width={1320}
+                height={2871}
                 loading="lazy"
                 decoding="async"
                 className="w-full max-w-[280px] md:max-w-xs"

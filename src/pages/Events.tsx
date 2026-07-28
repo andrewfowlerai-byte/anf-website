@@ -222,7 +222,7 @@ function EventCard({ event, highlight = false, code, autoOpen = false }: { event
         <div className="aspect-[16/9] w-full overflow-hidden bg-midnight-950">
           <img
             src={event.cover_image_url}
-            alt=""
+            alt={event.title || 'Event'}
             className="w-full h-full object-cover"
             loading="lazy"
           />

@@ -15,6 +15,11 @@ export function Layout() {
   const seo = seoForPath(pathname) ?? PAGE_SEO['/']
   useSeo({ ...seo, path: pathname })
 
+  // The six industry demo pages render their own in-demo assistant (DemoAssistant)
+  // in the bottom-right corner. Hide the global LeadChat there so the two floating
+  // buttons don't stack on top of each other.
+  const isDemoDetail = /^\/demos\/.+/.test(pathname)
+
   return (
     <div className="min-h-screen flex flex-col">
       <ScrollToTop />
@@ -28,7 +33,7 @@ export function Layout() {
         </Suspense>
       </main>
       <Footer />
-      <LeadChat />
+      {!isDemoDetail && <LeadChat />}
     </div>
   )
 }

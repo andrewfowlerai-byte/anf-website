@@ -155,26 +155,26 @@ export function Reviews() {
           />
 
           <div className="grid sm:grid-cols-2 gap-5">
-            <div>
-              <label className={labelCls}>
+            <label className="block">
+              <span className={labelCls}>
                 Your name<span className="text-flame-500"> *</span>
-              </label>
+              </span>
               <input className={fieldCls} value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" />
-            </div>
-            <div>
-              <label className={labelCls}>Business (optional)</label>
+            </label>
+            <label className="block">
+              <span className={labelCls}>Business (optional)</span>
               <input
                 className={fieldCls}
                 value={business}
                 onChange={(e) => setBusiness(e.target.value)}
                 autoComplete="organization"
               />
-            </div>
+            </label>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-5">
-            <div>
-              <label className={labelCls}>Email (optional)</label>
+            <label className="block">
+              <span className={labelCls}>Email (optional)</span>
               <input
                 type="email"
                 className={fieldCls}
@@ -182,9 +182,9 @@ export function Reviews() {
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
               />
-            </div>
-            <div>
-              <label className={labelCls}>What did we help with?</label>
+            </label>
+            <label className="block">
+              <span className={labelCls}>What did we help with?</span>
               <select className={`${fieldCls} appearance-none`} value={serviceSel} onChange={(e) => setServiceSel(e.target.value)}>
                 <option value="" className="bg-midnight-900">
                   Choose one
@@ -195,12 +195,13 @@ export function Reviews() {
                   </option>
                 ))}
               </select>
-            </div>
+            </label>
           </div>
           {serviceSel === 'Other' && (
             <input
               className={fieldCls}
               placeholder="Tell us what we worked on"
+              aria-label="What we worked on"
               value={serviceOther}
               onChange={(e) => setServiceOther(e.target.value)}
             />
@@ -239,26 +240,26 @@ export function Reviews() {
 
           <div className="h-px bg-white/[0.06]" />
 
-          <div>
-            <label className={labelCls}>Where were you before working with us?</label>
-            <p className={helpCls}>The challenge, or what wasn't working yet.</p>
+          <label className="block">
+            <span className={labelCls}>Where were you before working with us?</span>
+            <span className={`${helpCls} block`}>The challenge, or what wasn't working yet.</span>
             <textarea className={fieldCls} rows={2} value={before} onChange={(e) => setBefore(e.target.value)} />
-          </div>
-          <div>
-            <label className={labelCls}>What did we do, and what changed?</label>
-            <p className={helpCls}>The work we delivered and the results you saw.</p>
+          </label>
+          <label className="block">
+            <span className={labelCls}>What did we do, and what changed?</span>
+            <span className={`${helpCls} block`}>The work we delivered and the results you saw.</span>
             <textarea className={fieldCls} rows={3} value={outcome} onChange={(e) => setOutcome(e.target.value)} />
-          </div>
-          <div>
-            <label className={labelCls}>What stood out about the experience?</label>
-            <p className={helpCls}>Communication, clarity, responsiveness, anything.</p>
+          </label>
+          <label className="block">
+            <span className={labelCls}>What stood out about the experience?</span>
+            <span className={`${helpCls} block`}>Communication, clarity, responsiveness, anything.</span>
             <textarea className={fieldCls} rows={2} value={highlight} onChange={(e) => setHighlight(e.target.value)} />
-          </div>
-          <div>
-            <label className={labelCls}>Who would you recommend us to?</label>
-            <p className={helpCls}>The kind of business or person who would benefit.</p>
+          </label>
+          <label className="block">
+            <span className={labelCls}>Who would you recommend us to?</span>
+            <span className={`${helpCls} block`}>The kind of business or person who would benefit.</span>
             <textarea className={fieldCls} rows={2} value={recommend} onChange={(e) => setRecommend(e.target.value)} />
-          </div>
+          </label>
 
           <label className="flex items-start gap-2.5 cursor-pointer pt-1">
             <input

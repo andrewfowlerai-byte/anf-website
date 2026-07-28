@@ -8,7 +8,6 @@ import { Book } from './pages/Book'
 import { Events } from './pages/Events'
 import { Work } from './pages/Work'
 import { Demos } from './pages/Demos'
-import { Demo } from './pages/Demo'
 import { Audit } from './pages/Audit'
 import { Refer } from './pages/Refer'
 import { Invest } from './pages/Invest'
@@ -50,7 +49,8 @@ function App() {
           <Route path="/demos/fitness" element={<StudioFlowDemo />} />
           <Route path="/demos/creators" element={<CreatorDeskDemo />} />
           <Route path="/demos/home-services" element={<ServiceFlowDemo />} />
-          <Route path="/demos/:slug" element={<Demo />} />
+          {/* Unknown demo slugs fall back to the demo index rather than the home page. */}
+          <Route path="/demos/:slug" element={<Navigate to="/demos" replace />} />
           {/* Retired: the realtors landing overlapped Work and Demos. Redirect kept so old links still land somewhere useful. */}
           <Route path="/realtors" element={<Navigate to="/demos" replace />} />
           <Route path="/audit" element={<Audit />} />

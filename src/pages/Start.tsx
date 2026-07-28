@@ -57,6 +57,7 @@ export function Start() {
   const [uploading, setUploading] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
+  const [submitError, setSubmitError] = useState('')
   const [folder] = useState(() => (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : String(Date.now())))
 
   useEffect(() => { void fetchFeatures().then(setFeatures) }, [])
@@ -130,6 +131,7 @@ export function Start() {
     // Honeypot tripped: pretend it worked, drop it silently.
     if (hp.trim()) { setDone(true); window.scrollTo({ top: 0, behavior: 'smooth' }); return }
     setSubmitting(true)
+    setSubmitError('')
     try {
       const id = await submitIntake(code, {
         ...form,
@@ -151,7 +153,7 @@ export function Start() {
       setDone(true)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch {
-      alert('Something went wrong submitting. Please try again, or email Andrew.')
+      setSubmitError('Something went wrong submitting. Please try again, or email admin@anfconsult.com.')
     } finally {
       setSubmitting(false)
     }
@@ -210,7 +212,7 @@ export function Start() {
             >
               {checking ? 'Checking...' : 'Apply'}
             </button>
-            {gateError && <p className="w-full text-sm text-red-400">{gateError}</p>}
+            {gateError && <p className="w-full text-sm text-flame-400">{gateError}</p>}
           </div>
         ) : (
           <button onClick={() => setShowCode(true)} className="mt-4 text-sm text-flame-400 hover:text-flame-300">
@@ -352,7 +354,7 @@ export function Start() {
               <div key={i} className="grid sm:grid-cols-[1fr_1.5fr_auto] gap-2 items-start">
                 <input value={c.title} onChange={(e) => setCustom(custom.map((x, idx) => idx === i ? { ...x, title: e.target.value } : x))} className={inputClass} placeholder="What is it?" />
                 <input value={c.detail} onChange={(e) => setCustom(custom.map((x, idx) => idx === i ? { ...x, detail: e.target.value } : x))} className={inputClass} placeholder="A bit more detail" />
-                <button onClick={() => setCustom(custom.filter((_, idx) => idx !== i))} className="px-3 py-2.5 text-silver-500 hover:text-red-400 text-sm">Remove</button>
+                <button onClick={() => setCustom(custom.filter((_, idx) => idx !== i))} className="px-3 py-2.5 text-silver-500 hover:text-flame-400 text-sm">Remove</button>
               </div>
             ))}
             <button onClick={() => setCustom([...custom, { title: '', detail: '' }])} className="text-sm text-flame-400 hover:text-flame-300">+ Add a custom request</button>
@@ -370,7 +372,7 @@ export function Start() {
               {files.map((f, i) => (
                 <span key={i} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-midnight-900/60 border border-midnight-700/50 text-xs text-silver-300">
                   {f.name}
-                  <button onClick={() => setFiles(files.filter((_, idx) => idx !== i))} className="text-silver-500 hover:text-red-400">x</button>
+                  <button onClick={() => setFiles(files.filter((_, idx) => idx !== i))} className="text-silver-500 hover:text-flame-400">x</button>
                 </span>
               ))}
             </div>
@@ -393,6 +395,7 @@ export function Start() {
             {submitting ? 'Sending...' : 'Submit'}
           </button>
         </div>
+        {submitError && <p className="px-4 md:px-5 pb-2 text-[11px] text-flame-400">{submitError}</p>}
         {!canSubmit && !submitting && <p className="px-4 md:px-5 pb-2 text-[11px] text-silver-600">Add your name and email to submit.</p>}
       </div>
     </div>
