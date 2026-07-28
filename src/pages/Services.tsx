@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { BookCallButton } from '../components/BookCallButton'
+import { JsonLd } from '../components/JsonLd'
 import { pricingSection } from '../lib/siteContent'
 
 // Fallback copy: shown immediately and used whenever a section has not been
@@ -516,6 +517,17 @@ export function Services() {
           <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">FAQ</p>
           <h2 className="text-3xl md:text-4xl font-display text-silver-100">Common questions</h2>
         </div>
+        <JsonLd
+          data={{
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: faqs.map((item) => ({
+              '@type': 'Question',
+              name: item.q,
+              acceptedAnswer: { '@type': 'Answer', text: item.a },
+            })),
+          }}
+        />
         <div className="border-t border-midnight-700/40">
           {faqs.map((item) => (
             <details key={item.q} className="group border-b border-midnight-700/40 py-5">

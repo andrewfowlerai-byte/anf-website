@@ -208,16 +208,18 @@ export function Reviews() {
           )}
 
           <div>
-            <label className={labelCls}>
+            <span id="rating-label" className={labelCls}>
               How was it overall?<span className="text-flame-500"> *</span>
-            </label>
-            <div className="flex items-center gap-1.5 mt-1" onMouseLeave={() => setHover(0)}>
+            </span>
+            <div role="radiogroup" aria-labelledby="rating-label" className="flex items-center gap-1.5 mt-1" onMouseLeave={() => setHover(0)}>
               {[1, 2, 3, 4, 5].map((n) => {
                 const active = (hover || rating) >= n
                 return (
                   <button
                     key={n}
                     type="button"
+                    role="radio"
+                    aria-checked={rating === n}
                     onClick={() => setRating(n)}
                     onMouseEnter={() => setHover(n)}
                     aria-label={`${n} star${n === 1 ? '' : 's'}`}

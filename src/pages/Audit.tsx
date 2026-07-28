@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { runWebsiteAudit, type AuditResults } from '../lib/audit'
-import { submitLead } from '../lib/leads'
+import { submitRequest } from '../lib/leads'
 import { useLocalDraft, clearLocalDrafts } from '../hooks/useLocalDraft'
 import { PageHero } from '../components/PageHero'
 
@@ -101,7 +101,7 @@ export function Audit() {
         if (r.live) setResults(r.results)
       } else {
         // No website to audit: still a real lead, Andrew reviews it by hand.
-        await submitLead({
+        await submitRequest({
           contact_name: name.trim(),
           business_name: business.trim() || undefined,
           email: email.trim(),

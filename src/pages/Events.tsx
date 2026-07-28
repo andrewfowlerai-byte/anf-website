@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Calendar, MapPin, Lock, Ticket, Loader2, BookOpen, Check } from 'lucide-react'
 import { listUpcomingPublicEvents, lookupPrivateEvent, createRsvp, type AnfEvent } from '../lib/events'
 import { PageHero } from '../components/PageHero'
+import { JsonLd } from '../components/JsonLd'
 
 /** focusCode: a short-link matcher (an event's private_code) used by routes like
  *  /lunch to open that specific public event with its RSVP form ready. */
@@ -218,6 +219,27 @@ function EventCard({ event, highlight = false, code, autoOpen = false }: { event
           : 'border-white/[0.08] hover:border-flame-500/40'
       }`}
     >
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'Event',
+          name: event.title,
+          startDate: event.starts_at,
+          ...(event.ends_at ? { endDate: event.ends_at } : {}),
+          eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+          eventStatus: 'https://schema.org/EventScheduled',
+          ...(event.description ? { description: event.description } : {}),
+          ...(event.location ? { location: { '@type': 'Place', name: event.location } } : {}),
+          organizer: { '@type': 'Organization', name: 'ANF Consulting', url: 'https://anfconsult.com' },
+          offers: {
+            '@type': 'Offer',
+            price: (event.price_cents / 100).toFixed(2),
+            priceCurrency: 'USD',
+            availability: 'https://schema.org/InStock',
+            url: 'https://anfconsult.com/events',
+          },
+        }}
+      />
       {event.cover_image_url && (
         <div className="aspect-[16/9] w-full overflow-hidden bg-midnight-950">
           <img

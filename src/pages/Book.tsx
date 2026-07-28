@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import Cal, { getCalApi } from '@calcom/embed-react'
-import { submitLead } from '../lib/leads'
+import { submitRequest } from '../lib/leads'
 import { PageHero } from '../components/PageHero'
 
 // ─── Cal.com setup ────────────────────────────────────────────────────────────
@@ -83,7 +83,7 @@ function ContactForm() {
     const data = new FormData(form)
     setState('submitting')
     try {
-      await submitLead({
+      await submitRequest({
         contact_name: String(data.get('name') ?? '').trim(),
         business_name: String(data.get('business') ?? '').trim() || undefined,
         email: String(data.get('email') ?? '').trim() || undefined,
@@ -163,7 +163,7 @@ function Field({ label, name, type = 'text', required = false, textarea = false 
       {textarea ? (
         <textarea name={name} required={required} rows={4} className={className} />
       ) : (
-        <input name={name} type={type} required={required} className={className} />
+        <input name={name} type={type} required={required} autoComplete={name === 'name' ? 'name' : name === 'business' ? 'organization' : name === 'email' ? 'email' : name === 'phone' ? 'tel' : undefined} className={className} />
       )}
     </label>
   )
