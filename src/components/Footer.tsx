@@ -52,7 +52,7 @@ export function Footer() {
             <li><Link to="/demos" className="text-silver-300 hover:text-flame-400">Live demos</Link></li>
             <li><Link to="/reviews" className="text-silver-300 hover:text-flame-400">Reviews</Link></li>
             <li><Link to="/about" className="text-silver-300 hover:text-flame-400">About</Link></li>
-            <li><Link to="/book" className="text-silver-300 hover:text-flame-400">Book a discovery call</Link></li>
+            <li><Link to="/book" className="text-silver-300 hover:text-flame-400">Send a request</Link></li>
             <li><Link to="/audit" className="text-silver-300 hover:text-flame-400">Free website audit</Link></li>
             <li><Link to="/refer" className="text-silver-300 hover:text-flame-400">Refer a business</Link></li>
             {/* Class attendees are told to find these on the site, so they need a

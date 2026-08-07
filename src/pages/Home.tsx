@@ -74,7 +74,7 @@ export function Home() {
             Custom programs built around your life and your business, not templates you bend to fit. One partner for the marketing that grows you, the systems that run you, and the AI woven into how you actually work.
           </p>
           <div className="mt-9 flex flex-col sm:flex-row gap-3 justify-center items-center">
-            <BookCallButton size="lg" label="Book a discovery call" className="!rounded-full" />
+            <BookCallButton size="lg" className="!rounded-full" />
             <Link
               to="/start"
               className="inline-flex items-center gap-2 px-7 py-4 rounded-full border border-white/[0.12] text-silver-100 hover:border-flame-500/50 hover:bg-white/[0.03] transition-colors font-medium"
@@ -239,10 +239,10 @@ export function Home() {
           />
           <h2 className="text-3xl md:text-5xl font-display text-silver-100 mb-4">Ready to start?</h2>
           <p className="text-lg text-silver-400 mb-8 max-w-xl mx-auto">
-            A 30-minute discovery call. No pitch, no pressure. Just a conversation about what you are trying to build.
+            Tell us what you are trying to build. Andrew reads every request and gets back to you within one business day. No pitch, no pressure.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
-            <BookCallButton size="lg" label="Book a discovery call" className="!rounded-full" />
+            <BookCallButton size="lg" className="!rounded-full" />
             <Link
               to="/start"
               className="inline-flex items-center gap-2 px-7 py-4 rounded-full border border-white/[0.12] text-silver-100 hover:border-flame-500/50 hover:bg-white/[0.03] transition-colors font-medium"

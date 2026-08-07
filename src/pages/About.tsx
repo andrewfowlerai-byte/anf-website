@@ -157,7 +157,7 @@ export function About() {
       <section className="max-w-4xl mx-auto px-6 py-16 md:py-24 text-center">
         <h2 className="text-3xl md:text-5xl font-display text-silver-100 mb-4">Work with us</h2>
         <p className="text-lg text-silver-400 mb-8 max-w-2xl mx-auto">
-          A 30-minute discovery call. No pitch, no pressure. Just a conversation about what you're trying to build.
+          Tell us what you're trying to build. Andrew reads every request and gets back to you within one business day. No pitch, no pressure.
         </p>
         <BookCallButton size="lg" />
       </section>

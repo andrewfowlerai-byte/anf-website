@@ -64,7 +64,7 @@ export function Header() {
           >
             Start a project
           </Link>
-          <BookCallButton size="sm" label="Book a call" className="!rounded-full" />
+          <BookCallButton size="sm" label="Send a request" className="!rounded-full" />
 
           {/* Mobile menu toggle. */}
           <button
@@ -112,7 +112,7 @@ export function Header() {
               onClick={() => setOpen(false)}
               className="mt-2 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-flame-500 hover:bg-flame-600 text-white font-medium shadow-flame-glow transition-colors"
             >
-              Book a call <span aria-hidden>→</span>
+              Send a request <span aria-hidden>→</span>
             </Link>
           </div>
         </div>

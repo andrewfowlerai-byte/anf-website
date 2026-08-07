@@ -15,16 +15,16 @@ export function Book() {
   return (
     <>
       <PageHero
-        eyebrow="Discovery Call"
+        eyebrow="Start Here"
         title="Let's talk."
-        subtitle="A 30-minute call to understand your business, your goals, and how ANF can help. No pitch, no pressure."
+        subtitle="Tell us what you are trying to build or fix. Andrew reads every request and gets back to you within one business day. No pitch, no pressure."
       />
 
       <section className="max-w-3xl mx-auto px-6 pb-4">
         <p className="text-center text-xs tracking-[0.3em] uppercase text-flame-500 mb-6">What happens next</p>
         <div className="grid sm:grid-cols-3 gap-4">
           {[
-            { n: '1', t: 'Pick a time', b: 'Grab a slot below, or send a note and we will find one. You get a confirmation either way.' },
+            { n: '1', t: 'Send a request', b: 'A few lines about your business and what you need. Two minutes, tops. You hear back within one business day.' },
             { n: '2', t: 'We talk, 30 minutes', b: 'Your goals, what you have now, and where you are stuck. It is a conversation, not a pitch.' },
             { n: '3', t: 'You get a plan', b: 'A clear proposal with scope and price within two business days. If it fits, we start. If not, the plan is yours to keep.' },
           ].map((s) => (
@@ -37,13 +37,14 @@ export function Book() {
         </div>
       </section>
 
-      <section className="max-w-4xl mx-auto px-6 py-8">
-        <CalBooking />
+      {/* Request-first: the form leads, the scheduler is the secondary path. */}
+      <section className="max-w-2xl mx-auto px-6 py-8">
+        <ContactForm />
       </section>
 
-      <section className="max-w-2xl mx-auto px-6 pb-24">
-        <p className="text-center text-sm text-silver-500 mb-6">or send a note instead</p>
-        <ContactForm />
+      <section className="max-w-4xl mx-auto px-6 pb-24">
+        <p className="text-center text-sm text-silver-500 mb-6">Prefer to pick a time yourself? Grab a slot directly.</p>
+        <CalBooking />
       </section>
     </>
   )

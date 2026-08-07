@@ -137,7 +137,7 @@ export function Invest() {
       <section className="max-w-3xl mx-auto px-6 py-12 md:py-20 text-center">
         <h2 className="text-3xl md:text-4xl font-display text-silver-100 mb-4">Let's talk</h2>
         <p className="text-lg text-silver-400 mb-8">
-          Book a call and I will walk you through the platform, the numbers, and the plan.
+          Send a request and I will walk you through the platform, the numbers, and the plan.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <BookCallButton size="lg" />

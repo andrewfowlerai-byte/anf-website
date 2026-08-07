@@ -160,7 +160,7 @@ export function Audit() {
               to="/book"
               className="inline-flex items-center gap-2 rounded-full bg-flame-500 hover:bg-flame-600 text-white font-semibold px-7 py-3.5 transition-colors shadow-flame-glow"
             >
-              Talk it through on a call
+              Talk it through with Andrew
             </Link>
           </div>
         </section>
@@ -173,13 +173,13 @@ export function Audit() {
       <PageHero
         eyebrow="Request received"
         title="Your audit is on the way"
-        subtitle="We will review your website and lead flow and send a short, specific audit within two business days. Want to talk it through sooner? Grab a time below."
+        subtitle="We will review your website and lead flow and send a short, specific audit within two business days. Want to talk it through sooner? Send a request below."
       >
         <Link
           to="/book"
           className="inline-flex items-center gap-2 rounded-full bg-flame-500 hover:bg-flame-600 text-white font-semibold px-7 py-3.5 transition-colors shadow-flame-glow"
         >
-          Book a call
+          Send a request
         </Link>
       </PageHero>
     )

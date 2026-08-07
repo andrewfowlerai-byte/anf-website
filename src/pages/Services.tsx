@@ -547,14 +547,14 @@ export function Services() {
           ))}
         </div>
         <p className="mt-8 text-sm text-silver-500 text-center">
-          Still wondering? The discovery call is the fastest way to a real answer.
+          Still wondering? Send a request and you will have a real answer within a business day.
         </p>
       </section>
 
       <section className="max-w-4xl mx-auto px-6 py-16 md:py-24 text-center">
         <h2 className="text-3xl md:text-5xl font-display text-silver-100 mb-4">Ready to start?</h2>
         <p className="text-lg text-silver-400 mb-8 max-w-2xl mx-auto">
-          A 30-minute discovery call. No pitch, no pressure. We&rsquo;ll talk through what you&rsquo;re trying to do and whether ANF is the right fit.
+          It starts with a short request: what you&rsquo;re trying to do, in your own words. We read it, then set up a free 30-minute call. No pitch, no pressure.
         </p>
         <BookCallButton size="lg" />
         <p className="mt-10 text-xs text-silver-500">Pricing effective May 2026 · Subject to change.</p>
