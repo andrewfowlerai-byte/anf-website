@@ -25,6 +25,13 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     description:
       'Websites, CRMs, client portals, and automation, priced up front and built around your business instead of forced into someone else template. See what a build includes.',
   },
+  // Individual /answers/:slug pages set their own SEO from the content file,
+  // since title and description are per-slug. Only the index lives here.
+  '/answers': {
+    title: 'Answers',
+    description:
+      'Straight answers with real numbers: what field service software costs, CRM or website first, replacing Housecall Pro, unclaimed Google listings, and what AI actually does.',
+  },
   '/work': {
     title: 'Our Work',
     description:

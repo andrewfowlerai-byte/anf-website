@@ -49,6 +49,7 @@ export function Footer() {
             <li><Link to="/start" className="text-silver-300 hover:text-flame-400">Start a project</Link></li>
             <li><Link to="/services" className="text-silver-300 hover:text-flame-400">Services</Link></li>
             <li><Link to="/work" className="text-silver-300 hover:text-flame-400">Our work</Link></li>
+            <li><Link to="/answers" className="text-silver-300 hover:text-flame-400">Answers</Link></li>
             <li><Link to="/demos" className="text-silver-300 hover:text-flame-400">Live demos</Link></li>
             <li><Link to="/reviews" className="text-silver-300 hover:text-flame-400">Reviews</Link></li>
             <li><Link to="/about" className="text-silver-300 hover:text-flame-400">About</Link></li>

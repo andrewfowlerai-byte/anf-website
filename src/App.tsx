@@ -24,6 +24,8 @@ const Terms = lazy(() => import('./pages/Terms').then((m) => ({ default: m.Terms
 const Reviews = lazy(() => import('./pages/Reviews').then((m) => ({ default: m.Reviews })))
 const Handouts = lazy(() => import('./pages/Handouts').then((m) => ({ default: m.Handouts })))
 const FreeClass = lazy(() => import('./pages/FreeClass').then((m) => ({ default: m.FreeClass })))
+const Answers = lazy(() => import('./pages/Answers').then((m) => ({ default: m.Answers })))
+const AnswerDetail = lazy(() => import('./pages/AnswerDetail').then((m) => ({ default: m.AnswerDetail })))
 
 // Heavy WebGL bundle, code-split so it only loads on /experience.
 const Experience = lazy(() => import('./experience/Experience'))
@@ -59,6 +61,10 @@ function App() {
           {/* Retired: the realtors landing overlapped Work and Demos. Redirect kept so old links still land somewhere useful. */}
           <Route path="/realtors" element={<Navigate to="/demos" replace />} />
           <Route path="/audit" element={<Audit />} />
+          {/* The money pages: deep answers to the questions buyers actually
+              type, written to be quotable by an answer engine. */}
+          <Route path="/answers" element={<Answers />} />
+          <Route path="/answers/:slug" element={<AnswerDetail />} />
           {/* Referral intake: warm intros land in the CRM ledger + Inbox. */}
           <Route path="/refer" element={<Refer />} />
           {/* Unlisted investor page (no header nav link); Andrew shares the URL directly. */}
