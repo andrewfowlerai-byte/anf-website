@@ -158,11 +158,17 @@ export function Events({ focusCode }: { focusCode?: string } = {}) {
 function EventCard({ event, highlight = false, code, autoOpen = false }: { event: AnfEvent; highlight?: boolean; code?: string; autoOpen?: boolean }) {
   const cardRef = useRef<HTMLElement>(null)
   const start = new Date(event.starts_at)
-  const dateLine = start.toLocaleDateString(undefined, {
+  // Events happen in Northeast Ohio, so they are always shown in Eastern.
+  // `undefined` here would format in the visitor's own timezone, which told a
+  // reader in California that a 6pm ET class started at 3pm. timeZoneName
+  // prints EDT/EST so the hour is never ambiguous.
+  const dateLine = start.toLocaleDateString('en-US', {
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
+    timeZone: 'America/New_York',
   })
-  const timeLine = start.toLocaleTimeString(undefined, {
-    hour: 'numeric', minute: '2-digit',
+  const timeLine = start.toLocaleTimeString('en-US', {
+    hour: 'numeric', minute: '2-digit', timeZoneName: 'short',
+    timeZone: 'America/New_York',
   })
 
   const isFree = event.price_cents === 0
