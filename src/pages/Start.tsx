@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, memo, useCallback } from 'react'
 import { useLocalDraft } from '../hooks/useLocalDraft'
 import { useSearchParams } from 'react-router-dom'
 import {
@@ -26,17 +26,32 @@ const PROGRAM_TYPES: { key: string; label: string; categories: string[]; persona
   { key: 'personal', label: 'Personal & life tools', categories: [], personal: true },
 ]
 
-function Section({ step, title, subtitle, children }: { step: number; title: string; subtitle?: string; children: React.ReactNode }) {
+function Section({ step, title, subtitle, children, open, onToggle, done }: {
+  step: number
+  title: string
+  subtitle?: string
+  children: React.ReactNode
+  open: boolean
+  onToggle: () => void
+  done?: boolean
+}) {
   return (
-    <section className="border border-midnight-700/30 rounded-2xl p-5 md:p-6 bg-midnight-900/40">
-      <div className="flex items-baseline gap-3 mb-4">
-        <span className="text-xs font-mono text-flame-500">{String(step).padStart(2, '0')}</span>
-        <div>
+    <section className={`border rounded-2xl bg-midnight-900/40 transition-colors ${open ? 'border-flame-500/35' : 'border-midnight-700/30'}`}>
+      <button
+        onClick={onToggle}
+        aria-expanded={open}
+        className="w-full text-left flex items-baseline gap-3 p-5 md:p-6"
+      >
+        <span className={`text-xs font-mono ${done ? 'text-flame-400' : 'text-flame-500'}`}>
+          {done ? 'OK' : String(step).padStart(2, '0')}
+        </span>
+        <div className="flex-1 min-w-0">
           <h2 className="text-lg md:text-xl font-display text-silver-100">{title}</h2>
           {subtitle && <p className="text-sm text-silver-500 mt-0.5">{subtitle}</p>}
         </div>
-      </div>
-      {children}
+        <svg viewBox="0 0 24 24" className={`w-4 h-4 shrink-0 text-silver-500 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
+      </button>
+      {open && <div className="px-5 md:px-6 pb-5 md:pb-6">{children}</div>}
     </section>
   )
 }
@@ -51,7 +66,7 @@ function Section({ step, title, subtitle, children }: { step: number; title: str
  * only the parts they care about. The selected count stays on the collapsed tile
  * so nothing they have chosen is ever hidden from them.
  */
-function CategoryTile({
+const CategoryTile = memo(function CategoryTile({
   category, items, selected, onToggle, open, onOpen,
 }: {
   category: string
@@ -59,7 +74,7 @@ function CategoryTile({
   selected: Set<string>
   onToggle: (slug: string) => void
   open: boolean
-  onOpen: () => void
+  onOpen: (category: string) => void
 }) {
   const chosen = items.filter((f) => selected.has(f.slug)).length
   return (
@@ -73,7 +88,7 @@ function CategoryTile({
       }`}
     >
       <button
-        onClick={onOpen}
+        onClick={() => onOpen(category)}
         aria-expanded={open}
         className="w-full text-left p-4 md:p-5 flex items-start gap-3"
       >
@@ -119,7 +134,7 @@ function CategoryTile({
       )}
     </div>
   )
-}
+})
 
 export function Start() {
   const [params] = useSearchParams()
@@ -138,6 +153,21 @@ export function Start() {
   // Which tile is open. Persisted so switching tabs mid-form does not collapse
   // them back to the top of a catalog they were halfway through.
   const [openCat, setOpenCat] = useLocalDraft<string | null>('start.openCategory', null)
+  // Stable identities, so memo on CategoryTile actually holds. A fresh arrow
+  // here would make every tile re-render on every keystroke anyway.
+  const toggleFeature = useCallback((slug: string) => {
+    setSelected((prev) => { const n = new Set(prev); if (n.has(slug)) n.delete(slug); else n.add(slug); return n })
+  }, [])
+  // Which section is expanded. Only one at a time: that is the whole point.
+  const [openSec, setOpenSec] = useLocalDraft<number>('start.openSection', 1)
+  const sec = useCallback((n: number) => ({
+    open: openSec === n,
+    onToggle: () => setOpenSec(openSec === n ? 0 : n),
+  }), [openSec, setOpenSec])
+
+  const openCategory = useCallback((cat: string) => {
+    setOpenCat((prev) => (prev === cat ? null : cat))
+  }, [setOpenCat])
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [personal, setPersonal] = useState<Set<string>>(new Set())
   const [programs, setPrograms] = useState<Set<string>>(new Set())
@@ -340,7 +370,7 @@ export function Start() {
           </div>
         </section>
 
-        <Section step={1} title="About you" subtitle="The basics so we can reach you.">
+        <Section step={1} title="About you" subtitle="The basics so we can reach you." done={Boolean(form.contact_name && form.email)} {...sec(1)}>
           <div className="grid sm:grid-cols-2 gap-4">
             <label className="text-sm text-silver-400">Your name *
               <input value={form.contact_name} onChange={(e) => setForm({ ...form, contact_name: e.target.value })} className={`mt-1 ${inputClass}`} placeholder="Jane Smith" />
@@ -363,7 +393,7 @@ export function Start() {
           </div>
         </Section>
 
-        <Section step={2} title="Your goals" subtitle="What would make this a win for you?">
+        <Section step={2} title="Your goals" subtitle="What would make this a win for you?" done={Boolean(form.goals)} {...sec(2)}>
           <textarea value={form.goals} onChange={(e) => setForm({ ...form, goals: e.target.value })} rows={4} className={`${inputClass} resize-y`} placeholder="What do you want this to do for your business? What is not working today?" />
           <div className="grid sm:grid-cols-2 gap-4 mt-4">
             <label className="block text-sm text-silver-400">Ideal timeline
@@ -375,7 +405,7 @@ export function Start() {
           </div>
         </Section>
 
-        <Section step={3} title="What you'd like" subtitle="Open whichever areas matter to you. Pick anything that sounds useful and we will tailor the plan around it.">
+        <Section step={3} title="What you'd like" subtitle={selected.size > 0 ? `${selected.size} picked so far` : 'Open whichever areas matter to you.'} done={selected.size > 0} {...sec(3)}>
           {selected.size > 0 && (
             <p className="mb-4 text-sm text-flame-400">
               {selected.size} selected so far. Nothing is committed, this just tells us what to shape the plan around.
@@ -388,9 +418,9 @@ export function Start() {
                 category={g.category}
                 items={g.items}
                 selected={selected}
-                onToggle={(slug) => toggleIn(setSelected, slug)}
+                onToggle={toggleFeature}
                 open={openCat === g.category}
-                onOpen={() => setOpenCat(openCat === g.category ? null : g.category)}
+                onOpen={openCategory}
               />
             ))}
           </div>
@@ -402,7 +432,7 @@ export function Start() {
         </Section>
 
         {personalShown && (
-          <Section step={4} title="A few things for you" subtitle="Optional personal touches we can fold in.">
+          <Section step={4} title="A few things for you" subtitle={personal.size > 0 ? `${personal.size} picked` : 'Optional personal touches we can fold in.'} done={personal.size > 0} {...sec(4)}>
             <div className="grid sm:grid-cols-2 gap-2">
               {personalFeatures.map((f) => {
                 const on = personal.has(f.slug)
@@ -428,7 +458,7 @@ export function Start() {
           </Section>
         )}
 
-        <Section step={personalShown ? 5 : 4} title="Anything else?" subtitle="Something not on the list? Describe it and we will include it in your plan.">
+        <Section step={personalShown ? 5 : 4} title="Anything else?" subtitle="Something not on the list? Describe it and we will include it in your plan." {...sec(5)}>
           <div className="space-y-3">
             {custom.map((c, i) => (
               <div key={i} className="grid sm:grid-cols-[1fr_1.5fr_auto] gap-2 items-start">
@@ -441,7 +471,7 @@ export function Start() {
           </div>
         </Section>
 
-        <Section step={personalShown ? 6 : 5} title="Share your files" subtitle="Logo, brand assets, photos, anything you have. Optional.">
+        <Section step={personalShown ? 6 : 5} title="Share your files" subtitle="Logo, brand assets, photos, anything you have. Optional." {...sec(6)}>
           <label className="flex flex-col items-center justify-center gap-2 py-8 rounded-xl border border-dashed border-midnight-700/60 bg-midnight-900/30 cursor-pointer hover:border-flame-500/50 transition-colors">
             <input type="file" multiple className="hidden" onChange={(e) => void onFiles(e.target.files)} />
             <span className="text-sm text-silver-400">{uploading ? 'Uploading...' : 'Click to upload files'}</span>
