@@ -762,6 +762,26 @@ function RequestCTA() {
                   <p className="text-sm text-red-300 text-center">Something went wrong. Try again, or email admin@anfconsult.com.</p>
                 )}
               </form>
+
+              {/* The second door. The form above starts a conversation; this
+                  starts a plan. Someone who has just watched the whole thing is
+                  the most ready they will ever be to say what they actually
+                  want, so give them somewhere to say it in detail. */}
+              <div className="mt-7 sm:mt-8 pt-6 border-t border-white/10 text-left">
+                <p className={`text-sm text-silver-300 leading-relaxed ${SHADOW}`}>
+                  Know roughly what you want already?
+                </p>
+                <a
+                  href="/start"
+                  className="mt-3 inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/20 bg-white/[0.06] text-silver-100 hover:bg-white/[0.12] hover:border-white/35 text-sm font-medium tracking-wide transition-colors"
+                >
+                  Build your own plan
+                  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                </a>
+                <p className={`mt-2.5 text-xs text-silver-400 ${SHADOW}`}>
+                  Pick the pieces you want and we will price it around them.
+                </p>
+              </div>
             </>
           )}
         </div>

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useLocalDraft } from '../hooks/useLocalDraft'
 import { useSearchParams } from 'react-router-dom'
 import {
   fetchFeatures, validateCode, submitIntake, uploadIntakeFile,
@@ -37,6 +38,86 @@ function Section({ step, title, subtitle, children }: { step: number; title: str
   )
 }
 
+
+/**
+ * One tile per category, expanded in place.
+ *
+ * The catalog is 80 options across 11 categories. Rendered as one flat list it
+ * reads as a wall and people bail before they reach anything relevant. As tiles
+ * they can see the whole shape of what is on offer in a single screen, then open
+ * only the parts they care about. The selected count stays on the collapsed tile
+ * so nothing they have chosen is ever hidden from them.
+ */
+function CategoryTile({
+  category, items, selected, onToggle, open, onOpen,
+}: {
+  category: string
+  items: IntakeFeature[]
+  selected: Set<string>
+  onToggle: (slug: string) => void
+  open: boolean
+  onOpen: () => void
+}) {
+  const chosen = items.filter((f) => selected.has(f.slug)).length
+  return (
+    <div
+      className={`rounded-2xl border transition-colors ${
+        open
+          ? 'border-flame-500/40 bg-midnight-900/60 sm:col-span-2 lg:col-span-3'
+          : chosen > 0
+          ? 'border-flame-500/30 bg-flame-500/[0.06]'
+          : 'border-midnight-700/40 bg-midnight-900/30 hover:border-midnight-700/80'
+      }`}
+    >
+      <button
+        onClick={onOpen}
+        aria-expanded={open}
+        className="w-full text-left p-4 md:p-5 flex items-start gap-3"
+      >
+        <div className="min-w-0 flex-1">
+          <p className="font-display text-base md:text-lg text-silver-100 leading-tight">{category}</p>
+          <p className="mt-1 text-xs text-silver-500">
+            {items.length} option{items.length === 1 ? '' : 's'}
+            {chosen > 0 && <span className="text-flame-400 font-medium"> &middot; {chosen} picked</span>}
+          </p>
+        </div>
+        <svg
+          viewBox="0 0 24 24"
+          className={`w-4 h-4 mt-1 shrink-0 text-silver-500 transition-transform ${open ? 'rotate-45' : ''}`}
+          fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+        >
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+      </button>
+
+      {open && (
+        <div className="px-4 md:px-5 pb-4 md:pb-5 grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {items.map((f) => {
+            const on = selected.has(f.slug)
+            return (
+              <button
+                key={f.slug}
+                onClick={() => onToggle(f.slug)}
+                className={`text-left p-3 rounded-xl border transition-colors ${on ? 'border-flame-500/60 bg-flame-500/10' : 'border-midnight-700/40 bg-midnight-950/40 hover:border-midnight-700/80'}`}
+              >
+                <div className="flex items-start gap-2">
+                  <span className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center shrink-0 ${on ? 'bg-flame-500 border-flame-500' : 'border-silver-600'}`}>
+                    {on && <svg viewBox="0 0 24 24" className="w-3 h-3 text-midnight-950" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-silver-100">{f.label}</p>
+                    {f.description && <p className="text-xs text-silver-500 mt-0.5 leading-snug">{f.description}</p>}
+                  </div>
+                </div>
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export function Start() {
   const [params] = useSearchParams()
   const [code, setCode] = useState(params.get('code') ?? '')
@@ -45,9 +126,15 @@ export function Start() {
   const [gateError, setGateError] = useState('')
   const [features, setFeatures] = useState<IntakeFeature[]>([])
 
-  const [form, setForm] = useState({ contact_name: '', business_name: '', email: '', phone: '', website: '', industry: '', goals: '', timeline: '', budget: '' })
+  // Persisted: this is the longest form on the site, people fill it across
+  // sessions, and losing it on a tab switch is the one failure that guarantees
+  // they never come back to finish.
+  const [form, setForm] = useLocalDraft('start.form', { contact_name: '', business_name: '', email: '', phone: '', website: '', industry: '', goals: '', timeline: '', budget: '' })
   const [hp, setHp] = useState('') // honeypot: bots fill it, people never see it
   const [showCode, setShowCode] = useState(false)
+  // Which tile is open. Persisted so switching tabs mid-form does not collapse
+  // them back to the top of a catalog they were halfway through.
+  const [openCat, setOpenCat] = useLocalDraft<string | null>('start.openCategory', null)
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [personal, setPersonal] = useState<Set<string>>(new Set())
   const [programs, setPrograms] = useState<Set<string>>(new Set())
@@ -285,34 +372,23 @@ export function Start() {
           </div>
         </Section>
 
-        <Section step={3} title="What you'd like" subtitle="Pick everything that sounds useful. We will tailor your plan to what you choose.">
-          <div className="space-y-6">
+        <Section step={3} title="What you'd like" subtitle="Open whichever areas matter to you. Pick anything that sounds useful and we will tailor the plan around it.">
+          {selected.size > 0 && (
+            <p className="mb-4 text-sm text-flame-400">
+              {selected.size} selected so far. Nothing is committed, this just tells us what to shape the plan around.
+            </p>
+          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {visibleGroups.map((g) => (
-              <div key={g.category}>
-                <p className="text-xs font-semibold uppercase tracking-wider text-silver-500 mb-2">{g.category}</p>
-                <div className="grid sm:grid-cols-2 gap-2">
-                  {g.items.map((f) => {
-                    const on = selected.has(f.slug)
-                    return (
-                      <button
-                        key={f.slug}
-                        onClick={() => toggleIn(setSelected, f.slug)}
-                        className={`text-left p-3 rounded-xl border transition-colors ${on ? 'border-flame-500/60 bg-flame-500/10' : 'border-midnight-700/40 bg-midnight-900/30 hover:border-midnight-700/70'}`}
-                      >
-                        <div className="flex items-start gap-2">
-                          <span className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center shrink-0 ${on ? 'bg-flame-500 border-flame-500' : 'border-silver-600'}`}>
-                            {on && <svg viewBox="0 0 24 24" className="w-3 h-3 text-midnight-950" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>}
-                          </span>
-                          <div className="min-w-0">
-                            <p className="text-sm font-medium text-silver-100">{f.label}</p>
-                            {f.description && <p className="text-xs text-silver-500 mt-0.5 leading-snug">{f.description}</p>}
-                          </div>
-                        </div>
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
+              <CategoryTile
+                key={g.category}
+                category={g.category}
+                items={g.items}
+                selected={selected}
+                onToggle={(slug) => toggleIn(setSelected, slug)}
+                open={openCat === g.category}
+                onOpen={() => setOpenCat(openCat === g.category ? null : g.category)}
+              />
             ))}
           </div>
           {programs.size > 0 && (
