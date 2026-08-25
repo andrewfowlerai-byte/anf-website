@@ -28,6 +28,10 @@ const PAGES = NUM_FORMS // one full-screen section per form
 // Weak-device detection: low RAM or few CPU cores. Budget phones choke on the
 // additive particle fill rate, so we drop the particle count and starfield
 // further for them while keeping the full scene on capable hardware.
+// navigator.deviceMemory does not exist in Safari, so on every iPhone the first
+// clause silently falls back to 8 and this only ever tests core count. Left as
+// is because it still catches genuinely weak Android hardware, but it is worth
+// knowing that on iOS this is effectively a hardwareConcurrency check alone.
 const IS_LOW_END =
   typeof navigator !== 'undefined' &&
   (((navigator as unknown as { deviceMemory?: number }).deviceMemory ?? 8) <= 4 ||
@@ -654,8 +658,27 @@ function ExperienceInner() {
 // glowing particle scene behind it.
 const SHADOW = '[text-shadow:_0_2px_18px_rgba(0,0,0,0.9)]'
 
+/**
+ * The dark pad behind the text so it stays readable over the particles.
+ *
+ * This used to be `bg-midnight-950/60 blur-2xl`. A 40px CSS blur on a large DOM
+ * layer sitting on top of a full-screen WebGL canvas is one of the most
+ * expensive things you can ask mobile Safari to do: it cannot cheaply composite
+ * a filtered layer over a canvas that is repainting every frame, so it redoes
+ * the blur constantly while you scroll. Four of them were stacked over the
+ * scene.
+ *
+ * A radial gradient gives the same soft falloff with no filter at all, so the
+ * layer composites like any other coloured box.
+ */
 function Scrim({ className = '' }: { className?: string }) {
-  return <div aria-hidden className={`pointer-events-none absolute rounded-[2.5rem] bg-midnight-950/60 blur-2xl ${className}`} />
+  return (
+    <div
+      aria-hidden
+      className={`pointer-events-none absolute rounded-[2.5rem] ${className}`}
+      style={{ background: 'radial-gradient(ellipse at center, rgba(6,15,31,0.82) 0%, rgba(6,15,31,0.62) 45%, rgba(6,15,31,0) 78%)' }}
+    />
+  )
 }
 
 function Overlay() {
