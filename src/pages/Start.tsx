@@ -14,11 +14,14 @@ const inputClass =
 // Each maps to catalog categories; "personal" maps to the Personal/Life pack.
 // Category strings must match intake_features.category (verified against the DB).
 const PROGRAM_TYPES: { key: string; label: string; categories: string[]; personal?: boolean }[] = [
+  { key: 'fieldservice', label: 'Field service & trades', categories: ['Field service', 'CRM', 'Scheduling', 'Operations & finance', 'Client portal'] },
   { key: 'realestate', label: 'Real estate tools', categories: ['Real estate', 'Website', 'CRM', 'Sales & follow-up', 'Marketing & content'] },
   { key: 'website', label: 'Website & brand', categories: ['Website', 'Branding & content'] },
   { key: 'crm', label: 'CRM & client management', categories: ['CRM', 'Sales & follow-up', 'Client portal', 'Scheduling'] },
+  { key: 'ecommerce', label: 'Selling online', categories: ['E-commerce', 'Website', 'Operations & finance'] },
   { key: 'marketing', label: 'Marketing & content', categories: ['Marketing & content', 'Branding & content'] },
   { key: 'ai', label: 'AI & automation', categories: ['AI', 'Integrations'] },
+  { key: 'teaching', label: 'Teaching & training', categories: ['Learning & training', 'Website', 'Scheduling'] },
   { key: 'ops', label: 'Billing & operations', categories: ['Operations & finance', 'Integrations'] },
   { key: 'personal', label: 'Personal & life tools', categories: [], personal: true },
 ]
