@@ -222,6 +222,9 @@ function Hud({ section }: { section: number }) {
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" /> ANF systems online
         </span>
         <span className="mt-1.5 block text-flame-300/90">{label}</span>
+        {/* Which build this tab is actually running. A stale SPA tab keeps its
+            old bundle across deploys, and this line is how you can tell. */}
+        <span className="mt-1.5 block text-silver-500/70">build {__BUILD_TAG__}</span>
       </div>
 
       {/* Route marker: which world you are passing. */}
