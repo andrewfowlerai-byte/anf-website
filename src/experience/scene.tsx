@@ -216,6 +216,8 @@ const PLANET_FRAG = /* glsl */ `
 
     // Reveal by mixing toward the sky colour rather than alpha: the material
     // stays opaque, so there is no depth-sorting artifact while it fades in.
+    // Reveal by mixing toward the sky colour rather than alpha: the material
+    // stays opaque, so there is no depth-sorting artifact while it fades in.
     gl_FragColor = vec4(mix(vec3(0.016, 0.035, 0.071), base, uReveal), 1.0);
   }
 `
@@ -258,6 +260,8 @@ function Planet({ spec }: { spec: PlanetSpec }) {
   const group = useRef<THREE.Group>(null)
   const ringMat = useRef<THREE.MeshBasicMaterial>(null)
   const moonMat = useRef<THREE.MeshBasicMaterial>(null)
+  const bodyMat = useRef<THREE.ShaderMaterial>(null)
+  const glowMat = useRef<THREE.ShaderMaterial>(null)
   const { size } = useThree()
   const aspect = size.width / size.height
   const xf = lateralFactor(aspect)
@@ -282,14 +286,22 @@ function Planet({ spec }: { spec: PlanetSpec }) {
   )
 
   useFrame((state, delta) => {
-    uniforms.uTime.value = state.clock.elapsedTime
-
     // Distance still to travel to this world. Behind the camera counts as
     // arrived, so nothing ever fades back out in the mirror.
     const ahead = state.camera.position.z - spec.z
     const target = ahead <= REVEAL_NEAR ? 1 : ahead >= REVEAL_FAR ? 0 : 1 - (ahead - REVEAL_NEAR) / (REVEAL_FAR - REVEAL_NEAR)
     // Eased toward the target so a fast scroll still gets a soft arrival.
     reveal.value += (target - reveal.value) * Math.min(1, delta * 8)
+
+    // Mutations MUST go through the material's own uniform objects. Writing to
+    // the objects we passed as props updated the JS side only: r3f copies the
+    // values in, so uTime and uReveal sat at 0 on the GPU and every planet
+    // rendered as mix(sky, base, 0), the same flat navy, for two days.
+    if (bodyMat.current) {
+      bodyMat.current.uniforms.uTime.value = state.clock.elapsedTime
+      bodyMat.current.uniforms.uReveal.value = reveal.value
+    }
+    if (glowMat.current) glowMat.current.uniforms.uReveal.value = reveal.value
 
     if (group.current) {
       // Skip rendering entirely while hidden; swell the last 12% on approach.
@@ -322,6 +334,7 @@ function Planet({ spec }: { spec: PlanetSpec }) {
       <mesh position={[0, 0, spec.radius * 0.35]}>
         <planeGeometry args={[spec.radius * 5.2, spec.radius * 5.2]} />
         <shaderMaterial
+          ref={glowMat}
           vertexShader={GLOW_VERT}
           fragmentShader={GLOW_FRAG}
           uniforms={glowUniforms}
@@ -332,7 +345,7 @@ function Planet({ spec }: { spec: PlanetSpec }) {
       </mesh>
       <mesh ref={mesh}>
         <sphereGeometry args={[spec.radius, 48, 32]} />
-        <shaderMaterial vertexShader={PLANET_VERT} fragmentShader={PLANET_FRAG} uniforms={uniforms} />
+        <shaderMaterial ref={bodyMat} vertexShader={PLANET_VERT} fragmentShader={PLANET_FRAG} uniforms={uniforms} />
       </mesh>
       {spec.moon && (
         <mesh ref={moon}>
