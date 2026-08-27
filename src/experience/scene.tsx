@@ -97,11 +97,11 @@ export interface MoonSpec {
 }
 
 export const PLANETS: PlanetSpec[] = [
-  { z: -DEPTH * 1 - LEAD, x: -3.4, y: 0.5, radius: 1.35, color: '#1b3a63', accent: '#f26b1d', roughness: 0.55, moon: { color: '#e8d9c4', size: 0.16, speed: 0.5, phase: 1.2, tilt: 0.22, dist: 2.1 } },
-  { z: -DEPTH * 2 - LEAD, x: 3.6, y: -0.7, radius: 1.6, color: '#232c46', accent: '#7fb2ff', roughness: 0.85, ring: true },
-  { z: -DEPTH * 3 - LEAD, x: -3.8, y: -0.4, radius: 1.25, color: '#3a2140', accent: '#ff8a4c', roughness: 0.35, moon: { color: '#b98a6f', size: 0.24, speed: -0.28, phase: 4.4, tilt: 0.65, dist: 2.7 } },
-  { z: -DEPTH * 4 - LEAD, x: 3.3, y: 0.8, radius: 1.5, color: '#12303a', accent: '#57e0c8', roughness: 0.7, ring: false },
-  { z: -DEPTH * 5 - LEAD, x: -3.2, y: 0.3, radius: 1.4, color: '#2a2740', accent: '#f2b01d', roughness: 0.5, ring: true },
+  { z: -DEPTH * 1 - LEAD, x: -3.4, y: 0.5, radius: 1.35, color: '#8a4520', accent: '#ff9a4d', roughness: 0.55, moon: { color: '#e8d9c4', size: 0.16, speed: 0.5, phase: 1.2, tilt: 0.22, dist: 2.1 } },
+  { z: -DEPTH * 2 - LEAD, x: 3.6, y: -0.7, radius: 1.6, color: '#33639c', accent: '#a8d4ff', roughness: 0.85, ring: true },
+  { z: -DEPTH * 3 - LEAD, x: -3.8, y: -0.4, radius: 1.25, color: '#8a2e56', accent: '#ff7a6b', roughness: 0.35, moon: { color: '#b98a6f', size: 0.24, speed: -0.28, phase: 4.4, tilt: 0.65, dist: 2.7 } },
+  { z: -DEPTH * 4 - LEAD, x: 3.3, y: 0.8, radius: 1.5, color: '#1e7a68', accent: '#6cf5d8', roughness: 0.7, ring: false },
+  { z: -DEPTH * 5 - LEAD, x: -3.2, y: 0.3, radius: 1.4, color: '#8a6a24', accent: '#ffcf57', roughness: 0.5, ring: true },
 ]
 
 /* ------------------------------------------------------------------ camera */
@@ -201,12 +201,14 @@ const PLANET_FRAG = /* glsl */ `
     float bands = sin(vPos.y * 5.0 + wob(vPos) * uRough * 1.4);
     float land = smoothstep(-0.15, 0.55, bands);
 
-    vec3 base = mix(uColor * 0.55, uColor, land);
-    base += uAccent * land * 0.12;
+    // Lowlands are the body colour; highlands lean a third of the way into the
+    // accent, so the surface carries the planet's identity instead of hiding it
+    // at the rim.
+    vec3 base = mix(uColor * 0.5, mix(uColor, uAccent, 0.35), land);
 
     // A single key light from up and to the left, so the spheres read as solid.
     float lambert = clamp(dot(n, normalize(vec3(-0.5, 0.7, 0.45))), 0.0, 1.0);
-    base *= 0.35 + lambert * 0.9;
+    base *= 0.45 + lambert * 0.8;
 
     // Atmosphere: bright at the limb, invisible face on.
     float fres = pow(1.0 - clamp(dot(n, normalize(vViewDir)), 0.0, 1.0), 2.6);

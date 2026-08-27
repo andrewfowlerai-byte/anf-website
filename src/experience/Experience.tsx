@@ -447,13 +447,16 @@ function RequestCTA() {
                 )}
               </form>
 
-              <div className="mt-7 sm:mt-8 pt-6 border-t border-white/10 text-left">
+              {/* The second door, weighted like the first: same width, same
+                  height, centered, so it reads as a peer choice rather than a
+                  footnote under the form. */}
+              <div className="mt-7 sm:mt-8 pt-6 border-t border-white/10 w-full text-center">
                 <p className={`text-sm text-silver-300 leading-relaxed ${SHADOW}`}>
                   Know roughly what you want already?
                 </p>
                 <a
                   href="/start"
-                  className="mt-3 inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/20 bg-white/[0.06] text-silver-100 hover:bg-white/[0.12] hover:border-white/35 text-sm font-medium tracking-wide transition-colors"
+                  className="mt-3 w-full inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full border border-white/25 bg-white/[0.07] text-silver-100 hover:bg-white/[0.14] hover:border-white/40 font-medium tracking-wide transition-colors"
                 >
                   Build your own plan
                   <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
