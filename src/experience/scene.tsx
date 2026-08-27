@@ -204,7 +204,7 @@ const PLANET_FRAG = /* glsl */ `
     // Lowlands are the body colour; highlands lean a third of the way into the
     // accent, so the surface carries the planet's identity instead of hiding it
     // at the rim.
-    vec3 base = mix(uColor * 0.5, mix(uColor, uAccent, 0.35), land);
+    vec3 base = mix(uColor * 0.62, mix(uColor, uAccent, 0.45), land);
 
     // A single key light from up and to the left, so the spheres read as solid.
     float lambert = clamp(dot(n, normalize(vec3(-0.5, 0.7, 0.45))), 0.0, 1.0);
@@ -249,8 +249,8 @@ const GLOW_FRAG = /* glsl */ `
  * itself, halo and ring coming up with it, and a small scale swell so it reads
  * as arriving rather than switching on. Fully lit well before its copy lands.
  */
-const REVEAL_FAR = 32
-const REVEAL_NEAR = 18
+const REVEAL_FAR = 42
+const REVEAL_NEAR = 26
 
 function Planet({ spec }: { spec: PlanetSpec }) {
   const mesh = useRef<THREE.Mesh>(null)
@@ -289,7 +289,7 @@ function Planet({ spec }: { spec: PlanetSpec }) {
     const ahead = state.camera.position.z - spec.z
     const target = ahead <= REVEAL_NEAR ? 1 : ahead >= REVEAL_FAR ? 0 : 1 - (ahead - REVEAL_NEAR) / (REVEAL_FAR - REVEAL_NEAR)
     // Eased toward the target so a fast scroll still gets a soft arrival.
-    reveal.value += (target - reveal.value) * Math.min(1, delta * 4)
+    reveal.value += (target - reveal.value) * Math.min(1, delta * 8)
 
     if (group.current) {
       // Skip rendering entirely while hidden; swell the last 12% on approach.
