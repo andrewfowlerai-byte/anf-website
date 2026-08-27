@@ -411,7 +411,9 @@ function RequestCTA() {
     'w-full rounded-xl border border-white/12 bg-midnight-950/50 px-4 py-3 text-sm text-silver-100 placeholder:text-silver-400/70 outline-none focus:border-flame-500/60 transition-colors'
 
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center py-10 sm:py-24 text-center px-6">
+    // Bottom padding keeps the caption clear of the fixed HUD readout when
+    // the arrival runs taller than one screen (phones have scroll slack for it).
+    <section className="min-h-screen flex flex-col items-center justify-center pt-10 pb-28 sm:py-24 text-center px-6">
       <div className="relative w-full max-w-lg pointer-events-auto">
         <Scrim className="-inset-x-10 -inset-y-10" />
         <div className="relative flex flex-col items-center">
@@ -441,7 +443,7 @@ function RequestCTA() {
                 <button
                   type="submit"
                   disabled={status === 'sending'}
-                  className="w-full inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full border border-flame-500/60 bg-flame-500/15 text-flame-100 hover:bg-flame-500/25 font-medium tracking-wide transition-colors disabled:opacity-60"
+                  className="w-full inline-flex items-center justify-center gap-2 px-7 py-4 rounded-full border border-flame-500/60 bg-flame-500/15 text-flame-100 hover:bg-flame-500/25 text-base sm:text-lg font-medium tracking-wide transition-colors disabled:opacity-60"
                 >
                   {status === 'sending' ? 'Sending...' : 'Send my request'}
                 </button>
@@ -450,21 +452,27 @@ function RequestCTA() {
                 )}
               </form>
 
-              {/* The second door, weighted like the first: same width, same
-                  height, centered, so it reads as a peer choice rather than a
-                  footnote under the form. */}
-              <div className="mt-7 sm:mt-8 pt-6 border-t border-white/10 w-full text-center">
-                <p className={`text-sm text-silver-300 leading-relaxed ${SHADOW}`}>
+              {/* Two doors, equal weight. An "or" seam splits the section into
+                  two symmetric halves, the lead-in matches the form intro's
+                  register, and the button carries the same metrics as Send my
+                  request, so neither choice reads as the footnote. */}
+              <div className="mt-8 w-full flex items-center gap-4" aria-hidden>
+                <span className="h-px flex-1 bg-white/15" />
+                <span className={`text-[10px] uppercase tracking-[0.35em] text-silver-400 ${SHADOW}`}>or</span>
+                <span className="h-px flex-1 bg-white/15" />
+              </div>
+              <div className="mt-8 w-full text-center">
+                <p className={`text-base sm:text-lg font-medium text-silver-100 ${SHADOW}`}>
                   Know roughly what you want already?
                 </p>
                 <a
                   href="/start"
-                  className="mt-3 w-full inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full border border-white/25 bg-white/[0.07] text-silver-100 hover:bg-white/[0.14] hover:border-white/40 font-medium tracking-wide transition-colors"
+                  className="mt-4 w-full inline-flex items-center justify-center gap-2 px-7 py-4 rounded-full border border-white/30 bg-white/[0.09] text-white hover:bg-white/[0.16] hover:border-white/45 text-base sm:text-lg font-medium tracking-wide transition-colors"
                 >
                   Build your own plan
-                  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                  <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
                 </a>
-                <p className={`mt-2.5 text-xs text-silver-400 ${SHADOW}`}>
+                <p className={`mt-3 text-sm text-silver-400 ${SHADOW}`}>
                   Pick the pieces you want and we will price it around them.
                 </p>
               </div>
