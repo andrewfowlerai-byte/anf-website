@@ -1,584 +1,122 @@
 import { Component, Suspense, useEffect, useMemo, useRef, useState, type ReactNode, type FormEvent } from 'react'
-import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { ScrollControls, Scroll, useScroll, Stars } from '@react-three/drei'
+import { Canvas } from '@react-three/fiber'
+import { ScrollControls, Scroll, useScroll } from '@react-three/drei'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
-import * as THREE from 'three'
 import { submitRequest } from '../lib/leads'
-
-// Scratch vectors reused each frame to map the cursor onto the cloud's plane
-// without per-frame allocation (single ParticleField instance).
-const DIR = new THREE.Vector3()
-const WORLD = new THREE.Vector3()
+import { FlightRig, Planets, StarTunnel, Constellations, PAGES, STATIONS } from './scene'
 
 /**
- * ANF 3D experience: a living particle engine that morphs through the journey as
- * you scroll. ~38k GPU points spell ANF, then the whole swarm reorganizes into a
- * form for each pillar (reach, structure, intelligence, growth), then re-forms the
- * wordmark at the call to action. It parts around the cursor and ripples on click.
+ * ANF 3D experience: a flight.
  *
- * Built with react-three-fiber + a custom GLSL shader (one draw call, GPU-driven
- * morph and interaction, so it stays smooth). Near-monochrome midnight with a flame
- * core and cool dust at the edges, real bloom. The opposite of static and cartoon.
- * Standalone full-screen route at /experience.
+ * The previous version was a particle swarm that morphed between abstract forms.
+ * It looked good and said very little, which was the honest complaint about it:
+ * four trademarked names floating over shapes that could have belonged to any
+ * company. Cool, and vague.
+ *
+ * Now the camera flies a fixed course past five worlds, and each one is a real
+ * part of the work with room beside it to say so properly: what it is, and the
+ * four concrete things you actually get. The journey is doing the job the
+ * morphing was only gesturing at.
+ *
+ * Scene geometry lives in ./scene. This file is the shell, the copy, and the
+ * request form.
  */
 
-const NUM_FORMS = 6
-const PAGES = NUM_FORMS // one full-screen section per form
-
-// Weak-device detection: low RAM or few CPU cores. Budget phones choke on the
-// additive particle fill rate, so we drop the particle count and starfield
-// further for them while keeping the full scene on capable hardware.
-// navigator.deviceMemory does not exist in Safari, so on every iPhone the first
-// clause silently falls back to 8 and this only ever tests core count. Left as
-// is because it still catches genuinely weak Android hardware, but it is worth
-// knowing that on iOS this is effectively a hardwareConcurrency check alone.
+/** Only phones and low-end machines take the cheap path. */
 const IS_LOW_END =
   typeof navigator !== 'undefined' &&
-  (((navigator as unknown as { deviceMemory?: number }).deviceMemory ?? 8) <= 4 ||
-    (navigator.hardwareConcurrency ?? 8) <= 4)
-const HOLD = 0.24 // share of each section that holds settled before the morph
-
-// Resolve a scroll position to which two forms we are between, and the eased
-// blend between them (with a dwell so each form holds before gliding to the next).
-// Shared by the particles and the camera so they move in lockstep.
-function morphAt(off: number) {
-  const p = Math.min(NUM_FORMS - 1, Math.max(0, off * PAGES - 0.5))
-  const i0 = Math.floor(p)
-  const i1 = Math.min(i0 + 1, NUM_FORMS - 1)
-  const frac = p - i0
-  let t: number
-  if (frac < HOLD) t = 0
-  else if (frac > 1 - HOLD) t = 1
-  else { const m = (frac - HOLD) / (1 - 2 * HOLD); t = m * m * (3 - 2 * m) }
-  return { i0, i1, t }
-}
-
-// Camera distance at each station. Kept far enough that the whole pillar stays in
-// frame (no clipping); the shapes sit a touch closer than the wordmarks for a mild
-// zoom, but the real movement comes from orbiting around the center, not dollying in.
-const STATION_DIST = [6.0, 5.9, 5.8, 5.7, 5.9, 6.0]
-
-// ─── Form generators: each returns N*3 floats, a point cloud centered on origin ──
-
-function spherePositions(N: number, r: number): Float32Array {
-  const a = new Float32Array(N * 3)
-  const inc = Math.PI * (3 - Math.sqrt(5))
-  for (let i = 0; i < N; i++) {
-    const y = 1 - (i / (N - 1)) * 2
-    const rad = Math.sqrt(Math.max(0, 1 - y * y))
-    const phi = i * inc
-    a[3 * i] = Math.cos(phi) * rad * r
-    a[3 * i + 1] = y * r
-    a[3 * i + 2] = Math.sin(phi) * rad * r
-  }
-  return a
-}
-
-// Cube wireframe + a sparse interior grid. Reads as structure / infrastructure.
-function latticePositions(N: number, r: number): Float32Array {
-  const out = new Float32Array(N * 3)
-  const c = [-r, r]
-  const edges: Array<['x' | 'y' | 'z', number, number]> = []
-  for (const y of c) for (const z of c) edges.push(['x', y, z])
-  for (const x of c) for (const z of c) edges.push(['y', x, z])
-  for (const x of c) for (const y of c) edges.push(['z', x, y])
-  const grid = 6
-  for (let i = 0; i < N; i++) {
-    if (Math.random() < 0.64) {
-      const e = edges[(Math.random() * edges.length) | 0]
-      const t = Math.random() * 2 - 1
-      let x = 0, y = 0, z = 0
-      if (e[0] === 'x') { x = t * r; y = e[1]; z = e[2] }
-      else if (e[0] === 'y') { y = t * r; x = e[1]; z = e[2] }
-      else { z = t * r; x = e[1]; y = e[2] }
-      out[3 * i] = x + (Math.random() - 0.5) * 0.02
-      out[3 * i + 1] = y + (Math.random() - 0.5) * 0.02
-      out[3 * i + 2] = z + (Math.random() - 0.5) * 0.02
-    } else {
-      const ix = ((Math.random() * grid) | 0) / (grid - 1) * 2 - 1
-      const iy = ((Math.random() * grid) | 0) / (grid - 1) * 2 - 1
-      const iz = ((Math.random() * grid) | 0) / (grid - 1) * 2 - 1
-      out[3 * i] = ix * r * 0.92
-      out[3 * i + 1] = iy * r * 0.92
-      out[3 * i + 2] = iz * r * 0.92
-    }
-  }
-  return out
-}
-
-// Torus knot (p=2, q=3) with a little tube scatter. Reads as intricate / AI.
-function knotPositions(N: number, scale: number): Float32Array {
-  const out = new Float32Array(N * 3)
-  const p = 2, q = 3
-  const s = scale / 3.2
-  for (let i = 0; i < N; i++) {
-    const u = Math.random() * Math.PI * 2
-    const r0 = Math.cos(q * u) + 2.2
-    const x = r0 * Math.cos(p * u)
-    const y = r0 * Math.sin(p * u)
-    const z = -Math.sin(q * u)
-    const j = 0.18
-    out[3 * i] = (x + (Math.random() - 0.5) * j) * s
-    out[3 * i + 1] = (y + (Math.random() - 0.5) * j) * s
-    out[3 * i + 2] = (z + (Math.random() - 0.5) * j) * s * 1.4
-  }
-  return out
-}
-
-// Ascending double helix with rungs. Reads as growth / learning.
-function helixPositions(N: number, r: number): Float32Array {
-  const out = new Float32Array(N * 3)
-  const turns = 3.2, H = 4.3, rr = r * 0.82
-  for (let i = 0; i < N; i++) {
-    const u = Math.random()
-    const ang = u * turns * Math.PI * 2
-    if (Math.random() < 0.16) {
-      const t = Math.random()
-      const x1 = Math.cos(ang) * rr, z1 = Math.sin(ang) * rr
-      const x2 = Math.cos(ang + Math.PI) * rr, z2 = Math.sin(ang + Math.PI) * rr
-      out[3 * i] = x1 + (x2 - x1) * t
-      out[3 * i + 2] = z1 + (z2 - z1) * t
-      out[3 * i + 1] = u * H - H / 2
-    } else {
-      const phase = Math.random() < 0.5 ? 0 : Math.PI
-      out[3 * i] = Math.cos(ang + phase) * rr
-      out[3 * i + 2] = Math.sin(ang + phase) * rr
-      out[3 * i + 1] = u * H - H / 2 + (Math.random() - 0.5) * 0.03
-    }
-  }
-  return out
-}
-
-// Sample a word into points by rendering it to a canvas and reading filled pixels.
-// Letter-spacing pulls the glyphs apart so they do not bleed together, and the
-// result is normalized to its own bounding box so the wordmark is a consistent
-// size and centered regardless of font metrics or spacing.
-function sampleText(text: string, N: number, tm = false): Float32Array {
-  const W = 820, H = 340
-  const cnv = document.createElement('canvas')
-  cnv.width = W; cnv.height = H
-  const ctx = cnv.getContext('2d')
-  if (!ctx) return spherePositions(N, 1.9)
-  const setSpacing = (px: string) => { try { (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = px } catch { /* older browsers */ } }
-  const readLit = (): number[] => {
-    const d = ctx.getImageData(0, 0, W, H).data
-    const pts: number[] = []
-    for (let y = 0; y < H; y += 1) for (let x = 0; x < W; x += 1) { if (d[(y * W + x) * 4] > 128) pts.push(x, y) }
-    return pts
-  }
-
-  // Pass 1: the word.
-  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H)
-  ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
-  setSpacing('10px')
-  const mainFont = 190
-  ctx.font = `900 ${mainFont}px "Space Grotesk", system-ui, Arial, sans-serif`
-  ctx.fillText(text, W / 2, H / 2 + 6)
-  const rightX = W / 2 + ctx.measureText(text).width / 2
-  const main = readLit()
-  if (main.length === 0) return spherePositions(N, 1.9)
-
-  // Pass 2: a small superscript trademark, sampled separately so it gets a fair
-  // share of dots. Right-aligned to the F's edge, sat just above the cap top.
-  let tmPts: number[] = []
-  if (tm) {
-    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H)
-    ctx.fillStyle = '#fff'; setSpacing('0px')
-    ctx.font = `900 40px "Space Grotesk", system-ui, Arial, sans-serif`
-    ctx.textAlign = 'right'; ctx.textBaseline = 'alphabetic'
-    ctx.fillText('TM', rightX - 6, H / 2 + 6 - mainFont * 0.44)
-    tmPts = readLit()
-  }
-
-  // Normalize the whole mark (word + TM) to its bounding box at a fixed world width.
-  let minX = W, maxX = 0, minY = H, maxY = 0
-  const extend = (arr: number[]) => {
-    for (let k = 0; k < arr.length; k += 2) {
-      const x = arr[k], y = arr[k + 1]
-      if (x < minX) minX = x; if (x > maxX) maxX = x
-      if (y < minY) minY = y; if (y > maxY) maxY = y
-    }
-  }
-  extend(main); extend(tmPts)
-  const targetW = 4.7
-  const s = targetW / Math.max(1, maxX - minX)
-  const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2
-
-  const out = new Float32Array(N * 3)
-  const tmCount = tmPts.length ? Math.round(N * 0.04) : 0
-  const place = (arr: number[], start: number, num: number) => {
-    const c = arr.length / 2
-    for (let i = 0; i < num; i += 1) {
-      const j = ((Math.random() * c) | 0) * 2
-      const o = (start + i) * 3
-      // Tight jitter + a shallow depth keep the letters crisp and legible.
-      out[o] = (arr[j] - cx) * s + (Math.random() - 0.5) * 0.012
-      out[o + 1] = -(arr[j + 1] - cy) * s + (Math.random() - 0.5) * 0.012
-      out[o + 2] = (Math.random() - 0.5) * 0.3
-    }
-  }
-  place(main, 0, N - tmCount)
-  if (tmCount) place(tmPts, N - tmCount, tmCount)
-  return out
-}
-
-function buildForms(N: number): Float32Array[] {
-  const word = sampleText('ANF', N, true)
-  return [
-    word,                       // 0 hero: the brand
-    spherePositions(N, 1.9),    // 1 marketing: reach
-    latticePositions(N, 2.0),   // 2 infrastructure: structure
-    knotPositions(N, 2.25),     // 3 AI: intricate systems
-    helixPositions(N, 2.0),     // 4 education: growth
-    word,                       // 5 CTA: back to the brand
-  ]
-}
-
-// ─── Shaders ───────────────────────────────────────────────────────────────
-
-const VERT = /* glsl */ `
-uniform float uBlend;
-uniform float uTime;
-uniform vec2 uMouse;
-uniform float uMouseStrength;
-uniform float uSize;
-uniform float uScreenH;
-uniform float uReduced;
-uniform float uCrisp;
-attribute vec3 aFrom;
-attribute vec3 aTo;
-attribute float aRand;
-varying float vMix;
-varying float vRand;
-varying float vFade;
-
-void main() {
-  vec3 pos = mix(aFrom, aTo, uBlend);
-
-  // Constant gentle curl so the cloud is never frozen. uCrisp (high on the ANF
-  // wordmark) nearly freezes it so the letters stay sharp and do not bleed.
-  float amp = mix(0.12, 0.04, uReduced) * (1.0 - uCrisp * 0.9);
-  float ph = aRand * 6.2831;
-  pos.x += sin(uTime * 0.6 + pos.y * 1.4 + ph) * amp * (0.4 + aRand * 0.6);
-  pos.y += cos(uTime * 0.5 + pos.z * 1.4 + ph) * amp * (0.4 + aRand * 0.6);
-  pos.z += sin(uTime * 0.7 + pos.x * 1.4 + ph) * amp * (0.4 + aRand * 0.6);
-
-  // Part around the cursor (and ripple outward on click).
-  vec2 toM = pos.xy - uMouse;
-  float d2 = dot(toM, toM);
-  float infl = uMouseStrength * exp(-d2 * 1.1);
-  pos.xy += (d2 > 0.00001 ? normalize(toM) : vec2(0.0)) * infl;
-
-  vRand = aRand;
-  vMix = clamp(length(pos) * 0.34, 0.0, 1.0);
-
-  vec4 mv = modelViewMatrix * vec4(pos, 1.0);
-  float dist = -mv.z;
-  vFade = clamp((dist - 3.0) / 12.0, 0.0, 1.0);
-  float sz = uSize * (0.6 + aRand * 0.9) * (uScreenH / dist) * (1.0 - uCrisp * 0.28);
-  gl_PointSize = clamp(sz, 1.0, 22.0);
-  gl_Position = projectionMatrix * mv;
-}
-`
-
-const FRAG = /* glsl */ `
-precision highp float;
-uniform vec3 uColorA;
-uniform vec3 uColorB;
-uniform float uOpacity;
-varying float vMix;
-varying float vRand;
-varying float vFade;
-
-void main() {
-  vec2 c = gl_PointCoord - 0.5;
-  float r2 = dot(c, c);
-  if (r2 > 0.25) discard;
-  float a = smoothstep(0.25, 0.0, r2);
-  vec3 col = mix(uColorA, uColorB, vMix);            // flame core, electric dust at the edges
-  if (vRand > 0.95) col = uColorA * 1.6;             // flame embers
-  else if (vRand > 0.90) col = uColorB * 1.7;        // cyan data sparks
-  a *= (1.0 - vFade * 0.55) * uOpacity;
-  gl_FragColor = vec4(col, a);
-}
-`
-
-// ─── The particle field ──────────────────────────────────────────────────────
-
-function ParticleField() {
-  const scroll = useScroll()
-  const { size, viewport, camera } = useThree()
-  const reduced = useMemo(() => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches, [])
-  const coarse = useMemo(() => typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches, [])
-  const N = coarse ? (IS_LOW_END ? 4000 : 6500) : 38000
-
-  // Build the cloud only once the brand font is ready, so the "ANF" wordmark is
-  // sampled in Space Grotesk and not whatever fallback happened to be loaded.
-  const [forms, setForms] = useState<Float32Array[] | null>(null)
-  useEffect(() => {
-    let cancelled = false
-    const done = () => { if (!cancelled) setForms(buildForms(N)) }
-    if (document.fonts?.load) {
-      document.fonts.load('900 210px "Space Grotesk"').then(() => document.fonts.ready).then(done).catch(done)
-    } else {
-      done()
-    }
-    return () => { cancelled = true }
-  }, [N])
-
-  const points = useMemo(() => {
-    if (!forms) return null
-    const geo = new THREE.BufferGeometry()
-    geo.setAttribute('position', new THREE.BufferAttribute(forms[0].slice(), 3))
-    geo.setAttribute('aFrom', new THREE.BufferAttribute(forms[0].slice(), 3))
-    geo.setAttribute('aTo', new THREE.BufferAttribute(forms[1].slice(), 3))
-    const rand = new Float32Array(N)
-    for (let i = 0; i < N; i++) rand[i] = Math.random()
-    geo.setAttribute('aRand', new THREE.BufferAttribute(rand, 1))
-
-    const mat = new THREE.ShaderMaterial({
-      uniforms: {
-        uBlend: { value: 0 },
-        uTime: { value: 0 },
-        uMouse: { value: new THREE.Vector2(99, 99) },
-        uMouseStrength: { value: 0 },
-        uSize: { value: coarse ? 0.016 : 0.011 },
-        uScreenH: { value: 1 },
-        uReduced: { value: reduced ? 1 : 0 },
-        uCrisp: { value: 0 },
-        uOpacity: { value: 0 },
-        uColorA: { value: new THREE.Color('#f0631a') },
-        uColorB: { value: new THREE.Color('#2fb8f5') },
-      },
-      vertexShader: VERT,
-      fragmentShader: FRAG,
-      transparent: true,
-      depthWrite: false,
-      depthTest: false,
-      blending: THREE.AdditiveBlending,
-    })
-
-    const pts = new THREE.Points(geo, mat)
-    pts.frustumCulled = false
-    return pts
-  }, [forms, N, coarse, reduced])
-
-  const idx = useRef({ a: -1, b: -1 })
-  const burst = useRef(0)
-
-  useEffect(() => {
-    if (coarse) return // cursor ripple is desktop-only; no global touch listener on mobile
-    const onDown = () => { burst.current = 1.4 }
-    window.addEventListener('pointerdown', onDown)
-    return () => window.removeEventListener('pointerdown', onDown)
-  }, [coarse])
-
-  useEffect(() => () => {
-    if (!points) return
-    points.geometry.dispose()
-    ;(points.material as THREE.Material).dispose()
-  }, [points])
-
-  useFrame((state, dt) => {
-    if (!points || !forms) return
-    const d = Math.min(dt, 0.05) // dt-based eases below stay refresh-rate independent
-    const mat = points.material as THREE.ShaderMaterial
-    const u = mat.uniforms
-    u.uTime.value += d
-    u.uScreenH.value = size.height * viewport.dpr
-
-    // Morph progress with a dwell so each form holds before gliding to the next.
-    const { i0, i1, t } = morphAt(scroll.offset)
-    if (idx.current.a !== i0 || idx.current.b !== i1) {
-      const aFrom = points.geometry.attributes.aFrom as THREE.BufferAttribute
-      const aTo = points.geometry.attributes.aTo as THREE.BufferAttribute
-      ;(aFrom.array as Float32Array).set(forms[i0]); aFrom.needsUpdate = true
-      ;(aTo.array as Float32Array).set(forms[i1]); aTo.needsUpdate = true
-      idx.current.a = i0; idx.current.b = i1
-    }
-    u.uBlend.value = i0 === i1 ? 1 : t
-    // Crispen the wordmark forms (index 0 and 5) so the letters do not bleed.
-    const isWord = (k: number) => (k === 0 || k === NUM_FORMS - 1 ? 1 : 0)
-    u.uCrisp.value = (1 - t) * isWord(i0) + t * isWord(i1)
-
-    // Scale the cloud to the viewport so the wide "ANF" wordmark always fits, even
-    // on a narrow portrait phone (where the horizontal field of view is small).
-    const aspect = size.width / Math.max(1, size.height)
-    points.scale.setScalar(THREE.MathUtils.clamp(aspect * 0.92, 0.42, 1))
-
-    // Subtle sway keeps it alive while the wordmark stays readable. Set before the
-    // cursor transform so worldToLocal uses this frame's orientation.
-    const swayK = reduced ? 0.3 : 1
-    points.rotation.y = Math.sin(u.uTime.value * 0.1) * 0.15 * swayK
-    points.rotation.x = Math.sin(u.uTime.value * 0.13) * 0.06 * swayK
-
-    // Fade in on first load.
-    u.uOpacity.value += (1 - u.uOpacity.value) * (1 - Math.exp(-2.4 * d))
-
-    // Cursor interaction is desktop-only; skip the per-frame matrix work on touch.
-    if (!coarse) {
-      points.updateMatrixWorld()
-      // Map the cursor to the z=0 plane (accounts for the camera parallax), then into
-      // the cloud's local space so the "part around the cursor" lands under the pointer.
-      DIR.set(state.pointer.x, state.pointer.y, 0.5).unproject(camera).sub(camera.position).normalize()
-      if (Math.abs(DIR.z) > 1e-5) {
-        WORLD.copy(camera.position).addScaledVector(DIR, -camera.position.z / DIR.z)
-        points.worldToLocal(WORLD)
-        const mEase = 1 - Math.exp(-6.3 * d)
-        const mouse = u.uMouse.value as THREE.Vector2
-        mouse.x += (WORLD.x - mouse.x) * mEase
-        mouse.y += (WORLD.y - mouse.y) * mEase
-      }
-      burst.current *= Math.exp(-5 * d) // ~0.92 per 60fps frame
-      u.uMouseStrength.value += (0.5 + burst.current - u.uMouseStrength.value) * (1 - Math.exp(-13 * d))
-    }
-  })
-
-  return points ? <primitive object={points} /> : null
-}
-
-// ─── Camera + scroll plumbing ────────────────────────────────────────────────
-
-// Orbits the camera around the center as you scroll while keeping the pillar in
-// frame: it swings wide around the shapes (revealing their depth) and returns
-// front-on for the readable wordmarks at the ends, with a slow continuous circle
-// so it is always moving. Distance barely changes, so nothing gets clipped. The
-// spherical formula keeps the camera exactly `dist` from the center at every angle.
-function CameraRig() {
-  const scroll = useScroll()
-  useFrame((state, dt) => {
-    const off = scroll.offset
-    const { i0, i1, t } = morphAt(off)
-    const time = state.clock.elapsedTime
-
-    const base = STATION_DIST[i0] + (STATION_DIST[i1] - STATION_DIST[i0]) * t
-    const dist = base + Math.sin(t * Math.PI) * 0.5 + Math.sin(time * 0.18) * 0.25 // gentle breathing
-
-    // Azimuth: front-on (0) at the wordmark ends, swung wide through the shapes,
-    // plus a slow continuous circle so the camera is always drifting around.
-    const az = Math.sin(off * Math.PI) * 1.05 + Math.sin(time * 0.25) * 0.12
-    const el = Math.sin(off * Math.PI * 2) * 0.22 + Math.sin(time * 0.2) * 0.05
-    const ce = Math.cos(el)
-    const tx = Math.sin(az) * ce * dist + state.pointer.x * 0.3
-    const ty = Math.sin(el) * dist + state.pointer.y * 0.25
-    const tz = Math.cos(az) * ce * dist
-
-    const k = 1 - Math.exp(-3.5 * Math.min(dt, 0.05))
-    const cam = state.camera
-    cam.position.x += (tx - cam.position.x) * k
-    cam.position.y += (ty - cam.position.y) * k
-    cam.position.z += (tz - cam.position.z) * k
-    cam.lookAt(0, 0, 0)
-  })
-  return null
-}
-
-// Momentum scrolling. The native wheel moves the page in coarse jumps, which reads
-// as choppy; this intercepts the wheel and eases scrollTop toward a target every
-// frame so the page glides with inertia. Touch and scrollbar fall through to native.
-function SmoothWheel() {
-  const scroll = useScroll()
-  useEffect(() => {
-    const el = scroll?.el
-    if (!el) return
-    let target = el.scrollTop
-    let animating = false
-    let raf = 0
-    const maxScroll = () => el.scrollHeight - el.clientHeight
-    const tick = () => {
-      const current = el.scrollTop
-      const next = current + (target - current) * 0.12
-      if (Math.abs(target - next) < 0.5) {
-        el.scrollTop = target
-        animating = false
-        return
-      }
-      el.scrollTop = next
-      raf = requestAnimationFrame(tick)
-    }
-    const onWheel = (e: WheelEvent) => {
-      if (e.ctrlKey) return
-      e.preventDefault()
-      if (!animating) target = el.scrollTop
-      const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? el.clientHeight : 1
-      target = Math.max(0, Math.min(maxScroll(), target + e.deltaY * unit))
-      if (!animating) {
-        animating = true
-        raf = requestAnimationFrame(tick)
-      }
-    }
-    el.addEventListener('wheel', onWheel, { passive: false })
-    return () => {
-      el.removeEventListener('wheel', onWheel)
-      cancelAnimationFrame(raf)
-    }
-  }, [scroll])
-  return null
-}
-
-// Reports the active section index out to the HUD. Lives inside ScrollControls
-// (so it can read scroll.offset) and only fires React state on a section change.
-function ScrollReporter({ onSection }: { onSection: (i: number) => void }) {
-  const scroll = useScroll()
-  const last = useRef(-1)
-  useFrame(() => {
-    const i = Math.max(0, Math.min(NUM_FORMS - 1, Math.round(scroll.offset * PAGES - 0.5)))
-    if (i !== last.current) { last.current = i; onSection(i) }
-  })
-  return null
-}
-
-// ─── HUD (command-center chrome) ─────────────────────────────────────────────
+  ((navigator as Navigator & { deviceMemory?: number }).deviceMemory !== undefined
+    ? ((navigator as Navigator & { deviceMemory?: number }).deviceMemory as number) <= 4
+    : (navigator.hardwareConcurrency ?? 8) <= 4)
 
 const HUD_LABELS = [
-  'ANF // INITIALIZE',
-  '01 / FRONT DOOR™',
-  '02 / FOLLOW-UP ENGINE™',
-  '03 / AUTOPILOT™',
-  '04 / HOME BASE™',
-  'ANF // DEPLOY',
+  'ANF // DEPARTURE',
+  '01 / THE FRONT DOOR',
+  '02 / THE NERVE CENTER',
+  '03 / THE MACHINE ROOM',
+  '04 / THE INTELLIGENCE',
+  '05 / THE HANDOVER',
+  'ANF // ARRIVAL',
 ]
 
-function Hud({ section }: { section: number }) {
-  return (
-    <div className="pointer-events-none fixed inset-0 z-10">
-      {/* Scanlines for a screen feel. */}
-      <div
-        className="absolute inset-0 opacity-[0.05]"
-        style={{ backgroundImage: 'repeating-linear-gradient(to bottom, rgba(255,255,255,0.7) 0px, rgba(255,255,255,0.7) 1px, transparent 1px, transparent 3px)' }}
-      />
-      {/* Corner brackets. */}
-      <span className="absolute left-3 top-3 h-5 w-5 border-l border-t border-flame-500/30" />
-      <span className="absolute right-3 top-3 h-5 w-5 border-r border-t border-flame-500/30" />
-      <span className="absolute left-3 bottom-3 h-5 w-5 border-l border-b border-flame-500/30" />
-      <span className="absolute right-3 bottom-3 h-5 w-5 border-r border-b border-flame-500/30" />
-
-      {/* Status + live section readout. */}
-      <div className="absolute left-6 bottom-6 font-mono text-[10px] uppercase tracking-[0.2em] text-silver-400/80">
-        <span className="flex items-center gap-2">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" /> ANF systems online
-        </span>
-        <span className="mt-1 block text-flame-300/90">{HUD_LABELS[section]}</span>
-      </div>
-
-      {/* Vertical tick rail (desktop). */}
-      <div className="absolute right-5 top-1/2 hidden -translate-y-1/2 flex-col items-end gap-2.5 sm:flex">
-        {HUD_LABELS.map((_, i) => (
-          <span key={i} className={`h-px transition-all duration-500 ${i === section ? 'w-6 bg-flame-500' : 'w-3 bg-white/20'}`} />
-        ))}
-      </div>
-
-      {/* Tick rail (mobile, along the bottom). */}
-      <div className="absolute inset-x-0 bottom-3 flex justify-center gap-1.5 sm:hidden">
-        {HUD_LABELS.map((_, i) => (
-          <span key={i} className={`h-1 rounded-full transition-all duration-500 ${i === section ? 'w-4 bg-flame-500' : 'w-1.5 bg-white/25'}`} />
-        ))}
-      </div>
-    </div>
-  )
+/**
+ * The five worlds.
+ *
+ * `body` says what the problem actually is, in the language someone would use
+ * about their own week. `specifics` is the part that fixes the vagueness: four
+ * concrete deliverables, no adjectives. Marketing, infrastructure, automation,
+ * AI and education carry equal weight here on purpose, because ANF is not an AI
+ * company that also builds websites.
+ */
+interface Station {
+  num: string
+  title: string
+  body: string
+  specifics: string[]
 }
 
-// ─── Page ────────────────────────────────────────────────────────────────────
+const STATIONS_COPY: Station[] = [
+  {
+    num: '01',
+    title: 'The Front Door',
+    body:
+      'Before anyone calls you, they look you up. A slow page, a profile from three years ago, or nothing at all, and they are already dialing the next name on the list. This is the part of the business that works while you are asleep, and for most people it is the part nobody has touched since it was built.',
+    specifics: [
+      'A site built to load fast and be found',
+      'Copy that says what you actually do, in one sentence',
+      'A request form that lands in your system, not a forgotten inbox',
+      'The proof that makes a stranger pick you: work, reviews, results',
+    ],
+  },
+  {
+    num: '02',
+    title: 'The Nerve Center',
+    body:
+      'Most businesses run on four apps that do not talk to each other, one spreadsheet somebody guards, and a memory doing far too much. Nothing is lost exactly, it is just scattered, and every scattered thing costs you a small decision every day. One place instead, where the pipeline, the paperwork and the money all update each other.',
+    specifics: [
+      'A CRM shaped around how you already work, not a template',
+      'Contracts drafted, sent, signed and countersigned in one chain',
+      'Invoicing that reconciles itself when the money actually lands',
+      'A portal your clients log into, so they stop emailing you for updates',
+    ],
+  },
+  {
+    num: '03',
+    title: 'The Machine Room',
+    body:
+      'Half your week goes to the same small tasks. The follow-up you meant to send on Tuesday. The invoice nobody chased. The lead that came in at nine at night and sat until morning. None of those are judgment calls. They are loops, and a loop can be closed by something that never forgets and never has a bad morning.',
+    specifics: [
+      'Follow-up that goes out whether or not you remember',
+      'Overdue invoices chased on a schedule, politely',
+      'Every new lead answered within minutes, at any hour',
+      'Nothing sends to a client without your explicit say-so',
+    ],
+  },
+  {
+    num: '04',
+    title: 'The Intelligence',
+    body:
+      'Not a chatbot bolted onto a homepage. AI that drafts in your voice, reads the messy data you never have time to read, and hands you work already started rather than a blank page. It is worth being equally clear about where it does not belong: pricing, judgment, and the relationship with your client stay yours.',
+    specifics: [
+      'Drafts written in your voice, always approved by you before they go',
+      'An assistant that can reach your whole system, not just chat',
+      'Research and audits that used to take an afternoon',
+      'Honest limits, stated out loud instead of hidden',
+    ],
+  },
+  {
+    num: '05',
+    title: 'The Handover',
+    body:
+      'A system you cannot run yourself is just a subscription with extra steps. The work is not finished when it ships, it is finished when your team can operate it without calling anyone. That means teaching, writing it down, and being straight about how it works, including the parts that are simpler than they look.',
+    specifics: [
+      'Training for the people who will actually use it daily',
+      'Documentation written for humans, not for auditors',
+      'Classes on AI that are honest about what it does and does not do',
+      'Your data is yours, exportable, always',
+    ],
+  },
+]
 
 export default function Experience() {
   return (
@@ -589,13 +127,17 @@ export default function Experience() {
 }
 
 function ExperienceInner() {
-  // Lighter bloom + lower dpr on phones: additive points + multi-pass mipmap bloom
-  // is the main GPU cost, so ease off where it matters most.
+  // Phones get fewer stars, no bloom and dpr 1: additive points plus multi-pass
+  // mipmap bloom is the main GPU cost, and the frame drops it caused used to
+  // make the scroll pause and jump.
   const coarse = useMemo(() => typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches, [])
   const [section, setSection] = useState(0)
+
+  const starCount = coarse ? (IS_LOW_END ? 900 : 1800) : 5000
+  const constellationGroups = coarse ? (IS_LOW_END ? 5 : 9) : 16
+
   return (
-    <div className="fixed inset-0 bg-[#060d1a] text-white overflow-hidden">
-      {/* Fixed chrome */}
+    <div className="fixed inset-0 bg-[#040912] text-white overflow-hidden">
       <div className="fixed top-0 inset-x-0 z-20 flex items-center justify-between px-6 sm:px-10 py-5">
         <a href="/" className="font-display text-sm font-medium tracking-[0.05em] text-silver-200/90 hover:text-white transition-colors">
           ANF Consulting
@@ -605,48 +147,46 @@ function ExperienceInner() {
         </span>
       </div>
 
-      <Canvas camera={{ position: [0, 0, 6], fov: 42 }} dpr={coarse ? 1 : [1, 1.8]} gl={{ antialias: !coarse, alpha: false, powerPreference: 'high-performance' }}>
-        <color attach="background" args={['#060d1a']} />
-        {/* Lower damping on touch so the scene tracks the finger immediately. */}
+      <Canvas
+        camera={{ position: [0, 0, 0], fov: 62, near: 0.1, far: 400 }}
+        dpr={coarse ? 1 : [1, 1.8]}
+        gl={{ antialias: !coarse, alpha: false, powerPreference: 'high-performance' }}
+      >
+        <color attach="background" args={['#040912']} />
         <ScrollControls
-          // A little extra scroll length on phones so the tall final request
-          // section can be scrolled fully into view above the mobile address bar
-          // (inside this fixed-height scroll there is otherwise no room to reach
-          // its bottom). The particle morph clamps on the last form, so the small
-          // trailing stretch just holds the wordmark.
+          // A little extra length on phones so the tall final section can clear
+          // the mobile address bar. The flight clamps at the last station, so the
+          // trailing stretch just holds the arrival.
           pages={coarse ? PAGES + 0.6 : PAGES}
           damping={coarse ? 0.08 : 0.12}
-          // Keep iOS momentum scrolling alive on the container (it stops accepting
-          // touches after it settles otherwise) and always allow vertical panning.
           style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}
         >
-          {/* Desktop-only wheel momentum; on touch it fights native scroll. */}
           {!coarse && <SmoothWheel />}
-          <CameraRig />
-          <ParticleField />
-          {/* Deep starfield for parallax depth as the camera flies and orbits. */}
-          <Stars radius={40} depth={50} count={coarse ? (IS_LOW_END ? 150 : 300) : 1500} factor={3.5} saturation={0} fade speed={0.6} />
+          <FlightRig />
+          <StarTunnel count={starCount} />
+          <Constellations groups={constellationGroups} />
+          <Planets />
           <ScrollReporter onSection={setSection} />
           <Scroll html style={{ width: '100%' }}>
             <Overlay />
           </Scroll>
         </ScrollControls>
-        {/* Bloom is desktop-only: the multi-pass mipmap bloom is the biggest mobile
-            GPU cost, and the frame drops it caused made the scroll pause and jump.
-            Own Suspense so it never blanks the scroll UI while the composer sets up. */}
         {!coarse && (
           <Suspense fallback={null}>
             <EffectComposer>
-              <Bloom mipmapBlur intensity={0.85} luminanceThreshold={0.15} luminanceSmoothing={0.4} radius={0.7} />
+              <Bloom mipmapBlur intensity={0.7} luminanceThreshold={0.2} luminanceSmoothing={0.4} radius={0.65} />
             </EffectComposer>
           </Suspense>
         )}
       </Canvas>
 
-      {/* Filmic edge darkening, kept in CSS so it never blocks the scroll text. */}
+      {/* Filmic edge darkening. Kept as a plain gradient with no CSS filter: a
+          blurred layer over a canvas that repaints every frame is one of the most
+          expensive things you can ask mobile Safari to do, and it used to make
+          this page stutter. */}
       <div
         className="pointer-events-none fixed inset-0 z-10"
-        style={{ background: 'radial-gradient(ellipse 78% 78% at 50% 45%, transparent 52%, rgba(3,7,15,0.8) 100%)' }}
+        style={{ background: 'radial-gradient(ellipse 80% 80% at 50% 45%, transparent 48%, rgba(2,5,12,0.85) 100%)' }}
       />
 
       <Hud section={section} />
@@ -654,67 +194,173 @@ function ExperienceInner() {
   )
 }
 
-// Strong text shadow + a soft dark scrim keep the copy readable over the moving,
-// glowing particle scene behind it.
-const SHADOW = '[text-shadow:_0_2px_18px_rgba(0,0,0,0.9)]'
+/* ------------------------------------------------------------------- chrome */
+
+function Hud({ section }: { section: number }) {
+  const label = HUD_LABELS[Math.min(section, HUD_LABELS.length - 1)]
+  return (
+    <div className="pointer-events-none fixed inset-0 z-10">
+      <div
+        className="absolute inset-0 opacity-[0.05]"
+        style={{ backgroundImage: 'repeating-linear-gradient(to bottom, rgba(255,255,255,0.7) 0px, rgba(255,255,255,0.7) 1px, transparent 1px, transparent 3px)' }}
+      />
+      <span className="absolute left-3 top-3 h-5 w-5 border-l border-t border-flame-500/30" />
+      <span className="absolute right-3 top-3 h-5 w-5 border-r border-t border-flame-500/30" />
+      <span className="absolute left-3 bottom-3 h-5 w-5 border-l border-b border-flame-500/30" />
+      <span className="absolute right-3 bottom-3 h-5 w-5 border-r border-b border-flame-500/30" />
+
+      <div className="absolute left-6 bottom-6 font-mono text-[10px] uppercase tracking-[0.2em] text-silver-400/80">
+        <span className="flex items-center gap-2">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" /> ANF systems online
+        </span>
+        <span className="mt-1.5 block text-flame-300/90">{label}</span>
+      </div>
+
+      {/* Route marker: which world you are passing. */}
+      <div className="absolute right-6 bottom-6 hidden sm:flex flex-col items-end gap-1.5">
+        {Array.from({ length: STATIONS }, (_, i) => (
+          <span
+            key={i}
+            className={`h-px transition-all duration-500 ${
+              section === i + 1 ? 'w-8 bg-flame-400' : 'w-3 bg-silver-400/30'
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Desktop wheel momentum. On touch it fights native scrolling, so it is off. */
+function SmoothWheel() {
+  const scroll = useScroll()
+  useEffect(() => {
+    const el = scroll.el
+    if (!el) return
+    let target = el.scrollTop
+    let raf = 0
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault()
+      target = Math.max(0, Math.min(el.scrollHeight - el.clientHeight, target + e.deltaY))
+      if (!raf) raf = requestAnimationFrame(step)
+    }
+    const step = () => {
+      const next = el.scrollTop + (target - el.scrollTop) * 0.12
+      el.scrollTop = next
+      raf = Math.abs(target - next) > 0.5 ? requestAnimationFrame(step) : 0
+    }
+    el.addEventListener('wheel', onWheel, { passive: false })
+    return () => {
+      el.removeEventListener('wheel', onWheel)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [scroll])
+  return null
+}
+
+function ScrollReporter({ onSection }: { onSection: (i: number) => void }) {
+  const scroll = useScroll()
+  const last = useRef(-1)
+  useEffect(() => {
+    let raf = 0
+    const tick = () => {
+      const i = Math.round(scroll.offset * (PAGES - 1))
+      if (i !== last.current) {
+        last.current = i
+        onSection(i)
+      }
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [scroll, onSection])
+  return null
+}
+
+/* --------------------------------------------------------------------- copy */
+
+const SHADOW = '[text-shadow:_0_2px_18px_rgba(0,0,0,0.92)]'
 
 /**
- * The dark pad behind the text so it stays readable over the particles.
+ * The dark pad behind the text.
  *
- * This used to be `bg-midnight-950/60 blur-2xl`. A 40px CSS blur on a large DOM
- * layer sitting on top of a full-screen WebGL canvas is one of the most
- * expensive things you can ask mobile Safari to do: it cannot cheaply composite
- * a filtered layer over a canvas that is repainting every frame, so it redoes
- * the blur constantly while you scroll. Four of them were stacked over the
- * scene.
- *
- * A radial gradient gives the same soft falloff with no filter at all, so the
- * layer composites like any other coloured box.
+ * This used to be `blur-2xl`. A 40px CSS blur on a large DOM layer over a
+ * full-screen WebGL canvas is one of the most expensive things mobile Safari can
+ * be asked to do: it cannot cheaply composite a filtered layer over a canvas
+ * that repaints every frame, so it redoes the blur constantly while you scroll.
+ * A radial gradient gives the same falloff with no filter at all.
  */
 function Scrim({ className = '' }: { className?: string }) {
   return (
     <div
       aria-hidden
       className={`pointer-events-none absolute rounded-[2.5rem] ${className}`}
-      style={{ background: 'radial-gradient(ellipse at center, rgba(6,15,31,0.82) 0%, rgba(6,15,31,0.62) 45%, rgba(6,15,31,0) 78%)' }}
+      style={{ background: 'radial-gradient(ellipse at center, rgba(4,9,18,0.88) 0%, rgba(4,9,18,0.68) 45%, rgba(4,9,18,0) 78%)' }}
     />
   )
 }
 
 function Overlay() {
   return (
-    // pointer-events-none so the cursor reaches the particles behind the text; the
-    // CTA re-enables events on itself. The fixed top chrome is its own layer.
     <div className="text-white pointer-events-none">
       <h1 className="sr-only">ANF Consulting</h1>
 
-      {/* Hero: the particles spell the name, so the text gets out of the way. */}
       <section className="h-screen flex flex-col items-center justify-between py-24 sm:py-28 text-center px-6">
         <div className="relative">
           <Scrim className="-inset-x-10 -inset-y-6" />
           <p className={`relative font-display text-[10px] sm:text-xs tracking-[0.3em] uppercase text-flame-300 ${SHADOW}`}>
-            Front Door&trade; <span className="text-flame-400/70">/</span> Follow-Up&trade; <span className="text-flame-400/70">/</span> Autopilot&trade; <span className="text-flame-400/70">/</span> Home Base&trade;
+            Five stops. One system.
           </p>
         </div>
-        <div className="relative max-w-md">
+        <div className="relative max-w-lg">
           <Scrim className="-inset-x-8 -inset-y-8" />
           <div className="relative">
             <p className={`text-base sm:text-lg text-silver-100 leading-relaxed ${SHADOW}`}>
-              Your work and your life run on sticky notes, three different apps, and a memory that is doing too much. ANF builds you one system that holds it all, so nothing slips and you stop carrying it in your head.
+              Your business runs on four apps that do not talk, a spreadsheet somebody guards, and a memory doing too much. This is a tour of the alternative: the five things we build, what each one actually is, and what you get.
             </p>
-            <p className={`mt-10 text-[10px] uppercase tracking-[0.4em] text-silver-400 ${SHADOW}`}>Scroll to see your system</p>
+            <p className={`mt-10 text-[10px] uppercase tracking-[0.4em] text-silver-400 ${SHADOW}`}>Scroll to begin the flight</p>
           </div>
         </div>
       </section>
 
-      <PillarSection side="left" num="01" title="The Front Door" body="People look you up before they ever reach out, and right now they find a slow page, an old profile, or nothing at all, so they move on to the next name. We build the site, the presence, and the proof that makes a stranger choose you. Whether you run a business, work for yourself, or just want to be taken seriously online." />
-      <PillarSection side="right" num="02" title="The Follow-Up Engine" body="The message you meant to answer sat too long, and the person you meant to get back to quietly moved on. We build the system that catches every message, replies in a minute, books the time, and reminds the right person before anything slips through the cracks. Leads, clients, or the people in your life." />
-      <PillarSection side="left" num="03" title="The Autopilot" body="Half your week disappears into the same small tasks: the reminders, the forms, the scheduling, the message you retype from scratch every time, the thing you keep meaning to get to. We hand that work to a system that runs it the same way every time, so the busywork stops eating your evenings." />
-      <PillarSection side="right" num="04" title="The Home Base" body="Your to-do list lives in three apps, the family calendar is on the fridge, and the thing you cannot forget is on a napkin somewhere. We put the business and the life in one calm place you can trust, so you open one screen and know exactly what today needs and what can wait." />
+      {STATIONS_COPY.map((s, i) => (
+        <StationSection key={s.num} station={s} side={i % 2 === 0 ? 'right' : 'left'} />
+      ))}
 
-      {/* CTA: the swarm re-forms the wordmark above; a short request form, no call. */}
       <RequestCTA />
     </div>
+  )
+}
+
+/**
+ * Copy sits on the opposite side to the planet it describes, so the world stays
+ * visible while you read about it. Planets alternate sides, so the text does too.
+ */
+function StationSection({ station, side }: { station: Station; side: 'left' | 'right' }) {
+  return (
+    <section className="h-screen flex items-center px-6 sm:px-10 md:px-24">
+      <div className={`relative w-full max-w-md ${side === 'left' ? 'mr-auto' : 'ml-auto'}`}>
+        <Scrim className="-inset-x-8 -inset-y-10" />
+        <div className="relative">
+          <p className={`font-display text-[10px] tracking-[0.5em] uppercase text-flame-300 mb-3 ${SHADOW}`}>
+            Station {station.num}
+          </p>
+          <h2 className={`font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white leading-[1.02] ${SHADOW}`}>
+            {station.title}
+          </h2>
+          <div className="mt-4 h-px w-12 bg-flame-500/80" />
+          <p className={`mt-4 text-silver-200 text-sm sm:text-base leading-relaxed ${SHADOW}`}>{station.body}</p>
+          <ul className="mt-5 space-y-2">
+            {station.specifics.map((line) => (
+              <li key={line} className={`flex gap-2.5 text-sm text-silver-300 leading-snug ${SHADOW}`}>
+                <span aria-hidden className="mt-[0.45em] h-1 w-1 shrink-0 rounded-full bg-flame-400" />
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
   )
 }
 
@@ -786,10 +432,6 @@ function RequestCTA() {
                 )}
               </form>
 
-              {/* The second door. The form above starts a conversation; this
-                  starts a plan. Someone who has just watched the whole thing is
-                  the most ready they will ever be to say what they actually
-                  want, so give them somewhere to say it in detail. */}
               <div className="mt-7 sm:mt-8 pt-6 border-t border-white/10 text-left">
                 <p className={`text-sm text-silver-300 leading-relaxed ${SHADOW}`}>
                   Know roughly what you want already?
@@ -813,26 +455,8 @@ function RequestCTA() {
   )
 }
 
-function PillarSection({ side, num, title, body }: { side: 'left' | 'right'; num: string; title: string; body: string }) {
-  return (
-    <section className="h-screen flex items-center px-10 md:px-24">
-      <div className={`relative max-w-md ${side === 'left' ? 'mr-auto' : 'ml-auto'}`}>
-        <Scrim className="-inset-x-8 -inset-y-12" />
-        <div className="relative">
-          <p className={`font-display text-[10px] tracking-[0.5em] uppercase text-flame-300 mb-4 ${SHADOW}`}>System {num}</p>
-          <h2 className={`font-display text-4xl md:text-6xl font-semibold tracking-tight text-white leading-[0.98] ${SHADOW}`}>
-            {title}<sup className="ml-1 align-top text-[0.34em] font-medium tracking-normal text-flame-300/90">&trade;</sup>
-          </h2>
-          <div className="mt-5 h-px w-12 bg-flame-500/80" />
-          <p className={`mt-5 text-silver-200 text-base md:text-lg leading-relaxed ${SHADOW}`}>{body}</p>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// Catches a mount/render crash in the scene so the page shows the actual error
-// instead of a blank screen.
+// Catches a mount or render crash in the scene so the page shows the actual
+// error instead of a blank screen.
 class ExperienceBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
   state: { error: Error | null } = { error: null }
   static getDerivedStateFromError(error: Error) {
@@ -844,7 +468,7 @@ class ExperienceBoundary extends Component<{ children: ReactNode }, { error: Err
   render() {
     if (this.state.error) {
       return (
-        <div className="fixed inset-0 bg-[#060d1a] text-white flex items-center justify-center p-8">
+        <div className="fixed inset-0 bg-[#040912] text-white flex items-center justify-center p-8">
           <div className="max-w-lg text-center">
             <p className="text-flame-400 text-xs uppercase tracking-[0.3em] mb-3">3D experience hit an error</p>
             <p className="text-silver-300/80 text-sm mb-4">It loaded, but something in the scene crashed. Here is the message so it can be fixed fast:</p>
