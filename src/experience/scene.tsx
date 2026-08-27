@@ -76,15 +76,30 @@ export interface PlanetSpec {
   /** Rim and band colour, the light this world gives off. */
   accent: string
   ring?: boolean
-  moon?: boolean
+  moon?: MoonSpec
   /** Surface character: higher is more broken up and continental. */
   roughness: number
 }
 
+/** Every value here exists so two moons can never move or look the same. */
+export interface MoonSpec {
+  color: string
+  /** As a fraction of the planet radius. */
+  size: number
+  /** Radians per second around the orbit. Negative runs it the other way. */
+  speed: number
+  /** Where on the orbit it starts. */
+  phase: number
+  /** Inclination of the orbital plane, radians. */
+  tilt: number
+  /** Orbit radius as a multiple of the planet radius. */
+  dist: number
+}
+
 export const PLANETS: PlanetSpec[] = [
-  { z: -DEPTH * 1 - LEAD, x: -3.4, y: 0.5, radius: 1.35, color: '#1b3a63', accent: '#f26b1d', roughness: 0.55, moon: true },
+  { z: -DEPTH * 1 - LEAD, x: -3.4, y: 0.5, radius: 1.35, color: '#1b3a63', accent: '#f26b1d', roughness: 0.55, moon: { color: '#e8d9c4', size: 0.16, speed: 0.5, phase: 1.2, tilt: 0.22, dist: 2.1 } },
   { z: -DEPTH * 2 - LEAD, x: 3.6, y: -0.7, radius: 1.6, color: '#232c46', accent: '#7fb2ff', roughness: 0.85, ring: true },
-  { z: -DEPTH * 3 - LEAD, x: -3.8, y: -0.4, radius: 1.25, color: '#3a2140', accent: '#ff8a4c', roughness: 0.35, moon: true },
+  { z: -DEPTH * 3 - LEAD, x: -3.8, y: -0.4, radius: 1.25, color: '#3a2140', accent: '#ff8a4c', roughness: 0.35, moon: { color: '#b98a6f', size: 0.24, speed: -0.28, phase: 4.4, tilt: 0.65, dist: 2.7 } },
   { z: -DEPTH * 4 - LEAD, x: 3.3, y: 0.8, radius: 1.5, color: '#12303a', accent: '#57e0c8', roughness: 0.7, ring: false },
   { z: -DEPTH * 5 - LEAD, x: -3.2, y: 0.3, radius: 1.4, color: '#2a2740', accent: '#f2b01d', roughness: 0.5, ring: true },
 ]
@@ -166,6 +181,7 @@ const PLANET_FRAG = /* glsl */ `
   uniform vec3 uAccent;
   uniform float uTime;
   uniform float uRough;
+  uniform float uReveal;
   varying vec3 vNormalW;
   varying vec3 vViewDir;
   varying vec3 vPos;
@@ -196,7 +212,9 @@ const PLANET_FRAG = /* glsl */ `
     float fres = pow(1.0 - clamp(dot(n, normalize(vViewDir)), 0.0, 1.0), 2.6);
     base += uAccent * fres * 1.5;
 
-    gl_FragColor = vec4(base, 1.0);
+    // Reveal by mixing toward the sky colour rather than alpha: the material
+    // stays opaque, so there is no depth-sorting artifact while it fades in.
+    gl_FragColor = vec4(mix(vec3(0.016, 0.035, 0.071), base, uReveal), 1.0);
   }
 `
 
@@ -212,47 +230,91 @@ const GLOW_VERT = /* glsl */ `
 const GLOW_FRAG = /* glsl */ `
   precision mediump float;
   uniform vec3 uAccent;
+  uniform float uReveal;
   varying vec2 vUv;
   void main() {
     float d = length(vUv - 0.5) * 2.0;
-    float a = pow(max(0.0, 1.0 - d), 3.2) * 0.55;
+    float a = pow(max(0.0, 1.0 - d), 3.2) * 0.55 * uReveal;
     gl_FragColor = vec4(uAccent, a);
   }
 `
 
+/**
+ * Reveal window, in world units of distance still to travel.
+ *
+ * A planet stays part of the dark until the flight is about one station away,
+ * then materializes over the approach: sky-coloured body brightening into
+ * itself, halo and ring coming up with it, and a small scale swell so it reads
+ * as arriving rather than switching on. Fully lit well before its copy lands.
+ */
+const REVEAL_FAR = 32
+const REVEAL_NEAR = 18
+
 function Planet({ spec }: { spec: PlanetSpec }) {
   const mesh = useRef<THREE.Mesh>(null)
   const moon = useRef<THREE.Mesh>(null)
+  const group = useRef<THREE.Group>(null)
+  const ringMat = useRef<THREE.MeshBasicMaterial>(null)
+  const moonMat = useRef<THREE.MeshBasicMaterial>(null)
   const { size } = useThree()
   const aspect = size.width / size.height
   const xf = lateralFactor(aspect)
   const rf = aspect < 1 ? 0.85 : 1
+
+  // One value, shared by both shaders by object reference.
+  const reveal = useMemo(() => ({ value: 0 }), [])
   const uniforms = useMemo(
     () => ({
       uColor: { value: new THREE.Color(spec.color) },
       uAccent: { value: new THREE.Color(spec.accent) },
       uTime: { value: 0 },
       uRough: { value: spec.roughness },
+      uReveal: reveal,
     }),
-    [spec.color, spec.accent, spec.roughness],
+    [spec.color, spec.accent, spec.roughness, reveal],
   )
 
   const glowUniforms = useMemo(
-    () => ({ uAccent: { value: new THREE.Color(spec.accent) } }),
-    [spec.accent],
+    () => ({ uAccent: { value: new THREE.Color(spec.accent) }, uReveal: reveal }),
+    [spec.accent, reveal],
   )
 
   useFrame((state, delta) => {
     uniforms.uTime.value = state.clock.elapsedTime
+
+    // Distance still to travel to this world. Behind the camera counts as
+    // arrived, so nothing ever fades back out in the mirror.
+    const ahead = state.camera.position.z - spec.z
+    const target = ahead <= REVEAL_NEAR ? 1 : ahead >= REVEAL_FAR ? 0 : 1 - (ahead - REVEAL_NEAR) / (REVEAL_FAR - REVEAL_NEAR)
+    // Eased toward the target so a fast scroll still gets a soft arrival.
+    reveal.value += (target - reveal.value) * Math.min(1, delta * 4)
+
+    if (group.current) {
+      // Skip rendering entirely while hidden; swell the last 12% on approach.
+      group.current.visible = reveal.value > 0.02
+      const swell = rf * (0.88 + 0.12 * reveal.value)
+      group.current.scale.setScalar(swell)
+    }
+    if (ringMat.current) ringMat.current.opacity = 0.22 * reveal.value
+    if (moonMat.current) moonMat.current.opacity = reveal.value
+
     if (mesh.current) mesh.current.rotation.y += delta * 0.045
-    if (moon.current) {
-      const t = state.clock.elapsedTime * 0.35
-      moon.current.position.set(Math.cos(t) * spec.radius * 2.3, Math.sin(t * 0.7) * spec.radius * 0.5, Math.sin(t) * spec.radius * 2.3)
+    if (moon.current && spec.moon) {
+      const m = spec.moon
+      const a = state.clock.elapsedTime * m.speed + m.phase
+      const d = spec.radius * m.dist
+      // A circle in a plane inclined by tilt, so each moon crosses its planet
+      // at a different angle instead of every orbit lying flat.
+      moon.current.position.set(
+        Math.cos(a) * d,
+        Math.sin(a) * d * Math.sin(m.tilt),
+        Math.sin(a) * d * Math.cos(m.tilt),
+      )
     }
   })
 
   return (
-    <group position={[spec.x * xf, spec.y, spec.z]} scale={rf}>
+    <group ref={group} position={[spec.x * xf, spec.y, spec.z]} scale={rf}>
       {/* Atmosphere halo: a soft additive disc a little larger than the body.
           Faces the camera's approach, so no per-frame billboarding is needed. */}
       <mesh position={[0, 0, spec.radius * 0.35]}>
@@ -272,14 +334,15 @@ function Planet({ spec }: { spec: PlanetSpec }) {
       </mesh>
       {spec.moon && (
         <mesh ref={moon}>
-          <sphereGeometry args={[spec.radius * 0.18, 20, 14]} />
-          <meshBasicMaterial color="#cfd8e8" />
+          <sphereGeometry args={[spec.radius * spec.moon.size, 20, 14]} />
+          <meshBasicMaterial ref={moonMat} color={spec.moon.color} transparent />
         </mesh>
       )}
       {spec.ring && (
         <mesh rotation={[Math.PI / 2.35, 0.25, 0]}>
           <ringGeometry args={[spec.radius * 1.5, spec.radius * 2.25, 96]} />
           <meshBasicMaterial
+            ref={ringMat}
             color={spec.accent}
             side={THREE.DoubleSide}
             transparent

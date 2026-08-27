@@ -111,12 +111,13 @@ const STATIONS_COPY: Station[] = [
   {
     num: '05',
     title: 'The Handover',
-    kicker: 'Yours to run.',
+    kicker: 'Yours to run. Never yours alone.',
     body:
-      'A system you cannot run yourself is a subscription with extra steps. The job is finished when your team drives it without calling anyone.',
+      'Your team gets trained on it, it is written down, and the data is yours. And when something breaks or a new problem shows up, that lands on my desk, not yours. Support is part of what you pay for, not an upsell.',
     specifics: [
       'Training for the people who use it every day',
       'Documentation written for humans',
+      'Troubleshooting and problem solving stay on me',
       'Your data, exportable, always',
     ],
   },
