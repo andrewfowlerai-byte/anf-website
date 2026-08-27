@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber'
 import { ScrollControls, Scroll, useScroll } from '@react-three/drei'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import { submitRequest } from '../lib/leads'
-import { FlightRig, Planets, StarTunnel, Constellations, PAGES, STATIONS } from './scene'
+import { FlightRig, Planets, StarTunnel, Constellations, Nebulae, PLANETS, PAGES, STATIONS } from './scene'
 
 /**
  * ANF 3D experience: a flight.
@@ -51,6 +51,8 @@ const HUD_LABELS = [
 interface Station {
   num: string
   title: string
+  /** One line that could stand alone. The headline under the headline. */
+  kicker: string
   body: string
   specifics: string[]
 }
@@ -59,61 +61,63 @@ const STATIONS_COPY: Station[] = [
   {
     num: '01',
     title: 'The Front Door',
+    kicker: 'Be worth finding.',
     body:
-      'Before anyone calls you, they look you up. A slow page, a profile from three years ago, or nothing at all, and they are already dialing the next name on the list. This is the part of the business that works while you are asleep, and for most people it is the part nobody has touched since it was built.',
+      'People look you up long before they call you. If what they find is slow, stale, or missing, they dial the next name on the list.',
     specifics: [
-      'A site built to load fast and be found',
-      'Copy that says what you actually do, in one sentence',
-      'A request form that lands in your system, not a forgotten inbox',
-      'The proof that makes a stranger pick you: work, reviews, results',
+      'A fast site that says what you do in one line',
+      'Proof a stranger can check: work, reviews, results',
+      'A request form wired straight into your system',
     ],
   },
   {
     num: '02',
     title: 'The Nerve Center',
+    kicker: 'One place for everything.',
     body:
-      'Most businesses run on four apps that do not talk to each other, one spreadsheet somebody guards, and a memory doing far too much. Nothing is lost exactly, it is just scattered, and every scattered thing costs you a small decision every day. One place instead, where the pipeline, the paperwork and the money all update each other.',
+      'Four apps that do not talk, one guarded spreadsheet, and a memory doing too much. Nothing is lost, exactly. It is scattered, and scattered costs you every single day.',
     specifics: [
-      'A CRM shaped around how you already work, not a template',
-      'Contracts drafted, sent, signed and countersigned in one chain',
-      'Invoicing that reconciles itself when the money actually lands',
-      'A portal your clients log into, so they stop emailing you for updates',
+      'A CRM shaped to how you already work',
+      'Contracts drafted, signed, and countersigned in one chain',
+      'Invoices that reconcile themselves when the money lands',
+      'A portal your clients check instead of emailing you',
     ],
   },
   {
     num: '03',
     title: 'The Machine Room',
+    kicker: 'The busywork, handled.',
     body:
-      'Half your week goes to the same small tasks. The follow-up you meant to send on Tuesday. The invoice nobody chased. The lead that came in at nine at night and sat until morning. None of those are judgment calls. They are loops, and a loop can be closed by something that never forgets and never has a bad morning.',
+      'The Tuesday follow-up. The invoice nobody chased. The lead that came in at nine and sat until morning. None of that needs you. It needs a loop that never forgets.',
     specifics: [
-      'Follow-up that goes out whether or not you remember',
-      'Overdue invoices chased on a schedule, politely',
-      'Every new lead answered within minutes, at any hour',
-      'Nothing sends to a client without your explicit say-so',
+      'Follow-up that sends itself on time',
+      'Overdue invoices chased politely, on a schedule',
+      'Every new lead answered within minutes, any hour',
+      'Nothing reaches a client without your say-so',
     ],
   },
   {
     num: '04',
     title: 'The Intelligence',
+    kicker: 'AI with a job, not a gimmick.',
     body:
-      'Not a chatbot bolted onto a homepage. AI that drafts in your voice, reads the messy data you never have time to read, and hands you work already started rather than a blank page. It is worth being equally clear about where it does not belong: pricing, judgment, and the relationship with your client stay yours.',
+      'Drafts in your voice. Research that used to eat an afternoon. Work that arrives already started instead of blank. And clear limits: pricing, judgment, and your relationships stay yours.',
     specifics: [
-      'Drafts written in your voice, always approved by you before they go',
-      'An assistant that can reach your whole system, not just chat',
-      'Research and audits that used to take an afternoon',
-      'Honest limits, stated out loud instead of hidden',
+      'Drafts you approve before anything goes out',
+      'An assistant wired into the whole system, not a chat box',
+      'Straight answers about what AI cannot do',
     ],
   },
   {
     num: '05',
     title: 'The Handover',
+    kicker: 'Yours to run.',
     body:
-      'A system you cannot run yourself is just a subscription with extra steps. The work is not finished when it ships, it is finished when your team can operate it without calling anyone. That means teaching, writing it down, and being straight about how it works, including the parts that are simpler than they look.',
+      'A system you cannot run yourself is a subscription with extra steps. The job is finished when your team drives it without calling anyone.',
     specifics: [
-      'Training for the people who will actually use it daily',
-      'Documentation written for humans, not for auditors',
-      'Classes on AI that are honest about what it does and does not do',
-      'Your data is yours, exportable, always',
+      'Training for the people who use it every day',
+      'Documentation written for humans',
+      'Your data, exportable, always',
     ],
   },
 ]
@@ -148,7 +152,9 @@ function ExperienceInner() {
       </div>
 
       <Canvas
-        camera={{ position: [0, 0, 0], fov: 62, near: 0.1, far: 400 }}
+        // fov is vertical: portrait phones need a wider one or the planets,
+        // which sit off to the side, fall outside the narrow horizontal slice.
+        camera={{ position: [0, 0, 0], fov: coarse ? 70 : 62, near: 0.1, far: 400 }}
         dpr={coarse ? 1 : [1, 1.8]}
         gl={{ antialias: !coarse, alpha: false, powerPreference: 'high-performance' }}
       >
@@ -163,6 +169,7 @@ function ExperienceInner() {
         >
           {!coarse && <SmoothWheel />}
           <FlightRig />
+          <Nebulae />
           <StarTunnel count={starCount} />
           <Constellations groups={constellationGroups} />
           <Planets />
@@ -316,7 +323,7 @@ function Overlay() {
           <Scrim className="-inset-x-8 -inset-y-8" />
           <div className="relative">
             <p className={`text-base sm:text-lg text-silver-100 leading-relaxed ${SHADOW}`}>
-              Your business runs on four apps that do not talk, a spreadsheet somebody guards, and a memory doing too much. This is a tour of the alternative: the five things we build, what each one actually is, and what you get.
+              The five things we build, what each one is, and exactly what you get. A short flight, then you decide.
             </p>
             <p className={`mt-10 text-[10px] uppercase tracking-[0.4em] text-silver-400 ${SHADOW}`}>Scroll to begin the flight</p>
           </div>
@@ -324,7 +331,8 @@ function Overlay() {
       </section>
 
       {STATIONS_COPY.map((s, i) => (
-        <StationSection key={s.num} station={s} side={i % 2 === 0 ? 'right' : 'left'} />
+        // Copy opposite the planet, tinted by that planet's own light.
+        <StationSection key={s.num} station={s} side={i % 2 === 0 ? 'right' : 'left'} accent={PLANETS[i].accent} />
       ))}
 
       <RequestCTA />
@@ -336,24 +344,30 @@ function Overlay() {
  * Copy sits on the opposite side to the planet it describes, so the world stays
  * visible while you read about it. Planets alternate sides, so the text does too.
  */
-function StationSection({ station, side }: { station: Station; side: 'left' | 'right' }) {
+function StationSection({ station, side, accent }: { station: Station; side: 'left' | 'right'; accent: string }) {
   return (
-    <section className="h-screen flex items-center px-6 sm:px-10 md:px-24">
+    // items-end on phones: the squeezed flight line means the planet crosses the
+    // upper half of a portrait screen, so the copy keeps to the lower half
+    // instead of sitting on top of it.
+    <section className="h-screen flex items-end sm:items-center px-6 pb-16 sm:pb-0 sm:px-10 md:px-24">
       <div className={`relative w-full max-w-md ${side === 'left' ? 'mr-auto' : 'ml-auto'}`}>
         <Scrim className="-inset-x-8 -inset-y-10" />
         <div className="relative">
-          <p className={`font-display text-[10px] tracking-[0.5em] uppercase text-flame-300 mb-3 ${SHADOW}`}>
+          <p className={`font-display text-[10px] tracking-[0.5em] uppercase mb-2.5 ${SHADOW}`} style={{ color: accent }}>
             Station {station.num}
           </p>
           <h2 className={`font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white leading-[1.02] ${SHADOW}`}>
             {station.title}
           </h2>
-          <div className="mt-4 h-px w-12 bg-flame-500/80" />
+          <p className={`mt-2 text-base sm:text-lg font-medium ${SHADOW}`} style={{ color: accent }}>
+            {station.kicker}
+          </p>
+          <div className="mt-4 h-px w-12" style={{ background: accent, opacity: 0.8 }} />
           <p className={`mt-4 text-silver-200 text-sm sm:text-base leading-relaxed ${SHADOW}`}>{station.body}</p>
           <ul className="mt-5 space-y-2">
             {station.specifics.map((line) => (
               <li key={line} className={`flex gap-2.5 text-sm text-silver-300 leading-snug ${SHADOW}`}>
-                <span aria-hidden className="mt-[0.45em] h-1 w-1 shrink-0 rounded-full bg-flame-400" />
+                <span aria-hidden className="mt-[0.45em] h-1 w-1 shrink-0 rounded-full" style={{ background: accent }} />
                 <span>{line}</span>
               </li>
             ))}

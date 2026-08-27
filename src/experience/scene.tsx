@@ -1,5 +1,5 @@
 import { useMemo, useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 
@@ -48,6 +48,20 @@ export const ROUTE = DEPTH * (PAGES - 1)
 const LEAD = 9
 
 /**
+ * Lateral squeeze for narrow screens.
+ *
+ * fov is VERTICAL, so a portrait phone sees a far narrower horizontal slice:
+ * at fov 62 and iPhone aspect, the half-view is about 15 degrees while the
+ * planets sit at 21. Every world was perfectly rendered off the side of the
+ * screen. Pulling x in by aspect (never below 0.62, so fly-bys keep clearance)
+ * puts them back in frame; the phone canvas also runs fov 70 for the same
+ * reason.
+ */
+export function lateralFactor(aspect: number): number {
+  return Math.min(1, Math.max(0.62, aspect / 1.7))
+}
+
+/**
  * Where each planet sits. z lines up with its copy section; x and y push it off
  * the flight line so the camera passes beside it rather than through it, and the
  * side alternates so the view keeps changing.
@@ -62,14 +76,15 @@ export interface PlanetSpec {
   /** Rim and band colour, the light this world gives off. */
   accent: string
   ring?: boolean
+  moon?: boolean
   /** Surface character: higher is more broken up and continental. */
   roughness: number
 }
 
 export const PLANETS: PlanetSpec[] = [
-  { z: -DEPTH * 1 - LEAD, x: -3.4, y: 0.5, radius: 1.35, color: '#1b3a63', accent: '#f26b1d', roughness: 0.55, ring: false },
+  { z: -DEPTH * 1 - LEAD, x: -3.4, y: 0.5, radius: 1.35, color: '#1b3a63', accent: '#f26b1d', roughness: 0.55, moon: true },
   { z: -DEPTH * 2 - LEAD, x: 3.6, y: -0.7, radius: 1.6, color: '#232c46', accent: '#7fb2ff', roughness: 0.85, ring: true },
-  { z: -DEPTH * 3 - LEAD, x: -3.8, y: -0.4, radius: 1.25, color: '#3a2140', accent: '#ff8a4c', roughness: 0.35, ring: false },
+  { z: -DEPTH * 3 - LEAD, x: -3.8, y: -0.4, radius: 1.25, color: '#3a2140', accent: '#ff8a4c', roughness: 0.35, moon: true },
   { z: -DEPTH * 4 - LEAD, x: 3.3, y: 0.8, radius: 1.5, color: '#12303a', accent: '#57e0c8', roughness: 0.7, ring: false },
   { z: -DEPTH * 5 - LEAD, x: -3.2, y: 0.3, radius: 1.4, color: '#2a2740', accent: '#f2b01d', roughness: 0.5, ring: true },
 ]
@@ -88,15 +103,18 @@ export function FlightRig() {
   useFrame((state, delta) => {
     const cam = state.camera
     const t = state.clock.elapsedTime
+    const xf = lateralFactor(state.size.width / state.size.height)
+    const narrow = state.size.width / state.size.height < 1
 
     // Forward travel. Scroll offset drives z directly, so a section of copy and
     // the planet it describes always arrive together.
     const targetZ = -scroll.offset * ROUTE
     cam.position.z += (targetZ - cam.position.z) * Math.min(1, delta * 6)
 
-    // Idle drift: a slow figure that never repeats exactly on screen.
-    const driftX = Math.sin(t * 0.16) * 0.55 + Math.sin(t * 0.07) * 0.3
-    const driftY = Math.cos(t * 0.13) * 0.4
+    // Idle drift, smaller on phones where the corridor is tighter.
+    const driftScale = narrow ? 0.5 : 1
+    const driftX = (Math.sin(t * 0.16) * 0.55 + Math.sin(t * 0.07) * 0.3) * driftScale
+    const driftY = Math.cos(t * 0.13) * 0.4 * driftScale
 
     // Lean toward the planet being passed, strongest at closest approach.
     let leanX = 0
@@ -104,7 +122,7 @@ export function FlightRig() {
     for (const p of PLANETS) {
       const d = Math.abs(cam.position.z - p.z)
       const pull = Math.max(0, 1 - d / (DEPTH * 0.9))
-      leanX += p.x * 0.09 * pull * pull
+      leanX += p.x * xf * 0.09 * pull * pull
       leanY += p.y * 0.09 * pull * pull
     }
 
@@ -182,8 +200,33 @@ const PLANET_FRAG = /* glsl */ `
   }
 `
 
+const GLOW_VERT = /* glsl */ `
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`
+
+/** Soft radial falloff. Bright at the body, gone by the edge of the quad. */
+const GLOW_FRAG = /* glsl */ `
+  precision mediump float;
+  uniform vec3 uAccent;
+  varying vec2 vUv;
+  void main() {
+    float d = length(vUv - 0.5) * 2.0;
+    float a = pow(max(0.0, 1.0 - d), 3.2) * 0.55;
+    gl_FragColor = vec4(uAccent, a);
+  }
+`
+
 function Planet({ spec }: { spec: PlanetSpec }) {
   const mesh = useRef<THREE.Mesh>(null)
+  const moon = useRef<THREE.Mesh>(null)
+  const { size } = useThree()
+  const aspect = size.width / size.height
+  const xf = lateralFactor(aspect)
+  const rf = aspect < 1 ? 0.85 : 1
   const uniforms = useMemo(
     () => ({
       uColor: { value: new THREE.Color(spec.color) },
@@ -194,17 +237,45 @@ function Planet({ spec }: { spec: PlanetSpec }) {
     [spec.color, spec.accent, spec.roughness],
   )
 
+  const glowUniforms = useMemo(
+    () => ({ uAccent: { value: new THREE.Color(spec.accent) } }),
+    [spec.accent],
+  )
+
   useFrame((state, delta) => {
     uniforms.uTime.value = state.clock.elapsedTime
     if (mesh.current) mesh.current.rotation.y += delta * 0.045
+    if (moon.current) {
+      const t = state.clock.elapsedTime * 0.35
+      moon.current.position.set(Math.cos(t) * spec.radius * 2.3, Math.sin(t * 0.7) * spec.radius * 0.5, Math.sin(t) * spec.radius * 2.3)
+    }
   })
 
   return (
-    <group position={[spec.x, spec.y, spec.z]}>
+    <group position={[spec.x * xf, spec.y, spec.z]} scale={rf}>
+      {/* Atmosphere halo: a soft additive disc a little larger than the body.
+          Faces the camera's approach, so no per-frame billboarding is needed. */}
+      <mesh position={[0, 0, spec.radius * 0.35]}>
+        <planeGeometry args={[spec.radius * 5.2, spec.radius * 5.2]} />
+        <shaderMaterial
+          vertexShader={GLOW_VERT}
+          fragmentShader={GLOW_FRAG}
+          uniforms={glowUniforms}
+          transparent
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+        />
+      </mesh>
       <mesh ref={mesh}>
         <sphereGeometry args={[spec.radius, 48, 32]} />
         <shaderMaterial vertexShader={PLANET_VERT} fragmentShader={PLANET_FRAG} uniforms={uniforms} />
       </mesh>
+      {spec.moon && (
+        <mesh ref={moon}>
+          <sphereGeometry args={[spec.radius * 0.18, 20, 14]} />
+          <meshBasicMaterial color="#cfd8e8" />
+        </mesh>
+      )}
       {spec.ring && (
         <mesh rotation={[Math.PI / 2.35, 0.25, 0]}>
           <ringGeometry args={[spec.radius * 1.5, spec.radius * 2.25, 96]} />
@@ -227,6 +298,59 @@ export function Planets() {
     <>
       {PLANETS.map((p) => (
         <Planet key={p.z} spec={p} />
+      ))}
+    </>
+  )
+}
+
+/* ---------------------------------------------------------------- nebulae */
+
+const NEBULA_FRAG = /* glsl */ `
+  precision mediump float;
+  uniform vec3 uAccent;
+  varying vec2 vUv;
+  void main() {
+    float d = length(vUv - 0.5) * 2.0;
+    float a = pow(max(0.0, 1.0 - d), 2.4) * 0.16;
+    gl_FragColor = vec4(uAccent, a);
+  }
+`
+
+/**
+ * Distant colour fields: four enormous soft discs far off the flight line, one
+ * tinted for each stretch of the route. They cost four quads and are most of
+ * why the sky reads as painted rather than empty.
+ */
+const NEBULAE: { z: number; x: number; y: number; size: number; color: string }[] = [
+  { z: -30, x: -26, y: 10, size: 60, color: '#1d3f75' },
+  { z: -70, x: 30, y: -12, size: 75, color: '#3c2a5e' },
+  { z: -105, x: -32, y: -6, size: 70, color: '#173f45' },
+  { z: -145, x: 26, y: 12, size: 80, color: '#4a2b3c' },
+]
+
+export function Nebulae() {
+  const mats = useMemo(
+    () =>
+      NEBULAE.map((nb) => ({
+        nb,
+        uniforms: { uAccent: { value: new THREE.Color(nb.color) } },
+      })),
+    [],
+  )
+  return (
+    <>
+      {mats.map(({ nb, uniforms }) => (
+        <mesh key={nb.z} position={[nb.x, nb.y, nb.z]}>
+          <planeGeometry args={[nb.size, nb.size]} />
+          <shaderMaterial
+            vertexShader={GLOW_VERT}
+            fragmentShader={NEBULA_FRAG}
+            uniforms={uniforms}
+            transparent
+            depthWrite={false}
+            blending={THREE.AdditiveBlending}
+          />
+        </mesh>
       ))}
     </>
   )
