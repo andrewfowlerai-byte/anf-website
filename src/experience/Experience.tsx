@@ -323,13 +323,20 @@ function Overlay() {
             Five stops. One system.
           </p>
         </div>
-        <div className="relative max-w-lg">
-          <Scrim className="-inset-x-8 -inset-y-8" />
+        <div className="relative max-w-xl">
+          <Scrim className="-inset-x-8 -inset-y-10" />
           <div className="relative">
-            <p className={`text-base sm:text-lg text-silver-100 leading-relaxed ${SHADOW}`}>
+            {/* What ANF does, in five words, before anything else. A visitor who
+                scrolls no further should still be able to say what this company
+                is. The old opener led with the problem, which is a good second
+                line and a poor first one. */}
+            <p className={`font-display text-3xl sm:text-5xl md:text-6xl font-semibold tracking-tight leading-[1.05] text-white ${SHADOW}`}>
+              Custom systems,<br />built for you.
+            </p>
+            <p className={`mt-5 text-base sm:text-lg text-silver-100 leading-relaxed ${SHADOW}`}>
               The five things we build, what each one is, and exactly what you get. A short flight, then you decide.
             </p>
-            <p className={`mt-10 text-[10px] uppercase tracking-[0.4em] text-silver-400 ${SHADOW}`}>Scroll to begin the flight</p>
+            <p className={`mt-9 text-[10px] uppercase tracking-[0.4em] text-silver-400 ${SHADOW}`}>Scroll to begin the flight</p>
           </div>
         </div>
       </section>
