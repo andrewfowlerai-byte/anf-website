@@ -1,11 +1,15 @@
-import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
 import { listShowcaseProjects, type ShowcaseProject } from '../lib/showcase'
 
 type Project = {
   name: string
   category: string
+  /** 'demo' is one of the six interactive CRMs hosted on this site, which a
+   *  visitor can click through immediately. 'build' is a real project living at
+   *  its own URL. They are different promises and should not look identical. */
+  kind?: 'demo' | 'build'
   summary: string
   tags: string[]
   link?: string
@@ -41,6 +45,85 @@ const FALLBACK: Project[] = [
   },
 ]
 
+/**
+ * The interactive demos that used to live on their own /demos page.
+ *
+ * Splitting them from Work was the single biggest reason it was hard to tell
+ * which page mattered: a visitor faced two menu items covering the same idea
+ * with no way to know which held the thing they wanted. They are one list now,
+ * and the only real distinction, whether you can click through it here or it
+ * opens somewhere else, is carried on the card instead of in the navigation.
+ */
+const DEMOS: Project[] = [
+  {
+    name: 'Real estate agents',
+    category: 'Interactive demo',
+    summary: 'A CRM shaped around how an agent actually works: lead pipeline, speed to lead, listings through to closing. Click straight in.',
+    tags: ['Real Estate', 'CRM', 'Interactive'],
+    link: '/demos/real-estate', linkLabel: 'Open the demo', kind: 'demo',
+  },
+  {
+    name: 'Home and service pros',
+    category: 'Interactive demo',
+    summary: 'For trades, cleaners and landscapers. Jobs and quotes, scheduling, invoices and reviews, in the order a working day happens.',
+    tags: ['Home Services', 'CRM', 'Interactive'],
+    link: '/demos/home-services', linkLabel: 'Open the demo', kind: 'demo',
+  },
+  {
+    name: 'Coaches and consultants',
+    category: 'Interactive demo',
+    summary: 'Built for one to one and group programs. Client roster, session notes, packages and payments.',
+    tags: ['Coaching', 'CRM', 'Interactive'],
+    link: '/demos/coaches', linkLabel: 'Open the demo', kind: 'demo',
+  },
+  {
+    name: 'Fitness and wellness',
+    category: 'Interactive demo',
+    summary: 'Trainers, studios and clinics. Members, classes and the retention problem that decides whether a studio survives.',
+    tags: ['Wellness', 'CRM', 'Interactive'],
+    link: '/demos/fitness', linkLabel: 'Open the demo', kind: 'demo',
+  },
+  {
+    name: 'Parents and family',
+    category: 'Interactive demo',
+    summary: 'A family HQ rather than a CRM. Kids\u2019 schedules, meals and errands, appointments, all in one place.',
+    tags: ['Family', 'Interactive'],
+    link: '/demos/family', linkLabel: 'Open the demo', kind: 'demo',
+  },
+  {
+    name: 'Creators and solopreneurs',
+    category: 'Interactive demo',
+    summary: 'When content is the business. Brand deals, a content calendar, and posting that does not depend on remembering.',
+    tags: ['Creator', 'Interactive'],
+    link: '/demos/creators', linkLabel: 'Open the demo', kind: 'demo',
+  },
+]
+
+/**
+ * Filters, matched loosely against category and tags.
+ *
+ * Loose matching is deliberate. The categories are written by hand in the CRM
+ * and are almost all unique ("Realtor CRM", "Realtor Website + CRM", "Office
+ * Ops"), so filtering on them exactly would give eighteen filters for eighteen
+ * projects, which is not a filter. Industry is what a visitor self-identifies
+ * by, so that is the axis.
+ */
+const FILTERS: { key: string; label: string; match?: RegExp }[] = [
+  { key: 'all', label: 'Everything' },
+  { key: 'demo', label: 'Try one now', match: /interactive/i },
+  { key: 'realestate', label: 'Real estate', match: /realtor|real estate|brokerage|office ops/i },
+  { key: 'service', label: 'Service business', match: /home services|field service|hospitality|coaching|trades/i },
+  { key: 'wellness', label: 'Wellness and retail', match: /wellness|health|retail|fitness/i },
+  { key: 'software', label: 'Products and platforms', match: /product|saas|dashboard|web app|platform|family/i },
+]
+
+function matchesFilter(p: Project, key: string): boolean {
+  if (key === 'all') return true
+  const f = FILTERS.find((x) => x.key === key)
+  if (!f?.match) return true
+  return f.match.test(`${p.category} ${p.tags.join(' ')}`)
+}
+
 function domainOf(link?: string): string | undefined {
   if (!link || link.startsWith('/')) return undefined
   try { return new URL(link).host } catch { return undefined }
@@ -58,6 +141,7 @@ function toProject(p: ShowcaseProject): Project {
     domain: domainOf(p.live_url ?? undefined),
     accessCode: p.access_code ?? undefined,
     accessNote: p.access_note ?? undefined,
+    kind: 'build',
   }
 }
 
@@ -147,6 +231,7 @@ function FeatureRow({ p, i }: { p: Project; i: number }) {
       </div>
       <div className="wk-meta">
         <span className="wk-num">{String(i + 1).padStart(2, '0')}</span>
+        {p.kind === 'demo' && <span className="wk-badge">Click through it here</span>}
         {p.category && <p className="wk-cat">{p.category}</p>}
         <h2 className="wk-title">{p.name}</h2>
         {p.summary && <p className="wk-sum">{p.summary}</p>}
@@ -177,6 +262,10 @@ function FeatureRow({ p, i }: { p: Project; i: number }) {
 export function Work() {
   const [projects, setProjects] = useState<Project[]>(FALLBACK)
   const heroRef = useReveal<HTMLDivElement>()
+  // The filter lives in the URL so a filtered view can be sent to someone, and
+  // so going into a demo and coming back does not lose it.
+  const [params, setParams] = useSearchParams()
+  const active = params.get('show') ?? 'all'
 
   useEffect(() => {
     let cancelled = false
@@ -185,6 +274,24 @@ export function Work() {
       .catch(() => { /* keep fallback */ })
     return () => { cancelled = true }
   }, [])
+
+  // Demos first: they are the only things a visitor can open without leaving,
+  // so they are the lowest-friction way into the work.
+  const all = useMemo(() => [...DEMOS, ...projects], [projects])
+  const shown = useMemo(() => all.filter((p) => matchesFilter(p, active)), [all, active])
+
+  // Only offer a filter that would actually return something.
+  const available = useMemo(
+    () => FILTERS.filter((f) => f.key === 'all' || all.some((p) => matchesFilter(p, f.key))),
+    [all],
+  )
+
+  const setFilter = (key: string) => {
+    const next = new URLSearchParams(params)
+    if (key === 'all') next.delete('show')
+    else next.set('show', key)
+    setParams(next, { replace: true })
+  }
 
   return (
     <>
@@ -195,14 +302,32 @@ export function Work() {
         <p className="wk-eyebrow">Selected Work</p>
         <h1 className="wk-h1"><span>Things</span> <span>we&rsquo;ve</span> <span className="wk-flame">built.</span></h1>
         <p className="wk-lede">
-          Every one was built around a specific business, not pulled from a template. Real projects
-          we designed, built, and run, most live with sample data and the password to walk in right
-          on the card. Click straight in and look around.
+          Every one was built around a specific business, not pulled from a template. Some you can
+          click through right here. The rest are live projects at their own address, most with
+          sample data and the password on the card. Narrow it to your world, or scroll the lot.
         </p>
       </section>
 
+      <nav className="wk-filters" aria-label="Filter the work">
+        {available.map((f) => (
+          <button
+            key={f.key}
+            type="button"
+            onClick={() => setFilter(f.key)}
+            className={`wk-filter ${active === f.key ? 'is-on' : ''}`}
+            aria-pressed={active === f.key}
+          >
+            {f.label}
+          </button>
+        ))}
+      </nav>
+
       <section className="wk-list">
-        {projects.map((p, i) => <FeatureRow key={p.name} p={p} i={i} />)}
+        {shown.length === 0 ? (
+          <p className="wk-empty">Nothing in that category yet. <button type="button" onClick={() => setFilter('all')}>Show everything</button></p>
+        ) : (
+          shown.map((p, i) => <FeatureRow key={p.name} p={p} i={i} />)
+        )}
       </section>
 
       <section className="wk-cta">
@@ -235,13 +360,35 @@ const WK_CSS = `
 .wk-lede{font-size:clamp(17px,2vw,21px);line-height:1.6;color:#9aa6bd;max-width:56ch;margin:26px 0 0;
   opacity:0;animation:wkFade 1s ease .35s forwards}
 
-.wk-list{max-width:1200px;margin:0 auto;padding:20px 24px 40px}
+.wk-filters{max-width:1200px;margin:0 auto;padding:14px 24px 0;display:flex;flex-wrap:wrap;gap:8px}
+.wk-filter{font-family:inherit;font-size:14px;color:#9aa6bd;background:rgba(244,245,248,0.045);
+  border:1px solid rgba(244,245,248,0.09);border-radius:999px;padding:7px 15px;cursor:pointer;
+  transition:color .2s ease,border-color .2s ease,background .2s ease}
+.wk-filter:hover{color:#f4f5f8;border-color:rgba(242,107,29,0.5)}
+.wk-filter.is-on{color:#0b1526;background:#f26b1d;border-color:#f26b1d;font-weight:600}
+.wk-empty{max-width:1200px;margin:0 auto;padding:60px 24px;color:#9aa6bd;font-size:17px}
+.wk-empty button{background:none;border:0;color:#f26b1d;font:inherit;cursor:pointer;text-decoration:underline}
+.wk-badge{display:inline-block;margin-left:12px;font-family:ui-monospace,Consolas,monospace;font-size:11px;
+  letter-spacing:0.12em;text-transform:uppercase;color:#34d399;border:1px solid rgba(52,211,153,0.4);
+  border-radius:999px;padding:3px 9px;vertical-align:middle}
+
+.wk-list{max-width:1200px;margin:0 auto;padding:20px 24px 40px;overflow-x:clip}
 .wk-row{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(32px,5vw,72px);align-items:center;
   padding:clamp(48px,7vw,88px) 0;border-top:1px solid rgba(244,245,248,0.08)}
 .wk-row:first-child{border-top:0}
 .wk-rev{direction:rtl}
 .wk-rev>*{direction:ltr}
-@media(max-width:820px){.wk-row{grid-template-columns:1fr;gap:28px}.wk-rev{direction:ltr}}
+@media(max-width:820px){
+  .wk-row{grid-template-columns:1fr;gap:28px}
+  .wk-rev{direction:ltr}
+  /* The 3D swing projects a bounding box wider than the element itself, and a
+     row waiting off-screen at rotateY(14deg) therefore widens the document and
+     scrolls a phone sideways by about a scrollbar width. Straight fade and rise
+     on narrow screens: the swing was a desktop flourish and reads oddly on a
+     stacked layout anyway. */
+  .wk-media,.wk-rev .wk-media{transform:translateY(28px)}
+  .wk-row[data-inview] .wk-media{transform:translateY(0)}
+}
 
 /* Media reveal: swing in from a 3D angle as it enters view */
 .wk-media{opacity:0;transform:perspective(1400px) rotateY(14deg) translateY(40px);

@@ -14,7 +14,6 @@ const About = lazy(() => import('./pages/About').then((m) => ({ default: m.About
 const Book = lazy(() => import('./pages/Book').then((m) => ({ default: m.Book })))
 const Events = lazy(() => import('./pages/Events').then((m) => ({ default: m.Events })))
 const Work = lazy(() => import('./pages/Work').then((m) => ({ default: m.Work })))
-const Demos = lazy(() => import('./pages/Demos').then((m) => ({ default: m.Demos })))
 const Audit = lazy(() => import('./pages/Audit').then((m) => ({ default: m.Audit })))
 const Refer = lazy(() => import('./pages/Refer').then((m) => ({ default: m.Refer })))
 const ReferralLanding = lazy(() => import('./pages/ReferralLanding').then((m) => ({ default: m.ReferralLanding })))
@@ -50,7 +49,11 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/services" element={<Services />} />
           <Route path="/work" element={<Work />} />
-          <Route path="/demos" element={<Demos />} />
+          {/* Demos merged into Work on 2026-08-29. Two pages covered the same
+              idea and a visitor could not tell which held what they wanted. The
+              URL is kept and lands on Work pre-filtered to the interactive ones,
+              because this link has been sent to people. */}
+          <Route path="/demos" element={<Navigate to="/work?show=demo" replace />} />
           <Route path="/demos/real-estate" element={<RealEstateDemo />} />
           <Route path="/demos/coaches" element={<CoachFlowDemo />} />
           <Route path="/demos/family" element={<FamilyHqDemo />} />
@@ -58,9 +61,9 @@ function App() {
           <Route path="/demos/creators" element={<CreatorDeskDemo />} />
           <Route path="/demos/home-services" element={<ServiceFlowDemo />} />
           {/* Unknown demo slugs fall back to the demo index rather than the home page. */}
-          <Route path="/demos/:slug" element={<Navigate to="/demos" replace />} />
+          <Route path="/demos/:slug" element={<Navigate to="/work?show=demo" replace />} />
           {/* Retired: the realtors landing overlapped Work and Demos. Redirect kept so old links still land somewhere useful. */}
-          <Route path="/realtors" element={<Navigate to="/demos" replace />} />
+          <Route path="/realtors" element={<Navigate to="/work?show=realestate" replace />} />
           <Route path="/audit" element={<Audit />} />
           {/* The money pages: deep answers to the questions buyers actually
               type, written to be quotable by an answer engine. */}

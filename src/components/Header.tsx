@@ -2,13 +2,16 @@ import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { BookCallButton } from './BookCallButton'
 
-const NAV = [
-  { to: '/', label: 'Home', end: true },
-  { to: '/services', label: 'Services' },
+// Three links, deliberately.
+//
+// The pages taken out of here (Answers, Demos, Events, and Home, which is the
+// logo) were not removed: Demos merged into Work, and the rest are pages you
+// hand someone a link to. A nav full of send-a-link pages is what made it hard
+// to tell which page mattered. Everything still has its URL, and the footer
+// still links what needs crawling.
+const NAV: { to: string; label: string; end?: boolean }[] = [
   { to: '/work', label: 'Work' },
-  { to: '/answers', label: 'Answers' },
-  { to: '/demos', label: 'Demos' },
-  { to: '/events', label: 'Events' },
+  { to: '/services', label: 'Services' },
   { to: '/about', label: 'About' },
 ]
 
