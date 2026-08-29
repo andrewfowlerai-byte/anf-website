@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
 import { listShowcaseProjects, type ShowcaseProject } from '../lib/showcase'
-import { walkthroughForTitle } from '../lib/walkthroughs'
 
 type Project = {
   name: string
@@ -10,7 +9,7 @@ type Project = {
   /** 'demo' is one of the six interactive CRMs hosted on this site, which a
    *  visitor can click through immediately. 'build' is a real project living at
    *  its own URL. They are different promises and should not look identical. */
-  kind?: 'demo' | 'build' | 'tour'
+  kind?: 'demo' | 'build'
   summary: string
   tags: string[]
   link?: string
@@ -146,25 +145,6 @@ function toProject(p: ShowcaseProject): Project {
   }
 }
 
-/**
- * Where a card should actually send someone.
- *
- * If a build has a guided walkthrough, the card opens the walkthrough rather
- * than the live app. The walkthrough hands them the live link at the end, once
- * they know what they are looking at, which is the whole point of it.
- */
-function withWalkthrough(p: Project): Project {
-  const w = walkthroughForTitle(p.name)
-  if (!w) return p
-  return {
-    ...p,
-    link: `/work/${w.slug}`,
-    linkLabel: 'Take the guided tour',
-    accessCode: undefined,
-    accessNote: undefined,
-    kind: 'tour',
-  }
-}
 
 /** Adds `data-inview` when the element scrolls into view (once), for CSS reveals. */
 function useReveal<T extends HTMLElement>() {
@@ -253,7 +233,6 @@ function FeatureRow({ p, i }: { p: Project; i: number }) {
       <div className="wk-meta">
         <span className="wk-num">{String(i + 1).padStart(2, '0')}</span>
         {p.kind === 'demo' && <span className="wk-badge">Click through it here</span>}
-        {p.kind === 'tour' && <span className="wk-badge wk-badge-tour">Guided walkthrough</span>}
         {p.category && <p className="wk-cat">{p.category}</p>}
         <h2 className="wk-title">{p.name}</h2>
         {p.summary && <p className="wk-sum">{p.summary}</p>}
@@ -292,7 +271,7 @@ export function Work() {
   useEffect(() => {
     let cancelled = false
     listShowcaseProjects()
-      .then((rows) => { if (!cancelled && rows.length) setProjects(rows.map(toProject).map(withWalkthrough)) })
+      .then((rows) => { if (!cancelled && rows.length) setProjects(rows.map(toProject)) })
       .catch(() => { /* keep fallback */ })
     return () => { cancelled = true }
   }, [])
@@ -324,9 +303,9 @@ export function Work() {
         <p className="wk-eyebrow">Selected Work</p>
         <h1 className="wk-h1"><span>Things</span> <span>we&rsquo;ve</span> <span className="wk-flame">built.</span></h1>
         <p className="wk-lede">
-          Every one was built around a specific business, not pulled from a template. Some you can
-          click through right here. The rest are live projects at their own address, most with
-          sample data and the password on the card. Narrow it to your world, or scroll the lot.
+          Every one was built around a specific business, not pulled from a template. Open any of
+          them and a short guided tour points out what matters, inside the real thing, with sample
+          data you can click through. Narrow it to your world, or scroll the lot.
         </p>
       </section>
 
@@ -390,7 +369,6 @@ const WK_CSS = `
 .wk-filter.is-on{color:#0b1526;background:#f26b1d;border-color:#f26b1d;font-weight:600}
 .wk-empty{max-width:1200px;margin:0 auto;padding:60px 24px;color:#9aa6bd;font-size:17px}
 .wk-empty button{background:none;border:0;color:#f26b1d;font:inherit;cursor:pointer;text-decoration:underline}
-.wk-badge-tour{color:#f2833f;border-color:rgba(242,107,29,0.45)}
 .wk-badge{display:inline-block;margin-left:12px;font-family:ui-monospace,Consolas,monospace;font-size:11px;
   letter-spacing:0.12em;text-transform:uppercase;color:#34d399;border:1px solid rgba(52,211,153,0.4);
   border-radius:999px;padding:3px 9px;vertical-align:middle}

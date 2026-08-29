@@ -431,6 +431,18 @@ function RequestCTA() {
             Tell me what's<br />slowing you down.
           </h2>
 
+          {/* Proof before the ask. Five stations of claims land better when the
+              next thing is eighteen real builds rather than a form. It sits
+              above the intro on purpose: the person who is not ready to submit
+              anything still has somewhere to go. */}
+          <a
+            href="/work"
+            className="mt-5 sm:mt-6 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/[0.06] px-5 py-2.5 text-sm sm:text-base font-medium text-silver-100 transition-colors hover:border-flame-500/60 hover:bg-white/[0.12] hover:text-white"
+          >
+            See what ANF has built
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </a>
+
           {status === 'done' ? (
             <p className={`mt-4 sm:mt-6 max-w-md text-base sm:text-lg text-silver-100 leading-relaxed ${SHADOW}`}>
               Got it. I read every one of these myself, and I will be in touch soon. Thank you.
