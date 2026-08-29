@@ -38,6 +38,6 @@ export async function submitReferral(input: ReferralInput): Promise<void> {
     ]
       .filter(Boolean)
       .join('\n'),
-    source: 'referral',
+    source: 'website-referral',
   })
 }

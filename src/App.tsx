@@ -17,6 +17,7 @@ const Work = lazy(() => import('./pages/Work').then((m) => ({ default: m.Work })
 const Demos = lazy(() => import('./pages/Demos').then((m) => ({ default: m.Demos })))
 const Audit = lazy(() => import('./pages/Audit').then((m) => ({ default: m.Audit })))
 const Refer = lazy(() => import('./pages/Refer').then((m) => ({ default: m.Refer })))
+const ReferralLanding = lazy(() => import('./pages/ReferralLanding').then((m) => ({ default: m.ReferralLanding })))
 const Invest = lazy(() => import('./pages/Invest').then((m) => ({ default: m.Invest })))
 const Start = lazy(() => import('./pages/Start').then((m) => ({ default: m.Start })))
 const Privacy = lazy(() => import('./pages/Privacy').then((m) => ({ default: m.Privacy })))
@@ -67,6 +68,9 @@ function App() {
           <Route path="/answers/:slug" element={<AnswerDetail />} />
           {/* Referral intake: warm intros land in the CRM ledger + Inbox. */}
           <Route path="/refer" element={<Refer />} />
+          {/* A referral partner's own link. Records who sent the visitor, then
+              hands them to the site. The partner agreement names this URL. */}
+          <Route path="/r/:code" element={<ReferralLanding />} />
           {/* Unlisted investor page (no header nav link); Andrew shares the URL directly. */}
           <Route path="/invest" element={<Invest />} />
           {/* Code-gated client onboarding intake; Andrew shares the URL + a code. */}

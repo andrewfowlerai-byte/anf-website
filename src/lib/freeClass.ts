@@ -40,6 +40,6 @@ export async function submitClassSignup(input: ClassSignupInput): Promise<void> 
     ]
       .filter(Boolean)
       .join('\n'),
-    source: 'class-signup',
+    source: 'website-class-signup',
   })
 }

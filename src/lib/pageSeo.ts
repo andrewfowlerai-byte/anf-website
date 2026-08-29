@@ -151,5 +151,15 @@ export function seoForPath(pathname: string): PageSeo | null {
   const clean = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname
   if (PAGE_SEO[clean]) return PAGE_SEO[clean]
   if (clean.startsWith('/demos/')) return PAGE_SEO['/demos']
+  // A referral partner's link. It is on their signed agreement and gets shared
+  // in messages, so it must never render as "Page Not Found" in a tab or a link
+  // preview. noindex because every code is a different URL for the same page.
+  if (clean.startsWith('/r/')) {
+    return {
+      title: 'Welcome to ANF Consulting',
+      description: 'Custom systems built for you. Marketing, infrastructure, AI and education.',
+      noindex: true,
+    }
+  }
   return null
 }
