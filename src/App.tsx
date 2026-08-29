@@ -14,6 +14,7 @@ const About = lazy(() => import('./pages/About').then((m) => ({ default: m.About
 const Book = lazy(() => import('./pages/Book').then((m) => ({ default: m.Book })))
 const Events = lazy(() => import('./pages/Events').then((m) => ({ default: m.Events })))
 const Work = lazy(() => import('./pages/Work').then((m) => ({ default: m.Work })))
+const SampleWalkthrough = lazy(() => import('./pages/SampleWalkthrough').then((m) => ({ default: m.SampleWalkthrough })))
 const Audit = lazy(() => import('./pages/Audit').then((m) => ({ default: m.Audit })))
 const Refer = lazy(() => import('./pages/Refer').then((m) => ({ default: m.Refer })))
 const ReferralLanding = lazy(() => import('./pages/ReferralLanding').then((m) => ({ default: m.ReferralLanding })))
@@ -49,6 +50,10 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/services" element={<Services />} />
           <Route path="/work" element={<Work />} />
+          {/* A guided walk through one build, screen by screen, before the
+              live link. A card and an outbound link is not a sample: a lead
+              lands in somebody else's dashboard with no idea what to look at. */}
+          <Route path="/work/:slug" element={<SampleWalkthrough />} />
           {/* Demos merged into Work on 2026-08-29. Two pages covered the same
               idea and a visitor could not tell which held what they wanted. The
               URL is kept and lands on Work pre-filtered to the interactive ones,
