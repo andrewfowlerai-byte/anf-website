@@ -16,7 +16,10 @@
  * that is that GOOGLE_PLACES_API_KEY is currently rejected by Google.
  */
 
-export type Trade = 'plumbing' | 'hvac' | 'roofing' | 'electrical' | 'realestate' | 'general'
+export type Trade =
+  | 'plumbing' | 'hvac' | 'roofing' | 'electrical' | 'landscaping'
+  | 'realestate' | 'accounting' | 'insurance'
+  | 'general'
 
 export interface TradeProfile {
   label: string
@@ -183,6 +186,93 @@ export const TRADES: Record<Trade, TradeProfile> = {
     accent: '#2A4A6B', ink: '#111E2C', wash: '#F4F7FA',
   },
 
+  landscaping: {
+    label: 'Landscaping and lawn care',
+    lede: 'Weekly cuts, spring clean-ups, or a yard that has got away from you. We turn up on the day we said.',
+    services: [
+      ['Weekly mowing', 'Same day each week, so you stop thinking about it.'],
+      ['Spring and fall clean-up', 'Leaves, beds, gutters and everything winter left behind.'],
+      ['Design and planting', 'Beds and borders that still look right in three years.'],
+      ['Mulch, edging and trimming', 'The details that make a yard look maintained rather than mown.'],
+    ],
+    reasons: [
+      ['We show up', 'Same day every week. If weather moves us, you get a message.'],
+      ['Flat seasonal pricing', 'One number for the season, so there is nothing to think about.'],
+      ['We leave it clean', 'Blown down, cleared up, gate shut.'],
+    ],
+    faq: [
+      ['Do you do one-off cleanups?', 'Yes. A lot of people start with one and go weekly afterwards.'],
+      ['What happens if it rains?', 'We move you to the next dry day and tell you when.'],
+      ['Do I need to be home?', 'No. Most of our customers are at work when we come.'],
+    ],
+    proof: 'Licensed and insured',
+    hero: { url: px('6728925'), alt: 'Mowing a lawn on a sunny day', credit: 'Magic K' },
+    gallery: [
+      { url: px('11364122'), alt: 'Trimming grass in a sunny garden', credit: 'Pascal Küffer' },
+      { url: px('6728919'), alt: 'Mowing a sunlit lawn with a push mower', credit: 'Magic K' },
+      { url: px('9548417'), alt: 'Cutting grass in bright sunlight', credit: 'Reimond Mar Depra' },
+    ],
+    accent: '#3B6B33', ink: '#152210', wash: '#F4F8F2',
+  },
+
+  accounting: {
+    label: 'Accounting and tax',
+    lede: 'Books that are current, a return filed on time, and someone who picks up the phone in March.',
+    services: [
+      ['Tax preparation', 'Personal and business, filed on time, with the deductions you are owed.'],
+      ['Bookkeeping', 'Monthly, so the year-end is not an emergency.'],
+      ['Business advisory', 'Entity structure, payroll and the questions that cost money if you guess.'],
+      ['Payroll', 'Run properly, with the filings handled.'],
+    ],
+    reasons: [
+      ['You can reach us in March', 'The busiest month is when most people cannot get an answer. Not here.'],
+      ['Plain English', 'You will understand what we did and why it matters.'],
+      ['Fixed fees', 'Quoted up front, not billed by the six minutes.'],
+    ],
+    faq: [
+      ['When should I switch accountants?', 'Any time. We handle the handover and request your prior returns ourselves.'],
+      ['Do you work with small businesses?', 'Most of our clients are owner-operated. It is the work we know best.'],
+      ['How much does a return cost?', 'We quote before we start, based on the actual complexity rather than a guess.'],
+    ],
+    proof: 'Licensed CPA',
+    hero: { url: px('8296970'), alt: 'An accountant working through financial documents', credit: 'Mikhail Nilov' },
+    gallery: [
+      { url: px('33175651'), alt: 'Reviewing financial documents with a calculator', credit: 'Bia Limova' },
+      { url: px('7680744'), alt: 'Calculating expenses at a desk', credit: 'kaboompics.com' },
+      { url: px('8296974'), alt: 'Working through paperwork and folders at a desk', credit: 'Mikhail Nilov' },
+    ],
+    accent: '#1F4B57', ink: '#0E1D22', wash: '#F2F7F8',
+  },
+
+  insurance: {
+    label: 'Insurance',
+    lede: 'The right cover, explained properly, from someone local you can actually call when something happens.',
+    services: [
+      ['Home and auto', 'Bundled where it saves you money, separate where it does not.'],
+      ['Business insurance', 'General liability, property and the cover your contracts require.'],
+      ['Life and health', 'Sized to what your family would actually need.'],
+      ['Policy review', 'Free, and we will tell you if you are already fine.'],
+    ],
+    reasons: [
+      ['We answer at claim time', 'Anyone can sell a policy. The test is the day you need it.'],
+      ['We shop it for you', 'Multiple carriers, one conversation.'],
+      ['No pressure', 'If your current policy is good, we will say so.'],
+    ],
+    faq: [
+      ['Will switching cost me?', 'Usually not. Most policies are cancelled pro rata and we time the changeover so there is no gap.'],
+      ['Do you handle claims?', 'We walk you through it and deal with the adjuster alongside you.'],
+      ['Is a review really free?', 'Yes, and there is no obligation. Plenty of people leave a review with the policy they came in with.'],
+    ],
+    proof: 'Licensed in Ohio',
+    hero: { url: px('7734650'), alt: 'A handshake in an office meeting', credit: 'Mikhail Nilov' },
+    gallery: [
+      { url: px('8730120'), alt: 'Business professionals meeting around a table', credit: 'Mikhail Nilov' },
+      { url: px('7734597'), alt: 'A couple shaking hands with an agent', credit: 'Mikhail Nilov' },
+      { url: px('8730006'), alt: 'An agent closing a deal with clients', credit: 'Kampus Production' },
+    ],
+    accent: '#3D4B7A', ink: '#161B2E', wash: '#F4F5FA',
+  },
+
   general: {
     label: 'Local service',
     lede: 'Straightforward work, done when we say and priced the way we quoted.',
@@ -213,13 +303,29 @@ export const TRADES: Record<Trade, TradeProfile> = {
   },
 }
 
+/**
+ * Pick a trade from the Google category list and the business name.
+ *
+ * Order matters: the trades are checked before the professions, because
+ * "Smith Plumbing and Heating" should read as plumbing rather than HVAC, and a
+ * roofing company that also does gutters is still a roofer.
+ *
+ * The real estate pattern accepts a space as well as an underscore. It
+ * originally only matched Google's "real_estate_agency" category, so businesses
+ * carrying it in their NAME instead ("Trent Ecklar Real Estate Team", "Carter
+ * Real Estate Company") fell through to the generic profile and were shown a
+ * photograph of hand tools.
+ */
 export function tradeOf(types: string[] | null, name: string): Trade {
   const hay = `${(types ?? []).join(' ')} ${name}`.toLowerCase()
   if (/plumb/.test(hay)) return 'plumbing'
-  if (/hvac|heating|cooling|air condition|furnace/.test(hay)) return 'hvac'
+  if (/hvac|heating|cooling|air.?condition|furnace/.test(hay)) return 'hvac'
   if (/roof/.test(hay)) return 'roofing'
   if (/electric/.test(hay)) return 'electrical'
-  if (/real_estate|realty|realtor|homes|broker/.test(hay)) return 'realestate'
+  if (/landscap|lawn|garden_center|tree.?service|hardscap/.test(hay)) return 'landscaping'
+  if (/real.?estate|realty|realtor|\bhomes\b|brokerage/.test(hay)) return 'realestate'
+  if (/accounting|accountant|\bcpa\b|bookkeep|\btax\b/.test(hay)) return 'accounting'
+  if (/insurance/.test(hay)) return 'insurance'
   return 'general'
 }
 
