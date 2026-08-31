@@ -1,5 +1,6 @@
-import { lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { Suspense, lazy, useEffect } from 'react'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { recordPageview } from './lib/traffic'
 import { Layout } from './components/Layout'
 import { Home } from './pages/Home'
 import { Signature } from './pages/Signature'
@@ -42,9 +43,25 @@ const StudioFlowDemo = lazy(() => import('./demos/StudioFlowDemo').then((m) => (
 const CreatorDeskDemo = lazy(() => import('./demos/CreatorDeskDemo').then((m) => ({ default: m.CreatorDeskDemo })))
 const ServiceFlowDemo = lazy(() => import('./demos/ServiceFlowDemo').then((m) => ({ default: m.ServiceFlowDemo })))
 
+
+/**
+ * Counts one pageview per route.
+ *
+ * Mounted inside the router and outside Routes on purpose. Inside, because it
+ * needs useLocation. Outside Routes, because it must cover the standalone pages
+ * too: /experience sits outside the marketing layout and is the only page that
+ * has ever produced a real lead, so measuring it is the entire point.
+ */
+function PageviewBeacon() {
+  const { pathname } = useLocation()
+  useEffect(() => { recordPageview(pathname) }, [pathname])
+  return null
+}
+
 function App() {
   return (
     <BrowserRouter>
+      <PageviewBeacon />
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
