@@ -37,6 +37,17 @@ const DEPTH = 26
 export const ROUTE = DEPTH * (PAGES - 1)
 
 /**
+ * Scroll offset to flight progress, 0 to 1.
+ *
+ * The scroll can be longer than the flight. Anything past `span` is slack for
+ * the arrival section to finish scrolling through, and the flight holds still
+ * for it rather than stretching to fill it.
+ */
+export function flightProgress(offset: number, span: number) {
+  return span >= 1 ? offset : Math.min(offset / span, 1)
+}
+
+/**
  * How far ahead of its copy each planet sits.
  *
  * Without this a planet is exactly level with the camera when its section is on
@@ -111,7 +122,13 @@ export const PLANETS: PlanetSpec[] = [
  * so it reads as piloted rather than railed. The lean is derived from the
  * nearest planet, so the ship tips toward whatever it is passing.
  */
-export function FlightRig() {
+/**
+ * @param span The fraction of the scroll the flight occupies. The page adds
+ * slack past the end so the arrival section, which runs taller than one screen,
+ * can finish scrolling. Without this the whole route would simply stretch to
+ * fill that slack and every station would arrive late.
+ */
+export function FlightRig({ span = 1 }: { span?: number }) {
   const scroll = useScroll()
   const look = useRef(new THREE.Vector3())
 
@@ -123,7 +140,7 @@ export function FlightRig() {
 
     // Forward travel. Scroll offset drives z directly, so a section of copy and
     // the planet it describes always arrive together.
-    const targetZ = -scroll.offset * ROUTE
+    const targetZ = -flightProgress(scroll.offset, span) * ROUTE
     cam.position.z += (targetZ - cam.position.z) * Math.min(1, delta * 6)
 
     // Idle drift, smaller on phones where the corridor is tighter.

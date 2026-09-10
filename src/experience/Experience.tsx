@@ -1,9 +1,9 @@
-import { Component, Suspense, useEffect, useMemo, useRef, useState, type ReactNode, type FormEvent } from 'react'
+import { Component, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode, type FormEvent } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { ScrollControls, Scroll, useScroll } from '@react-three/drei'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import { submitRequest } from '../lib/leads'
-import { FlightRig, Planets, StarTunnel, Constellations, Nebulae, PLANETS, PAGES, STATIONS } from './scene'
+import { FlightRig, Planets, StarTunnel, Constellations, Nebulae, PLANETS, PAGES, STATIONS, flightProgress } from './scene'
 
 /**
  * ANF 3D experience: a flight.
@@ -138,6 +138,27 @@ function ExperienceInner() {
   const coarse = useMemo(() => typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches, [])
   const [section, setSection] = useState(0)
 
+  /**
+   * How much scroll to add past the end of the flight, in screens.
+   *
+   * The arrival section is the only one that can run taller than a screen: it
+   * carries the form, the "or" seam and the second door. On a 900px laptop it
+   * comes to 1165px, and the scroll used to stop with the last 265 of that
+   * still below the fold, so the second door was unreachable. It is measured
+   * rather than guessed because it depends on the viewport, the font and
+   * whether the error line is showing.
+   */
+  const [arrivalSlack, setArrivalSlack] = useState(0)
+  const onArrivalSlack = useCallback((v: number) => {
+    // A tolerance, so a one pixel reflow does not resize the scroll container.
+    setArrivalSlack((prev) => (Math.abs(prev - v) < 0.01 ? prev : v))
+  }, [])
+  // The phone floor stays: the address bar shows and hides mid-scroll, so the
+  // measurement there is a moving target and a little spare room is cheap.
+  const slack = Math.max(coarse ? 0.6 : 0, arrivalSlack)
+  // The flight still ends where it always did. The slack holds the arrival.
+  const span = (PAGES - 1) / (PAGES - 1 + slack)
+
   const starCount = coarse ? (IS_LOW_END ? 900 : 1800) : 5000
   const constellationGroups = coarse ? (IS_LOW_END ? 5 : 9) : 16
 
@@ -164,19 +185,19 @@ function ExperienceInner() {
           // A little extra length on phones so the tall final section can clear
           // the mobile address bar. The flight clamps at the last station, so the
           // trailing stretch just holds the arrival.
-          pages={coarse ? PAGES + 0.6 : PAGES}
+          pages={PAGES + slack}
           damping={coarse ? 0.08 : 0.12}
           style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}
         >
           {!coarse && <SmoothWheel />}
-          <FlightRig />
+          <FlightRig span={span} />
           <Nebulae />
           <StarTunnel count={starCount} />
           <Constellations groups={constellationGroups} />
           <Planets />
-          <ScrollReporter onSection={setSection} />
+          <ScrollReporter onSection={setSection} span={span} />
           <Scroll html style={{ width: '100%' }}>
-            <Overlay />
+            <Overlay onArrivalSlack={onArrivalSlack} />
           </Scroll>
         </ScrollControls>
         {!coarse && (
@@ -269,13 +290,15 @@ function SmoothWheel() {
   return null
 }
 
-function ScrollReporter({ onSection }: { onSection: (i: number) => void }) {
+function ScrollReporter({ onSection, span }: { onSection: (i: number) => void; span: number }) {
   const scroll = useScroll()
   const last = useRef(-1)
   useEffect(() => {
     let raf = 0
     const tick = () => {
-      const i = Math.round(scroll.offset * (PAGES - 1))
+      // Same progress the flight uses, so the readout cannot say DEPARTURE
+      // while the ship is already parked at the arrival.
+      const i = Math.round(flightProgress(scroll.offset, span) * (PAGES - 1))
       if (i !== last.current) {
         last.current = i
         onSection(i)
@@ -284,7 +307,7 @@ function ScrollReporter({ onSection }: { onSection: (i: number) => void }) {
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [scroll, onSection])
+  }, [scroll, onSection, span])
   return null
 }
 
@@ -311,7 +334,7 @@ function Scrim({ className = '' }: { className?: string }) {
   )
 }
 
-function Overlay() {
+function Overlay({ onArrivalSlack }: { onArrivalSlack: (v: number) => void }) {
   return (
     <div className="text-white pointer-events-none">
       <h1 className="sr-only">ANF Consulting</h1>
@@ -346,7 +369,7 @@ function Overlay() {
         <StationSection key={s.num} station={s} side={i % 2 === 0 ? 'right' : 'left'} accent={PLANETS[i].accent} />
       ))}
 
-      <RequestCTA />
+      <RequestCTA onSlack={onArrivalSlack} />
     </div>
   )
 }
@@ -389,7 +412,8 @@ function StationSection({ station, side, accent }: { station: Station; side: 'le
   )
 }
 
-function RequestCTA() {
+function RequestCTA({ onSlack }: { onSlack: (v: number) => void }) {
+  const ref = useRef<HTMLElement | null>(null)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
@@ -414,13 +438,41 @@ function RequestCTA() {
     }
   }
 
+  /**
+   * Tells the page how far past one screen this section runs, so the scroll can
+   * be made long enough to reach the bottom of it.
+   *
+   * Watched rather than measured once: the height moves when the viewport
+   * changes, when the error line appears, and when somebody drags the corner of
+   * the textarea.
+   */
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const measure = () => {
+      const vh = window.innerHeight || 1
+      const over = Math.max(0, el.offsetHeight - vh) / vh
+      // A little more than the overflow, so the last line is clear of the edge
+      // rather than flush against it.
+      onSlack(over > 0 ? over + 0.06 : 0)
+    }
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    window.addEventListener('resize', measure)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', measure)
+    }
+  }, [onSlack])
+
   const field =
     'w-full rounded-xl border border-white/12 bg-midnight-950/50 px-4 py-3 text-sm text-silver-100 placeholder:text-silver-400/70 outline-none focus:border-flame-500/60 transition-colors'
 
   return (
     // Bottom padding keeps the caption clear of the fixed HUD readout when
     // the arrival runs taller than one screen (phones have scroll slack for it).
-    <section className="min-h-screen flex flex-col items-center justify-center pt-10 pb-28 sm:py-24 text-center px-6">
+    <section ref={ref} className="min-h-screen flex flex-col items-center justify-center pt-10 pb-28 sm:py-24 text-center px-6">
       <div className="relative w-full max-w-lg pointer-events-auto">
         <Scrim className="-inset-x-10 -inset-y-10" />
         <div className="relative flex flex-col items-center">
