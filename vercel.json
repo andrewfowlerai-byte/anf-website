@@ -1,6 +1,7 @@
 {
   "redirects": [
-    { "source": "/realtors", "destination": "/demos", "permanent": false }
+    { "source": "/realtors", "destination": "/demos", "permanent": false },
+    { "source": "/preview/:id", "destination": "https://concept.anfconsult.com/:id", "permanent": false }
   ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/" }

@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom'
 import { recordPageview } from './lib/traffic'
 import { Layout } from './components/Layout'
 import { Home } from './pages/Home'
@@ -18,7 +18,6 @@ const Work = lazy(() => import('./pages/Work').then((m) => ({ default: m.Work })
 const Audit = lazy(() => import('./pages/Audit').then((m) => ({ default: m.Audit })))
 const Refer = lazy(() => import('./pages/Refer').then((m) => ({ default: m.Refer })))
 const ReferralLanding = lazy(() => import('./pages/ReferralLanding').then((m) => ({ default: m.ReferralLanding })))
-const ProspectPreview = lazy(() => import('./pages/ProspectPreview').then((m) => ({ default: m.ProspectPreview })))
 const Invest = lazy(() => import('./pages/Invest').then((m) => ({ default: m.Invest })))
 const Start = lazy(() => import('./pages/Start').then((m) => ({ default: m.Start })))
 const Privacy = lazy(() => import('./pages/Privacy').then((m) => ({ default: m.Privacy })))
@@ -55,6 +54,19 @@ const ServiceFlowDemo = lazy(() => import('./demos/ServiceFlowDemo').then((m) =>
 function PageviewBeacon() {
   const { pathname } = useLocation()
   useEffect(() => { recordPageview(pathname) }, [pathname])
+  return null
+}
+
+/**
+ * Hands an old /preview/<id> link to the concept site that replaced the
+ * one-page mockup. vercel.json redirects these before the app loads; this
+ * covers anything that still reaches the router.
+ */
+function PreviewMoved() {
+  const { id = '' } = useParams()
+  useEffect(() => {
+    window.location.replace(`https://concept.anfconsult.com/${encodeURIComponent(id)}`)
+  }, [id])
   return null
 }
 
@@ -121,12 +133,11 @@ function App() {
         {/* Standalone route (no marketing layout) — select-all copy on the
             signature shouldn't pull in the site header / footer. */}
         <Route path="/signature" element={<Signature />} />
-        {/* The homepage mockup the outreach opener promises. Standalone on
-            purpose: it has to read as the prospect's own site, so the ANF
-            header, footer and chat widget must not sit on top of it. The only
-            ANF presence is the disclosure banner, which is not optional.
-            Noindexed: it carries a real company's name. */}
-        <Route path="/preview/:id" element={<ProspectPreview />} />
+        {/* Retired 2026-09-15: the one-page homepage mockup the outreach opener
+            promises became a full concept site per prospect at
+            concept.anfconsult.com/<id> (repo concept-sites). These links have
+            been sent to prospects, so they keep working. */}
+        <Route path="/preview/:id" element={<PreviewMoved />} />
         {/* Code-locked class worksheet (scan a QR, enter the code). */}
         <Route path="/class" element={<ClassMaterial />} />
         {/* Immersive 3D experience demo (standalone, full-screen, lazy-loaded). */}
