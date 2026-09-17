@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 /**
  * Hosted email signature for ANF Consulting.
@@ -17,8 +17,10 @@ import { useRef, useState } from 'react'
  * the banner changes, save it under a new file name (-v2) instead of
  * overwriting this one.
  *
- * One-click copy puts the rich HTML on the clipboard. Pasting into
- * Gmail's signature editor keeps the banner and the links.
+ * Every copy path puts exactly SIGNATURE_HTML on the clipboard: the button,
+ * the button's fallback, and a hand selection of the preview. A browser
+ * copying a selection also serializes the elements around it, which pasted the
+ * white preview card, border and all, into Gmail (2026-09-17).
  */
 
 const BANNER_URL = 'https://anfconsult.com/email/andrew-fowler-signature-v1.png'
@@ -40,36 +42,56 @@ const SIGNATURE_HTML = `<table cellpadding="0" cellspacing="0" border="0" role="
   </tr>
 </table>`
 
+// Separators match the rendered HTML above (pipes, not dashes) so the
+// plaintext fallback reads the same in clients that strip rich text.
+const SIGNATURE_TEXT = 'Andrew Fowler | Founder, ANF Consulting | (573) 276-9756 | admin@anfconsult.com | anfconsult.com'
+
+/** Fills a copy event with the signature alone, instead of whatever the browser would serialize. */
+function fillClipboard(e: ClipboardEvent) {
+  if (!e.clipboardData) return false
+  e.clipboardData.setData('text/html', SIGNATURE_HTML)
+  e.clipboardData.setData('text/plain', SIGNATURE_TEXT)
+  e.preventDefault()
+  return true
+}
+
 export function Signature() {
-  const signatureRef = useRef<HTMLDivElement>(null)
+  const cardRef = useRef<HTMLDivElement>(null)
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'error'>('idle')
+
+  // Selecting the preview by hand and pressing copy gets the signature
+  // itself, never the white card it sits in.
+  useEffect(() => {
+    const onCopy = (e: ClipboardEvent) => {
+      const card = cardRef.current
+      const sel = window.getSelection()
+      if (!card || !sel || sel.rangeCount === 0 || sel.isCollapsed) return
+      if (card.contains(sel.anchorNode) || card.contains(sel.focusNode)) fillClipboard(e)
+    }
+    document.addEventListener('copy', onCopy)
+    return () => document.removeEventListener('copy', onCopy)
+  }, [])
 
   const handleCopy = async () => {
     try {
-      // Prefer the modern Clipboard API so the rich HTML lands intact in
-      // Gmail's editor. The fallback selects the rendered node and uses
-      // execCommand for older browsers / restrictive contexts.
       if (typeof ClipboardItem !== 'undefined' && navigator.clipboard?.write) {
-        const blob = new Blob([SIGNATURE_HTML], { type: 'text/html' })
-        const plain = new Blob(
-          // Separators match the rendered HTML above (pipes, not dashes) so the
-          // plaintext fallback reads the same in clients that strip rich text.
-          ['Andrew Fowler | Founder, ANF Consulting | (573) 276-9756 | admin@anfconsult.com | anfconsult.com'],
-          { type: 'text/plain' },
-        )
         await navigator.clipboard.write([
-          new ClipboardItem({ 'text/html': blob, 'text/plain': plain }),
+          new ClipboardItem({
+            'text/html': new Blob([SIGNATURE_HTML], { type: 'text/html' }),
+            'text/plain': new Blob([SIGNATURE_TEXT], { type: 'text/plain' }),
+          }),
         ])
-      } else if (signatureRef.current) {
-        const range = document.createRange()
-        range.selectNodeContents(signatureRef.current)
-        const sel = window.getSelection()
-        sel?.removeAllRanges()
-        sel?.addRange(range)
-        document.execCommand('copy')
-        sel?.removeAllRanges()
       } else {
-        throw new Error('Clipboard not available')
+        // Older browsers: a copy command with our own data in it, so nothing
+        // on the page gets serialized along with the signature.
+        let filled = false
+        const onCopy = (e: ClipboardEvent) => {
+          filled = fillClipboard(e)
+        }
+        document.addEventListener('copy', onCopy)
+        document.execCommand('copy')
+        document.removeEventListener('copy', onCopy)
+        if (!filled) throw new Error('Clipboard not available')
       }
       setCopyState('copied')
       setTimeout(() => setCopyState('idle'), 2500)
@@ -97,13 +119,11 @@ export function Signature() {
 
         {/* Preview card */}
         <div
+          ref={cardRef}
           className="bg-white rounded-2xl border border-line p-8 shadow-sm overflow-x-auto"
           style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '32px' }}
         >
-          <div
-            ref={signatureRef}
-            dangerouslySetInnerHTML={{ __html: SIGNATURE_HTML }}
-          />
+          <div dangerouslySetInnerHTML={{ __html: SIGNATURE_HTML }} />
         </div>
 
         {/* Copy button */}
@@ -135,7 +155,7 @@ export function Signature() {
           <li>Click <strong style={{ color: '#0B1A33' }}>Copy signature</strong> above.</li>
           <li>Open Gmail. Click the gear icon, then <strong style={{ color: '#0B1A33' }}>See all settings</strong>.</li>
           <li>In the <strong style={{ color: '#0B1A33' }}>General</strong> tab, scroll to <strong style={{ color: '#0B1A33' }}>Signature</strong>.</li>
-          <li>Click <strong style={{ color: '#0B1A33' }}>Create new</strong> (or open your current one), clear it out, then paste.</li>
+          <li>Click <strong style={{ color: '#0B1A33' }}>Create new</strong> (or open your current one). Click inside the box, press <strong style={{ color: '#0B1A33' }}>Ctrl+A</strong> then <strong style={{ color: '#0B1A33' }}>Delete</strong> to clear it, then paste.</li>
           <li>Pick it as the default for new emails and replies. Scroll down and click <strong style={{ color: '#0B1A33' }}>Save Changes</strong>.</li>
         </ol>
 
