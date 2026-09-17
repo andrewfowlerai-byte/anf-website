@@ -66,7 +66,9 @@ export function Signature() {
       const card = cardRef.current
       const sel = window.getSelection()
       if (!card || !sel || sel.rangeCount === 0 || sel.isCollapsed) return
-      if (card.contains(sel.anchorNode) || card.contains(sel.focusNode)) fillClipboard(e)
+      // Any overlap counts: a drag that starts just outside the card covers it
+      // without either end of the selection being inside it.
+      if (sel.getRangeAt(0).intersectsNode(card)) fillClipboard(e)
     }
     document.addEventListener('copy', onCopy)
     return () => document.removeEventListener('copy', onCopy)
