@@ -7,28 +7,35 @@ import { useRef, useState } from 'react'
  * "select all" copy path grabs only the signature itself, with no
  * surrounding nav or footer.
  *
+ * The signature is a full-width banner image linked to the site, with the
+ * phone, email and website underneath as live text. Anything inside an image
+ * can't be tapped, and some mail clients block images, so the contact line
+ * stays text.
+ *
+ * The banner lives in public/email at 1200 x 240 and is shown at 600 x 120, so
+ * it stays sharp on retina screens. Gmail caches signature images by URL: when
+ * the banner changes, save it under a new file name (-v2) instead of
+ * overwriting this one.
+ *
  * One-click copy puts the rich HTML on the clipboard. Pasting into
- * Gmail's signature editor preserves the layout exactly.
+ * Gmail's signature editor keeps the banner and the links.
  */
 
-const SIGNATURE_HTML = `<table cellpadding="0" cellspacing="0" border="0" style="font-family: 'Inter', Helvetica, Arial, sans-serif; color: #1F2937; line-height: 1.4; border-collapse: collapse;">
+const BANNER_URL = 'https://anfconsult.com/email/andrew-fowler-signature-v1.png'
+
+const SIGNATURE_HTML = `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse: collapse;">
   <tr>
-    <td style="padding-right: 18px; vertical-align: top;">
-      <div style="width: 56px; height: 56px; border-radius: 50%; background-color: #0B1A33; color: #F0F4F8; font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif; font-weight: 700; font-size: 28px; text-align: center; line-height: 56px; letter-spacing: -1px;">A</div>
+    <td style="padding: 0;">
+      <a href="https://anfconsult.com" style="text-decoration: none;"><img src="${BANNER_URL}" width="600" height="120" alt="Andrew Fowler, Founder, ANF Consulting. Clarity. Integration. Automation." style="display: block; width: 600px; max-width: 100%; height: auto; border: 0;"></a>
     </td>
-    <td style="vertical-align: top; border-left: 1px solid #E2E8F0; padding-left: 18px;">
-      <div style="font-size: 16px; font-weight: 600; color: #0B1A33; letter-spacing: -0.2px; margin-bottom: 2px;">Andrew Fowler</div>
-      <div style="font-size: 13px; color: #6B7280; margin-bottom: 10px;">Founder, <span style="color: #0B1A33; font-weight: 600;">ANF Consulting</span></div>
-      <div style="font-size: 13px; color: #1F2937; margin-bottom: 8px;">
-        <a href="https://anfconsult.com" style="color: #F26B1D; text-decoration: none; font-weight: 500;">anfconsult.com</a>
-        &nbsp;<span style="color: #CBD5E1;">|</span>&nbsp;
-        <a href="tel:+15732769756" style="color: #1F2937; text-decoration: none;">(573) 276-9756</a>
-        &nbsp;<span style="color: #CBD5E1;">|</span>&nbsp;
-        <a href="mailto:admin@anfconsult.com" style="color: #1F2937; text-decoration: none;">admin@anfconsult.com</a>
-      </div>
-      <div style="font-size: 10px; color: #6B7280; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 500;">
-        Marketing<span style="color: #F26B1D;"> · </span>Infrastructure<span style="color: #F26B1D;"> · </span>AI<span style="color: #F26B1D;"> · </span>Education
-      </div>
+  </tr>
+  <tr>
+    <td style="padding: 9px 0 0 2px; font-family: Helvetica, Arial, sans-serif; font-size: 13px; line-height: 1.4; color: #1F2937;">
+      <a href="tel:+15732769756" style="color: #1F2937; text-decoration: none;">(573) 276-9756</a>
+      &nbsp;<span style="color: #CBD5E1;">|</span>&nbsp;
+      <a href="mailto:admin@anfconsult.com" style="color: #1F2937; text-decoration: none;">admin@anfconsult.com</a>
+      &nbsp;<span style="color: #CBD5E1;">|</span>&nbsp;
+      <a href="https://anfconsult.com" style="color: #F26B1D; text-decoration: none; font-weight: 600;">anfconsult.com</a>
     </td>
   </tr>
 </table>`
@@ -47,7 +54,7 @@ export function Signature() {
         const plain = new Blob(
           // Separators match the rendered HTML above (pipes, not dashes) so the
           // plaintext fallback reads the same in clients that strip rich text.
-          ['Andrew Fowler | Founder, ANF Consulting | anfconsult.com | (573) 276-9756 | admin@anfconsult.com'],
+          ['Andrew Fowler | Founder, ANF Consulting | (573) 276-9756 | admin@anfconsult.com | anfconsult.com'],
           { type: 'text/plain' },
         )
         await navigator.clipboard.write([
@@ -128,12 +135,12 @@ export function Signature() {
           <li>Click <strong style={{ color: '#0B1A33' }}>Copy signature</strong> above.</li>
           <li>Open Gmail. Click the gear icon, then <strong style={{ color: '#0B1A33' }}>See all settings</strong>.</li>
           <li>In the <strong style={{ color: '#0B1A33' }}>General</strong> tab, scroll to <strong style={{ color: '#0B1A33' }}>Signature</strong>.</li>
-          <li>Click <strong style={{ color: '#0B1A33' }}>Create new</strong> (or edit existing), then paste.</li>
-          <li>Pick it as the default for new emails and replies. Save.</li>
+          <li>Click <strong style={{ color: '#0B1A33' }}>Create new</strong> (or open your current one), clear it out, then paste.</li>
+          <li>Pick it as the default for new emails and replies. Scroll down and click <strong style={{ color: '#0B1A33' }}>Save Changes</strong>.</li>
         </ol>
 
         <p className="text-center text-xs" style={{ color: '#6B7280', fontSize: '11px', textAlign: 'center', marginTop: '40px' }}>
-          Web fonts may not load inside Gmail. The layout, colors, and flame accents survive intact.
+          The banner is an image, so it looks the same in every inbox. The phone, email and website under it stay tappable, and still show when an inbox blocks images.
         </p>
       </div>
     </div>
