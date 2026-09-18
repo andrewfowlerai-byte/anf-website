@@ -2,17 +2,21 @@ import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { BookCallButton } from './BookCallButton'
 
-// Three links, deliberately.
-//
-// The pages taken out of here (Answers, Demos, Events, and Home, which is the
-// logo) were not removed: Demos merged into Work, and the rest are pages you
-// hand someone a link to. A nav full of send-a-link pages is what made it hard
-// to tell which page mattered. Everything still has its URL, and the footer
+// Kept short on purpose. Answers, Demos and Events are pages you hand someone
+// a link to, not nav items, and a nav full of send-a-link pages is what made it
+// hard to tell which page mattered. Everything still has its URL and the footer
 // still links what needs crawling.
+//
+// Home and Book are here because the marketing videos send people to
+// anfconsult.com/book by name, so both words need to be visible in the header
+// on the page they land on. Book points at the scheduler half of /book; the
+// orange button still points at the request form, which stays the primary path.
 const NAV: { to: string; label: string; end?: boolean }[] = [
+  { to: '/', label: 'Home', end: true },
   { to: '/work', label: 'Work' },
   { to: '/services', label: 'Services' },
   { to: '/about', label: 'About' },
+  { to: '/book#schedule', label: 'Book' },
 ]
 
 export function Header() {
@@ -29,7 +33,7 @@ export function Header() {
         </Link>
 
         {/* Desktop nav with an animated underline. */}
-        <div className="hidden lg:flex items-center gap-7">
+        <div className="hidden lg:flex items-center gap-6">
           {NAV.map((n) => (
             <NavLink
               key={n.to}
@@ -58,7 +62,7 @@ export function Header() {
         <div className="flex items-center gap-2.5">
           <a
             href="https://crm.anfconsult.com/portal"
-            className="hidden lg:inline-block text-sm text-silver-500 hover:text-silver-200 transition-colors"
+            className="hidden xl:inline-block text-sm text-silver-500 hover:text-silver-200 transition-colors"
           >
             Client Login
           </a>

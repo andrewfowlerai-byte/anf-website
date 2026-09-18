@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import Cal, { getCalApi } from '@calcom/embed-react'
 import { submitRequest } from '../lib/leads'
 import { PageHero } from '../components/PageHero'
@@ -12,6 +13,38 @@ const CAL_EVENT_SLUG = 'discovery-call'
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
 
 export function Book() {
+  // The header's "Book" link points at /book#schedule. React Router does not
+  // scroll to a hash on its own, and the key dependency makes a second click
+  // work when you are already on this page.
+  const { hash, key } = useLocation()
+  useEffect(() => {
+    if (hash !== '#schedule') return
+    // The scheduler sits below a hero and a 640px Cal embed that are still
+    // laying out when this runs, so a single scroll lands short and the page
+    // grows out from under it. Scroll again as the page settles, instantly
+    // rather than smoothly so there is no animation to interrupt, and stop the
+    // moment the visitor takes over with a wheel or a finger.
+    let cancelled = false
+    const stop = () => { cancelled = true }
+    const go = () => {
+      if (cancelled) return
+      document.getElementById('schedule')?.scrollIntoView({ behavior: 'instant' as ScrollBehavior, block: 'start' })
+    }
+    window.addEventListener('wheel', stop, { passive: true, once: true })
+    window.addEventListener('touchstart', stop, { passive: true, once: true })
+    const frame = requestAnimationFrame(go)
+    const settle = window.setTimeout(go, 350)
+    const late = window.setTimeout(go, 1000)
+    return () => {
+      cancelled = true
+      cancelAnimationFrame(frame)
+      window.clearTimeout(settle)
+      window.clearTimeout(late)
+      window.removeEventListener('wheel', stop)
+      window.removeEventListener('touchstart', stop)
+    }
+  }, [hash, key])
+
   return (
     <>
       <PageHero
@@ -42,7 +75,7 @@ export function Book() {
         <ContactForm />
       </section>
 
-      <section className="max-w-4xl mx-auto px-6 pb-24">
+      <section id="schedule" className="max-w-4xl mx-auto px-6 pb-24 scroll-mt-24">
         <p className="text-center text-sm text-silver-500 mb-6">Prefer to pick a time yourself? Grab a slot directly.</p>
         <CalBooking />
       </section>
