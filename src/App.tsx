@@ -27,6 +27,7 @@ const Handouts = lazy(() => import('./pages/Handouts').then((m) => ({ default: m
 const FreeClass = lazy(() => import('./pages/FreeClass').then((m) => ({ default: m.FreeClass })))
 const Answers = lazy(() => import('./pages/Answers').then((m) => ({ default: m.Answers })))
 const AnswerDetail = lazy(() => import('./pages/AnswerDetail').then((m) => ({ default: m.AnswerDetail })))
+const CardAndrew = lazy(() => import('./pages/CardAndrew').then((m) => ({ default: m.CardAndrew })))
 
 // Heavy WebGL bundle, code-split so it only loads on /experience.
 const Experience = lazy(() => import('./experience/Experience'))
@@ -133,6 +134,16 @@ function App() {
         {/* Standalone route (no marketing layout) — select-all copy on the
             signature shouldn't pull in the site header / footer. */}
         <Route path="/signature" element={<Signature />} />
+        {/* Andrew's digital business card. The QR on the printed card opens this,
+            so it stays standalone and loads as a card, not as a website. */}
+        <Route
+          path="/andrew"
+          element={
+            <Suspense fallback={<div style={{ minHeight: '100vh', background: '#E7ECF4' }} />}>
+              <CardAndrew />
+            </Suspense>
+          }
+        />
         {/* Retired 2026-09-15: the one-page homepage mockup the outreach opener
             promises became a full concept site per prospect at
             concept.anfconsult.com/<id> (repo concept-sites). These links have
