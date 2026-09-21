@@ -11,7 +11,7 @@ const FALLBACK_OVERVIEW = [
   // "Website + CRM bundle" misdescribed the entry price: Starter is the website
   // on the platform, and the CRM arrives at Growth. Say the range instead.
   { service: 'Complete Platform', format: 'Website, CRM, and client portal tiers', starting: '$2,200', anchor: 'platform' },
-  { service: 'Website Development', format: 'Flat project fee, complex builds quoted', starting: '$1,500', anchor: 'website' },
+  { service: 'Website Development', format: 'Simple sites $500 + $50/mo, larger builds flat fee', starting: '$500', anchor: 'website' },
   { service: 'Proof-of-Work Marketing System', format: 'Build + monthly', starting: '$4,000', anchor: 'proof-of-work' },
   { service: 'AI Coaching & Integration', format: 'Per session or retainer', starting: '$229', anchor: 'coaching' },
   { service: 'AI Strategy', format: 'Flat package', starting: '$229', anchor: 'strategy' },
@@ -23,9 +23,9 @@ const FALLBACK_OVERVIEW = [
 const FALLBACK_WEBSITE_TIERS = [
   {
     name: 'Simple',
-    price: '$1,500',
-    idealFor: 'Personal brands, solo professionals, landing pages',
-    scope: 'Up to 5 pages (Home, About, Services, Contact, +1). Mobile-responsive design. Basic SEO setup (meta titles, descriptions, alt tags). Contact form integration. Social media links.',
+    price: '$500 + $50/mo',
+    idealFor: 'Personal brands, solo professionals, small local businesses',
+    scope: 'Fast turnaround. Up to 5 pages (Home, About, Services, Contact, +1). Mobile-responsive design. Basic SEO setup (meta titles, descriptions, alt tags). Contact form integration. Social media links. Then $50 a month for hosting, security updates, and small edits.',
   },
   {
     name: 'Mid-Scale',
@@ -273,7 +273,7 @@ export function Services() {
         id="website"
         kicker="Websites"
         title="Website Development"
-        blurb="Modern, mobile-first websites built for performance and conversion. ANF Consulting designs and develops websites that match your brand, load fast, rank well, and turn visitors into leads. This is the website on its own: a one-time build, priced by how big and how custom it needs to be, and yours when it ships. If you also want a CRM, a client portal, or automation running behind it, start with the platforms below instead."
+        blurb="Modern, mobile-first websites built for performance and conversion. ANF Consulting designs and develops websites that match your brand, load fast, rank well, and turn visitors into leads. This is the website on its own. A Simple site is $500 to build and $50 a month to host and keep current. Larger sites are a one-time build, priced by how big and how custom they need to be, and yours when they ship. If you also want a CRM, a client portal, or automation running behind it, start with the platforms below instead."
       >
         <div className="grid md:grid-cols-3 gap-4">
           {websiteTiers.map((t) => (

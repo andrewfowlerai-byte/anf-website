@@ -86,7 +86,7 @@ export const ANSWERS: Answer[] = [
         heading: 'When custom is genuinely cheaper',
         body: [
           'Custom is not automatically the better deal, and anyone telling you otherwise is selling. It makes financial sense in a specific situation: you have enough seats that per-user pricing has become a real line item, your process does not fit the tool, and you intend to still be running in five years.',
-          'At ANF a website build starts at $1,500. A complete platform with a website, CRM, and client portal starts at $2,200, with larger tiers at $4,500 and $8,000 depending on what the business actually needs. Those are one-time build costs, published openly, and the price is locked once you sign.',
+          'At ANF a simple website is $500 to build plus $50 a month for hosting and upkeep. A complete platform with a website, CRM, and client portal starts at $2,200, with larger tiers at $4,500 and $8,000 depending on what the business actually needs. Every price is published openly, and it is locked once you sign.',
           'The break-even math is simple enough to do on a napkin. Take your current monthly software spend, multiply by sixty for five years, and compare. For a crew of six or more, that comparison usually stops being close.',
         ],
       },
@@ -245,7 +245,7 @@ export const ANSWERS: Answer[] = [
       },
       {
         q: 'What does a website cost for a home service company?',
-        a: 'At ANF, website builds start at $1,500, with a larger tier at $3,500 and complex builds quoted per project. A complete platform including a CRM and client portal starts at $2,200.',
+        a: 'At ANF, a simple website is $500 plus $50 a month, a larger tier is $3,500, and complex builds are quoted per project. A complete platform including a CRM and client portal starts at $2,200.',
       },
     ],
     related: ['google-business-profile-cost', 'field-service-software-cost'],
@@ -434,7 +434,7 @@ export const ANSWERS: Answer[] = [
       },
       {
         q: 'How much does custom business software cost?',
-        a: 'ANF publishes flat pricing: website builds from $1,500, and complete platforms with a website, CRM, and client portal at $2,200, $4,500, and $8,000 depending on scope. Prices are locked once signed.',
+        a: 'ANF publishes flat pricing: simple websites at $500 plus $50 a month, and complete platforms with a website, CRM, and client portal at $2,200, $4,500, and $8,000 depending on scope. Prices are locked once signed.',
       },
     ],
     related: ['field-service-software-cost', 'crm-or-website'],
