@@ -288,7 +288,7 @@ export function Services() {
           ))}
         </div>
         <FinePrint>
-          All projects include kickoff consultation, two rounds of design revisions, content review, and launch support. Hosting and domain are billed separately at provider cost. Ongoing maintenance retainers are available after launch.
+          All projects include kickoff consultation, two rounds of design revisions, content review, and launch support. Domains are billed at provider cost. The Simple site&apos;s $50 a month covers hosting; for larger sites, hosting is billed at provider cost and maintenance retainers are available after launch.
         </FinePrint>
       </ServiceSection>
 
