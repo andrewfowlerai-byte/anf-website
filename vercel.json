@@ -6,6 +6,8 @@
   "rewrites": [
     { "source": "/poprealty", "destination": "https://pop-realty.vercel.app/poprealty" },
     { "source": "/poprealty/(.*)", "destination": "https://pop-realty.vercel.app/poprealty/$1" },
+    { "source": "/brokerage", "destination": "https://brokerage-demo-steel.vercel.app/brokerage" },
+    { "source": "/brokerage/(.*)", "destination": "https://brokerage-demo-steel.vercel.app/brokerage/$1" },
     { "source": "/(.*)", "destination": "/" }
   ],
   "headers": [
@@ -35,6 +37,12 @@
     },
     {
       "source": "/poprealty(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+      ]
+    },
+    {
+      "source": "/brokerage(.*)",
       "headers": [
         { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
       ]
