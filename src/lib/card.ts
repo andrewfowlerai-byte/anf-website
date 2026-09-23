@@ -23,25 +23,37 @@ export interface CardSwapInput {
  * new-lead pass picks them up. A person who took the time to share their
  * number is never lost to an outage.
  */
-export async function submitCardSwap(input: CardSwapInput): Promise<void> {
-  let res: Response | null
+async function post(input: CardSwapInput): Promise<Response | null> {
   try {
-    res = await fetch('https://crm.anfconsult.com/api/card-exchange', {
+    return await fetch('https://crm.anfconsult.com/api/card-exchange', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(input),
     })
   } catch {
-    res = null
+    return null
+  }
+}
+
+export async function submitCardSwap(input: CardSwapInput): Promise<void> {
+  let res = await post(input)
+  // A dropped connection may have landed anyway. Asking again is safe: the
+  // endpoint treats the same email or phone within 12 hours as the same swap.
+  // Only after a second failure does the direct insert run, so a lost reply
+  // does not turn into a second contact.
+  if (!res) {
+    await new Promise((r) => setTimeout(r, 1500))
+    res = await post(input)
   }
 
   if (res && res.ok) return
-  if (res && res.status >= 400 && res.status < 500) {
+  // 400 is the one answer about the form itself; show it so they can fix it.
+  if (res && res.status === 400) {
     const body = (await res.json().catch(() => null)) as { error?: string } | null
     throw new Error(body?.error || 'Something in the form needs a look.')
   }
 
-  // Unreachable or a server error: keep the person anyway.
+  // Unreachable, busy (429) or a server error: keep the person anyway.
   await submitLead({
     contact_name: input.name,
     business_name: input.company || undefined,

@@ -117,7 +117,10 @@ function SwapBack({ justSaved }: { justSaved: boolean }) {
   const [sharedAs, setSharedAs] = useState<string | null>(() => readShared())
   const ref = useRef<HTMLDivElement>(null)
 
-  const open = !sharedAs && (openClicked || justSaved)
+  // Anything already typed (a draft from earlier in the visit) keeps the form open.
+  const hasDraft = !!(name || phone || email || company || note)
+  const open = !sharedAs && (openClicked || justSaved || hasDraft)
+  const thanksRef = useRef<HTMLParagraphElement>(null)
 
   // Coming back from the phone's Contacts sheet, the form is the next thing
   // they should see.
@@ -157,6 +160,8 @@ function SwapBack({ justSaved }: { justSaved: boolean }) {
       }
       setSharedAs(first)
       recordPageview('/andrew/shared-back')
+      // Move focus to the confirmation, so it is read out and keyboard users are not left on a removed button.
+      window.setTimeout(() => thanksRef.current?.focus(), 50)
       clearName()
       clearPhone()
       clearEmail()
@@ -181,13 +186,13 @@ function SwapBack({ justSaved }: { justSaved: boolean }) {
 
   if (sharedAs) {
     return (
-      <div ref={ref} className="rounded-xl p-5" style={{ backgroundColor: '#FFFFFF', border: '1px solid #D9DFE9' }}>
+      <div ref={ref} role="status" aria-live="polite" className="rounded-xl p-5" style={{ backgroundColor: '#FFFFFF', border: '1px solid #D9DFE9' }}>
         <div className="flex items-start gap-3">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg" style={{ backgroundColor: '#E8F5EE', color: '#1E7A4C' }}>
             <Check className="h-5 w-5" />
           </span>
           <div className="min-w-0">
-            <p className="text-[17px] font-semibold leading-snug" style={{ color: navy }}>
+            <p ref={thanksRef} tabIndex={-1} className="text-[17px] font-semibold leading-snug outline-none" style={{ color: navy }}>
               Thanks, {sharedAs}. I have your info.
             </p>
             <p className="mt-1 text-[15px] leading-relaxed" style={{ color: slate }}>
