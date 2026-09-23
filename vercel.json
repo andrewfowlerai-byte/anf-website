@@ -5,7 +5,7 @@
   ],
   "rewrites": [
     { "source": "/poprealty", "destination": "https://pop-realty.vercel.app/poprealty" },
-    { "source": "/poprealty/:path*", "destination": "https://pop-realty.vercel.app/poprealty/:path*" },
+    { "source": "/poprealty/(.*)", "destination": "https://pop-realty.vercel.app/poprealty/$1" },
     { "source": "/(.*)", "destination": "/" }
   ],
   "headers": [
