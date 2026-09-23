@@ -4,6 +4,8 @@
     { "source": "/preview/:id", "destination": "https://concept.anfconsult.com/:id", "permanent": false }
   ],
   "rewrites": [
+    { "source": "/poprealty", "destination": "https://pop-realty.vercel.app/poprealty" },
+    { "source": "/poprealty/:path*", "destination": "https://pop-realty.vercel.app/poprealty/:path*" },
     { "source": "/(.*)", "destination": "/" }
   ],
   "headers": [
@@ -29,6 +31,12 @@
       "source": "/assets/(.*)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/poprealty(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
       ]
     }
   ]

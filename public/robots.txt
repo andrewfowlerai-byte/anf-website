@@ -12,4 +12,8 @@ Disallow: /signature
 Disallow: /lunch
 Disallow: /rsvp
 
+# Client proposal demos. Served from their own Vercel projects through a rewrite in
+# vercel.json, noindexed there as well.
+Disallow: /poprealty
+
 Sitemap: https://anfconsult.com/sitemap.xml
