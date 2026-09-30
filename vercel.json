@@ -1,5 +1,6 @@
 {
   "redirects": [
+    { "source": "/experience", "has": [{ "type": "query", "key": "src", "value": "card" }], "destination": "/andrew", "permanent": false },
     { "source": "/realtors", "destination": "/demos", "permanent": false },
     { "source": "/preview/:id", "destination": "https://concept.anfconsult.com/:id", "permanent": false }
   ],
