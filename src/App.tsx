@@ -8,7 +8,7 @@ import ClassMaterial from './pages/ClassMaterial'
 import { NotFound } from './pages/NotFound'
 
 // Route-level code splitting: Home and the shell load eagerly; every other page
-// (and the Supabase client + Cal.com embed some of them pull in) loads on demand,
+// (and the Supabase client some of them pull in) loads on demand,
 // which keeps the initial JS bundle small. Layout already wraps <Outlet/> in Suspense.
 const Services = lazy(() => import('./pages/Services').then((m) => ({ default: m.Services })))
 const About = lazy(() => import('./pages/About').then((m) => ({ default: m.About })))

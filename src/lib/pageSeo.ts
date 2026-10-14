@@ -78,9 +78,9 @@ export const PAGE_SEO: Record<string, PageSeo> = {
       'ANF Consulting is Andrew Fowler and a small team in Northeast Ohio. We build the systems small businesses actually run on. Clarity. Integration. Automation.',
   },
   '/book': {
-    title: 'Send a Request',
+    title: 'Request a Call',
     description:
-      'Tell us what you are trying to build or fix. Andrew reads every request and gets back within one business day. Prefer to talk sooner? Grab a time directly.',
+      'Leave your name, your number and a line about what you need. Andrew reads every request and calls you back within one business day. No pitch, no pressure.',
   },
   '/audit': {
     title: 'Free Business Systems Audit',

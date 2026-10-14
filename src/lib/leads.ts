@@ -9,6 +9,10 @@ export interface LeadInput {
   notes?: string
   /** Where the lead came from; defaults to the contact form. */
   source?: string
+  /** They asked Andrew to call them (anfconsult.com/book). */
+  callRequested?: boolean
+  /** Their best time for that call, a short label such as "Afternoons". */
+  bestTime?: string
 }
 
 export async function submitLead(input: LeadInput): Promise<void> {
@@ -67,11 +71,17 @@ export async function submitRequest(input: LeadInput): Promise<void> {
         // re-resolve server-side, and an unrecognised code stays visible.
         referralCode: currentReferral()?.code ?? undefined,
         referralPartnerId: currentReferral()?.partnerId ?? undefined,
+        callRequested: input.callRequested || undefined,
+        bestTime: input.bestTime,
       }),
     })
     if (res.ok) return
   } catch {
     /* fall through to the direct insert */
   }
-  await submitLead(input)
+  // The direct insert has no call fields, so a call request keeps its ask in the notes.
+  const callLine = input.callRequested
+    ? `Requested a call${input.phone ? ` at ${input.phone}` : ''}${input.bestTime ? ` (best time: ${input.bestTime})` : ''}.`
+    : ''
+  await submitLead({ ...input, notes: [input.notes, callLine].filter(Boolean).join('\n') || undefined })
 }

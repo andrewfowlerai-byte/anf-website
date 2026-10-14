@@ -39,8 +39,10 @@ must be readable under RLS by anonymous visitors.
   calendar day.
 - **No "book a call" CTAs. Anywhere on this site or any subsite.** The site is request-first:
   the CTA is **"Send a request"** and it opens the contact form. `BookCallButton` already
-  defaults to that label. On `/book`, the contact form comes first and the Cal.com scheduler
-  is demoted to a secondary option below it. Do not reintroduce a scheduler-first flow.
+  defaults to that label. `/book` is a **request-a-call form** (name, number, email, best time,
+  what they need) and nothing else: Cal.com was removed on 2026-10-14 (Andrew: people submit
+  their info and request a call from him). It posts to the CRM's `inbound-lead` with
+  `callRequested: true`, which makes a "Call ..." Inbox card and push. Do not add a scheduler back.
 - **The one catchphrase is "Clarity. Integration. Automation."** Use it consistently.
 - **No em-dashes** anywhere in copy. They read as AI. Use periods, commas, colons, or parens.
 - **No "boutique"**. Ever.

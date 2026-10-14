@@ -1,48 +1,47 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import Cal, { getCalApi } from '@calcom/embed-react'
 import { submitRequest } from '../lib/leads'
 import { PageHero } from '../components/PageHero'
+import { useLocalDraft } from '../hooks/useLocalDraft'
 
-// ─── Cal.com setup ────────────────────────────────────────────────────────────
-// CAL_EVENT_SLUG is the event-type URL slug for the discovery call.
-const CAL_USERNAME: string = 'andrew-fowler'
-const CAL_EVENT_SLUG = 'discovery-call'
-// ─────────────────────────────────────────────────────────────────────────────
+// Request a call. There is no scheduler on this page (Cal.com came off the
+// site on 2026-10-14): a visitor leaves their name, number and what they need,
+// and Andrew calls them. The CRM's inbound-lead endpoint turns the request into
+// a "Call ..." Inbox card and a push, and emails the visitor that he will call.
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
 
+interface RequestDraft {
+  name: string
+  business: string
+  email: string
+  phone: string
+  bestTime: string
+  message: string
+}
+
+const EMPTY_DRAFT: RequestDraft = { name: '', business: '', email: '', phone: '', bestTime: '', message: '' }
+
+/** The best-time choices. "" is "Any time", which sends no preference. */
+const BEST_TIMES = [
+  { value: '', label: 'Any time' },
+  { value: 'Mornings', label: 'Mornings' },
+  { value: 'Afternoons', label: 'Afternoons' },
+  { value: 'Evenings', label: 'Evenings' },
+]
+
 export function Book() {
-  // The header's "Book" link points at /book#schedule. React Router does not
-  // scroll to a hash on its own, and the key dependency makes a second click
-  // work when you are already on this page.
+  // Old links and the header point at /book#request (and older ones at
+  // /book#schedule, where the scheduler used to be). React Router does not
+  // scroll to a hash on its own, so bring the form into view, and the key
+  // dependency makes a second click work when you are already on this page.
   const { hash, key } = useLocation()
   useEffect(() => {
-    if (hash !== '#schedule') return
-    // The scheduler sits below a hero and a 640px Cal embed that are still
-    // laying out when this runs, so a single scroll lands short and the page
-    // grows out from under it. Scroll again as the page settles, instantly
-    // rather than smoothly so there is no animation to interrupt, and stop the
-    // moment the visitor takes over with a wheel or a finger.
-    let cancelled = false
-    const stop = () => { cancelled = true }
-    const go = () => {
-      if (cancelled) return
-      document.getElementById('schedule')?.scrollIntoView({ behavior: 'instant' as ScrollBehavior, block: 'start' })
-    }
-    window.addEventListener('wheel', stop, { passive: true, once: true })
-    window.addEventListener('touchstart', stop, { passive: true, once: true })
-    const frame = requestAnimationFrame(go)
-    const settle = window.setTimeout(go, 350)
-    const late = window.setTimeout(go, 1000)
-    return () => {
-      cancelled = true
-      cancelAnimationFrame(frame)
-      window.clearTimeout(settle)
-      window.clearTimeout(late)
-      window.removeEventListener('wheel', stop)
-      window.removeEventListener('touchstart', stop)
-    }
+    if (hash !== '#request' && hash !== '#schedule') return
+    const frame = requestAnimationFrame(() => {
+      document.getElementById('request')?.scrollIntoView({ behavior: 'instant' as ScrollBehavior, block: 'start' })
+    })
+    return () => cancelAnimationFrame(frame)
   }, [hash, key])
 
   return (
@@ -50,15 +49,15 @@ export function Book() {
       <PageHero
         eyebrow="Start Here"
         title="Let's talk."
-        subtitle="Tell us what you are trying to build or fix. Andrew reads every request and gets back to you within one business day. No pitch, no pressure."
+        subtitle="Leave your name, your number and a line about what you need. Andrew reads every request and calls you back within one business day. No pitch, no pressure."
       />
 
       <section className="max-w-3xl mx-auto px-6 pb-4">
         <p className="text-center text-xs tracking-[0.3em] uppercase text-flame-500 mb-6">What happens next</p>
-        <div className="grid sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
-            { n: '1', t: 'Send a request', b: 'A few lines about your business and what you need. Two minutes, tops. You hear back within one business day.' },
-            { n: '2', t: 'We talk, 30 minutes', b: 'Your goals, what you have now, and where you are stuck. It is a conversation, not a pitch.' },
+            { n: '1', t: 'Request a call', b: 'Your name, your number and a few lines about what you need. Two minutes, tops.' },
+            { n: '2', t: 'Andrew calls you', b: 'Within one business day, at the time you pick. About 30 minutes: your goals, what you have now, and where you are stuck. A conversation, not a pitch.' },
             { n: '3', t: 'You get a plan', b: 'A clear proposal with scope and price within two business days. If it fits, we start. If not, the plan is yours to keep.' },
           ].map((s) => (
             <div key={s.n} className="rounded-2xl border border-white/[0.07] bg-gradient-to-b from-white/[0.05] to-white/[0.01] p-5">
@@ -70,73 +69,56 @@ export function Book() {
         </div>
       </section>
 
-      {/* Request-first: the form leads, the scheduler is the secondary path. */}
-      <section className="max-w-2xl mx-auto px-6 py-8">
-        <ContactForm />
-      </section>
-
-      <section id="schedule" className="max-w-4xl mx-auto px-6 pb-24 scroll-mt-24">
-        <p className="text-center text-sm text-silver-500 mb-6">Prefer to pick a time yourself? Grab a slot directly.</p>
-        <CalBooking />
+      <section id="request" className="max-w-2xl mx-auto px-6 pt-8 pb-24 scroll-mt-24">
+        <RequestCallForm />
       </section>
     </>
   )
 }
 
-function CalBooking() {
-  useEffect(() => {
-    ;(async () => {
-      const cal = await getCalApi()
-      cal('ui', {
-        theme: 'dark',
-        styles: { branding: { brandColor: '#F26B1D' } },
-        hideEventTypeDetails: false,
-        layout: 'month_view',
-      })
-    })()
-  }, [])
-
-  return (
-    <div className="rounded-2xl border border-white/[0.07] bg-midnight-900/60 overflow-hidden">
-      <Cal
-        calLink={`${CAL_USERNAME}/${CAL_EVENT_SLUG}`}
-        style={{ width: '100%', height: '640px', overflow: 'auto' }}
-        config={{ layout: 'month_view' }}
-      />
-    </div>
-  )
-}
-
-function ContactForm() {
+function RequestCallForm() {
   const [state, setState] = useState<FormState>('idle')
   const [errorMsg, setErrorMsg] = useState('')
+  // Typed input survives a tab switch or a reload (house rule: forms persist).
+  const [draft, setDraft, clearDraft] = useLocalDraft<RequestDraft>('book.requestCall', EMPTY_DRAFT)
+  // What the thank-you shows after the draft is cleared.
+  const [sent, setSent] = useState<{ firstName: string; phone: string; bestTime: string } | null>(null)
+
+  const set = (field: keyof RequestDraft) => (value: string) => setDraft((d) => ({ ...d, [field]: value }))
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const form = e.currentTarget
-    const data = new FormData(form)
+    const name = draft.name.trim()
+    const phone = draft.phone.trim()
     setState('submitting')
     try {
       await submitRequest({
-        contact_name: String(data.get('name') ?? '').trim(),
-        business_name: String(data.get('business') ?? '').trim() || undefined,
-        email: String(data.get('email') ?? '').trim() || undefined,
-        phone: String(data.get('phone') ?? '').trim() || undefined,
-        notes: String(data.get('message') ?? '').trim() || undefined,
+        contact_name: name,
+        business_name: draft.business.trim() || undefined,
+        email: draft.email.trim() || undefined,
+        phone: phone || undefined,
+        notes: draft.message.trim() || undefined,
+        source: 'website-call-request',
+        callRequested: true,
+        bestTime: draft.bestTime || undefined,
       })
+      setSent({ firstName: name.split(/\s+/)[0] || name, phone, bestTime: draft.bestTime })
+      clearDraft()
       setState('success')
-      form.reset()
     } catch (err) {
       setState('error')
       setErrorMsg(err instanceof Error ? err.message : 'Something went wrong')
     }
   }
 
-  if (state === 'success') {
+  if (state === 'success' && sent) {
     return (
-      <div className="rounded-2xl border border-flame-500/40 p-8 bg-midnight-900/60 text-center">
-        <h2 className="text-2xl font-display text-silver-100 mb-2">Got it.</h2>
-        <p className="text-silver-300">Andrew will reach out within 24 hours to schedule a time.</p>
+      <div role="status" className="rounded-2xl border border-flame-500/40 p-8 bg-midnight-900/60 text-center">
+        <h2 className="text-2xl font-display text-silver-100 mb-2">Got it{sent.firstName ? `, ${sent.firstName}` : ''}.</h2>
+        <p className="text-silver-300">
+          Andrew will call you{sent.phone ? ` at ${sent.phone}` : ''} within one business day
+          {sent.bestTime ? `, ${sent.bestTime.toLowerCase()} if he can` : ''}. A confirmation is on its way to your email.
+        </p>
       </div>
     )
   }
@@ -146,15 +128,32 @@ function ContactForm() {
       onSubmit={handleSubmit}
       className="space-y-5 rounded-2xl border border-white/[0.07] p-6 md:p-8 bg-gradient-to-b from-white/[0.05] to-white/[0.01]"
     >
-      <Field label="Your name" name="name" required />
-      <Field label="Business name" name="business" />
-      <Field label="Email" name="email" type="email" required />
-      <Field label="Phone" name="phone" type="tel" />
-      <Field label="What are you looking for?" name="message" textarea />
+      <h2 className="text-xl font-display text-silver-100">Request a call</h2>
+      <Field label="Your name" name="name" autoComplete="name" required value={draft.name} onChange={set('name')} />
+      <Field label="Business name" name="business" autoComplete="organization" value={draft.business} onChange={set('business')} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <Field label="Phone" name="phone" type="tel" autoComplete="tel" required value={draft.phone} onChange={set('phone')} />
+        <Field label="Email" name="email" type="email" autoComplete="email" required value={draft.email} onChange={set('email')} />
+      </div>
+      <label className="block">
+        <span className="block text-sm text-silver-300 mb-2">Best time to call</span>
+        <select
+          name="bestTime"
+          value={draft.bestTime}
+          onChange={(e) => set('bestTime')(e.target.value)}
+          className={FIELD_CLASS}
+        >
+          {BEST_TIMES.map((t) => (
+            <option key={t.label} value={t.value}>{t.label}</option>
+          ))}
+        </select>
+        <span className="block text-xs text-silver-500 mt-1.5">Eastern time. Andrew is in Northeast Ohio.</span>
+      </label>
+      <Field label="What would you like to talk about?" name="message" textarea value={draft.message} onChange={set('message')} />
 
       {state === 'error' && (
         <p role="alert" className="text-sm text-flame-400">
-          Couldn&rsquo;t send your message: {errorMsg}. Try emailing{' '}
+          Couldn&rsquo;t send your request: {errorMsg}. Try emailing{' '}
           <a href="mailto:admin@anfconsult.com" className="underline">admin@anfconsult.com</a> directly.
         </p>
       )}
@@ -164,7 +163,7 @@ function ContactForm() {
         disabled={state === 'submitting'}
         className="w-full bg-flame-500 hover:bg-flame-600 disabled:opacity-60 text-white font-medium px-6 py-3 rounded-md shadow-flame-glow transition-all"
       >
-        {state === 'submitting' ? 'Sending…' : 'Request a discovery call'}
+        {state === 'submitting' ? 'Sending…' : 'Request a call'}
       </button>
 
       <p className="text-xs text-silver-500 text-center pt-2">
@@ -177,17 +176,21 @@ function ContactForm() {
   )
 }
 
+const FIELD_CLASS =
+  'w-full bg-midnight-950/60 border border-midnight-700 focus:border-flame-500 focus:outline-none focus:ring-1 focus:ring-flame-500/40 rounded-md px-4 py-3 text-silver-100 placeholder-silver-500 transition-colors'
+
 interface FieldProps {
   label: string
   name: string
+  value: string
+  onChange: (value: string) => void
   type?: string
   required?: boolean
   textarea?: boolean
+  autoComplete?: string
 }
 
-function Field({ label, name, type = 'text', required = false, textarea = false }: FieldProps) {
-  const className =
-    'w-full bg-midnight-950/60 border border-midnight-700 focus:border-flame-500 focus:outline-none focus:ring-1 focus:ring-flame-500/40 rounded-md px-4 py-3 text-silver-100 placeholder-silver-500 transition-colors'
+function Field({ label, name, value, onChange, type = 'text', required = false, textarea = false, autoComplete }: FieldProps) {
   return (
     <label className="block">
       <span className="block text-sm text-silver-300 mb-2">
@@ -195,9 +198,9 @@ function Field({ label, name, type = 'text', required = false, textarea = false 
         {required && <span className="text-flame-500 ml-1">*</span>}
       </span>
       {textarea ? (
-        <textarea name={name} required={required} rows={4} className={className} />
+        <textarea name={name} required={required} rows={4} value={value} onChange={(e) => onChange(e.target.value)} className={FIELD_CLASS} />
       ) : (
-        <input name={name} type={type} required={required} autoComplete={name === 'name' ? 'name' : name === 'business' ? 'organization' : name === 'email' ? 'email' : name === 'phone' ? 'tel' : undefined} className={className} />
+        <input name={name} type={type} required={required} autoComplete={autoComplete} value={value} onChange={(e) => onChange(e.target.value)} className={FIELD_CLASS} />
       )}
     </label>
   )

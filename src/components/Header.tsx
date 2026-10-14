@@ -9,14 +9,14 @@ import { BookCallButton } from './BookCallButton'
 //
 // Home and Book are here because the marketing videos send people to
 // anfconsult.com/book by name, so both words need to be visible in the header
-// on the page they land on. Book points at the scheduler half of /book; the
-// orange button still points at the request form, which stays the primary path.
+// on the page they land on. /book is the request-a-call form (no scheduler since
+// 2026-10-14); Book jumps straight to the form, the orange button opens the page.
 const NAV: { to: string; label: string; end?: boolean }[] = [
   { to: '/', label: 'Home', end: true },
   { to: '/work', label: 'Work' },
   { to: '/services', label: 'Services' },
   { to: '/about', label: 'About' },
-  { to: '/book#schedule', label: 'Book' },
+  { to: '/book#request', label: 'Book' },
 ]
 
 export function Header() {

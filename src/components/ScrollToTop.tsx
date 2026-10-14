@@ -5,7 +5,7 @@ export function ScrollToTop() {
   const { pathname, hash } = useLocation()
   const firstRender = useRef(true)
   useEffect(() => {
-    // A hashed link (the header's "Book" points at /book#schedule) is asking for
+    // A hashed link (the header's "Book" points at /book#request) is asking for
     // a specific spot on the page. Effects run child first, so without this the
     // page would scroll to the anchor and then get yanked back to the top here.
     if (hash) {
