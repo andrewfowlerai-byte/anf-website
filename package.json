@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:onboard": "vite --mode onboard-mock",
+    "dev:onboard:sync": "node scripts/onboard-template-sync.mjs med_spa",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"

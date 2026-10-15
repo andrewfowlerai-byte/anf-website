@@ -29,6 +29,10 @@ const Answers = lazy(() => import('./pages/Answers').then((m) => ({ default: m.A
 const AnswerDetail = lazy(() => import('./pages/AnswerDetail').then((m) => ({ default: m.AnswerDetail })))
 const CardAndrew = lazy(() => import('./pages/CardAndrew').then((m) => ({ default: m.CardAndrew })))
 
+// Client onboarding form (/onboard/:token). Standalone and lazy: the form
+// code and its template never ride along in the main bundle.
+const Onboard = lazy(() => import('./pages/Onboard').then((m) => ({ default: m.Onboard })))
+
 // Heavy WebGL bundle, code-split so it only loads on /experience.
 const Experience = lazy(() => import('./experience/Experience'))
 
@@ -149,6 +153,17 @@ function App() {
             concept.anfconsult.com/<id> (repo concept-sites). These links have
             been sent to prospects, so they keep working. */}
         <Route path="/preview/:id" element={<PreviewMoved />} />
+        {/* Client onboarding form. Private link per client (owner link and team
+            link); no marketing header, footer or chat; noindex. traffic.ts
+            records it as /onboard so the token never lands in analytics. */}
+        <Route
+          path="/onboard/:token"
+          element={
+            <Suspense fallback={<div className="min-h-screen bg-[#07102B]" />}>
+              <Onboard />
+            </Suspense>
+          }
+        />
         {/* Code-locked class worksheet (scan a QR, enter the code). */}
         <Route path="/class" element={<ClassMaterial />} />
         {/* Immersive 3D experience demo (standalone, full-screen, lazy-loaded). */}

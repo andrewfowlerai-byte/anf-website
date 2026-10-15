@@ -1,0 +1,230 @@
+{
+  "version": "0.1.0",
+  "title": "Sample onboarding",
+  "intro": "A made-up practice, so the form can be built and checked before any client's template is loaded. Every field type and rule the real templates use is here.",
+  "phase1Essentials": ["business_legal_name", "business_main_phone", "services_table", "business_logo_files"],
+  "collapseWhen": { "showIf": "access_option=A smaller start (first phases only)", "phases": ["P4", "P5", "APP"] },
+  "phaseLabels": {
+    "ALL": "Before we start",
+    "P1": "Website and online booking",
+    "P2": "Day to day",
+    "P3": "Checkout",
+    "P4": "Growth",
+    "P5": "Team",
+    "APP": "Your own app (optional)"
+  },
+  "sections": [
+    {
+      "part": "Before you start",
+      "key": "start",
+      "title": "Before you start",
+      "intro": "- Your answers save as you type. Stop any time and pick up where you left off.\n- \"Not sure yet\" is always a fine answer, and nothing here commits you to anything.\n- Your team gets its own link, which hides the questions marked Owner only. Copy it from the box below or from the menu, and please do not forward this one.",
+      "introTeam": "- Your answers save as you type. Stop any time and pick up where you left off.\n- More than one person can fill this in, even at the same time.\n- \"Not sure yet\" is always a fine answer.",
+      "questions": [
+        {
+          "key": "start_helpers",
+          "label": "Who will help fill this in?",
+          "type": "table",
+          "phase": "ALL",
+          "help": "List who will help. Send each of them the team link, not this one, so they can answer the parts they know best.",
+          "helpTeam": "Add yourself and anyone else helping, so everyone knows who is answering what.",
+          "columns": [
+            { "key": "name", "label": "Name", "type": "text" },
+            { "key": "role", "label": "Role", "type": "text" },
+            { "key": "email", "label": "Email", "type": "email" },
+            { "key": "parts", "label": "Parts they will answer", "type": "text" }
+          ]
+        },
+        {
+          "key": "start_ack",
+          "label": "No passwords, card or bank numbers, Social Security numbers, or anything about a client goes in this form.",
+          "type": "check",
+          "phase": "ALL",
+          "help": "ANF sees each answer as it is typed, even one you later delete. For accounts, invite admin@anfconsult.com or tell us who holds access.",
+          "checkLabel": "I understand"
+        }
+      ]
+    },
+    {
+      "part": "About your business",
+      "key": "about_business",
+      "title": "Your business",
+      "intro": "The basics: names, contacts and where you are.",
+      "questions": [
+        { "key": "business_legal_name", "label": "Legal business name", "type": "text", "phase": "ALL", "required": true, "help": "As it appears on your state filing." },
+        { "key": "business_public_name", "label": "The name clients know you by", "type": "text", "phase": "P1" },
+        { "key": "business_owner_email", "label": "Owner's email", "type": "email", "phase": "ALL", "required": true },
+        { "key": "business_entity_type", "label": "What kind of business is it?", "type": "choice", "phase": "ALL", "options": ["LLC", "Corporation", "Sole proprietor", "Other"] },
+        { "key": "business_entity_type_other", "label": "You picked Other. Tell us which.", "type": "text", "phase": "ALL", "showIf": "business_entity_type=Other" },
+        { "key": "business_audiences", "label": "Who are your clients?", "type": "multi", "phase": "P1", "options": ["Women 25 to 40", "Women 40 and up", "Men", "Brides and wedding parties", "Other"] },
+        { "key": "business_audiences_other", "label": "You picked Other. Tell us which.", "type": "text", "phase": "P1", "showIf": "business_audiences=Other" },
+        { "key": "business_main_phone", "label": "Main phone number", "type": "phone", "phase": "P1", "required": true },
+        { "key": "business_clinic_address", "label": "Street address", "type": "address", "phase": "P1" },
+        { "key": "business_year_opened", "label": "Year you opened", "type": "number", "phase": "P1" },
+        { "key": "business_has_second_site", "label": "Do you plan a second location?", "type": "yesno", "phase": "P5" },
+        { "key": "business_second_site_when", "label": "Roughly when?", "type": "date", "phase": "P5", "showIf": "business_has_second_site=Yes" }
+      ]
+    },
+    {
+      "part": "About your business",
+      "key": "about_hours",
+      "title": "Hours",
+      "intro": "When you are open, and when phones and texts are answered.",
+      "questions": [
+        {
+          "key": "business_hours",
+          "label": "Opening hours in a typical week",
+          "type": "table",
+          "phase": "P1",
+          "help": "Use \"Phones and texts answered until\" for when calls and messages are answered each day.",
+          "columns": [
+            { "key": "day", "label": "Day", "type": "text" },
+            { "key": "open", "label": "Opens", "type": "time" },
+            { "key": "close", "label": "Closes", "type": "time" },
+            { "key": "phones_until", "label": "Phones and texts answered until", "type": "time" },
+            { "key": "notes", "label": "Notes", "type": "text" }
+          ],
+          "defaultRows": [
+            { "id": "d_mon", "cells": { "day": "Monday" } },
+            { "id": "d_tue", "cells": { "day": "Tuesday" } },
+            { "id": "d_wed", "cells": { "day": "Wednesday" } },
+            { "id": "d_thu", "cells": { "day": "Thursday" } },
+            { "id": "d_fri", "cells": { "day": "Friday" } },
+            { "id": "d_sat", "cells": { "day": "Saturday" } },
+            { "id": "d_sun", "cells": { "day": "Sunday" } }
+          ]
+        },
+        { "key": "business_holidays", "label": "Which holidays are you closed?", "type": "multi", "phase": "P1", "options": ["New Year's Day", "July 4", "Thanksgiving", "Christmas Day", "Other"] },
+        { "key": "business_holidays_other", "label": "Other closed days, and holidays with shorter hours", "type": "text", "phase": "P1" },
+        { "key": "business_closing_time", "label": "Latest time a client can book", "type": "time", "phase": "P1" }
+      ]
+    },
+    {
+      "part": "Services",
+      "key": "services_menu",
+      "title": "Your service menu",
+      "intro": "Everything a client can book, with prices and timing.",
+      "questions": [
+        { "key": "services_menu_source", "label": "How would you like to give us your menu?", "type": "choice", "phase": "P1", "options": ["Fill in the tables on this form", "Send a price list", "Walk through it together on a call", "Not sure yet"] },
+        {
+          "key": "services_table",
+          "label": "List every service you offer",
+          "type": "table",
+          "phase": "P1",
+          "required": true,
+          "answeredIf": ["services_menu_source=Send a price list", "services_menu_source=Walk through it together on a call"],
+          "help": "One row per service. Prices as you charge them today.",
+          "columns": [
+            { "key": "name", "label": "Service", "type": "text" },
+            { "key": "category", "label": "Category", "type": "text" },
+            { "key": "description", "label": "Short description", "type": "longtext" },
+            { "key": "duration", "label": "Minutes", "type": "number" },
+            { "key": "price", "label": "Price", "type": "money" },
+            { "key": "price_type", "label": "Priced per", "type": "text" },
+            { "key": "deposit", "label": "Deposit", "type": "money" },
+            { "key": "online", "label": "Book online?", "type": "yesno" },
+            { "key": "on_site", "label": "At events?", "type": "yesno" }
+          ]
+        },
+        {
+          "key": "services_rules",
+          "label": "Prep and aftercare notes per service",
+          "type": "table",
+          "phase": "P2",
+          "rowsFrom": { "question": "services_table", "sourceColumn": "name", "targetColumn": "service" },
+          "columns": [
+            { "key": "service", "label": "Service", "type": "text" },
+            { "key": "prep", "label": "Before the visit", "type": "longtext" },
+            { "key": "after", "label": "After the visit", "type": "longtext" }
+          ]
+        },
+        { "key": "services_price_list", "label": "Upload your current price list (optional)", "type": "file", "phase": "P1", "fileNote": "No clients in any photo, video or file." }
+      ]
+    },
+    {
+      "part": "Brand and website",
+      "key": "brand_look",
+      "title": "Your look",
+      "intro": "Logo, colors and the forms you already use.",
+      "questions": [
+        { "key": "business_logo_files", "label": "Logo files", "type": "file", "phase": "P1", "fileNote": "No clients in any photo, video or file.", "help": "Any format you have. We tidy them up." },
+        { "key": "business_brand_colors", "label": "Brand colors", "type": "text", "phase": "P1" },
+        { "key": "business_forms_upload", "label": "Upload your blank intake forms", "type": "file", "phase": "P2" }
+      ]
+    },
+    {
+      "part": "Team",
+      "key": "team_people",
+      "title": "Your team, pay and commission",
+      "titleTeam": "Your team",
+      "intro": "Everyone who works with you, and how they are paid. Questions about pay are Owner only.",
+      "introTeam": "Everyone who works with you. We never invite or message anyone without the owner's go-ahead.",
+      "questions": [
+        {
+          "key": "operations_staff_list",
+          "label": "Your team",
+          "type": "table",
+          "phase": "P2",
+          "required": true,
+          "help": "Columns marked Owner only are hidden from the rest of your team.",
+          "helpTeam": "Everyone who works here, with a work email.",
+          "columns": [
+            { "key": "name", "label": "Name", "type": "text" },
+            { "key": "role", "label": "Role", "type": "text" },
+            { "key": "email", "label": "Work email", "type": "email" },
+            { "key": "start_date", "label": "Started", "type": "date", "audience": "owner" },
+            { "key": "pay_type", "label": "Pay type", "type": "text", "audience": "owner" }
+          ]
+        },
+        {
+          "key": "team_alerts",
+          "label": "Who gets which alerts?",
+          "type": "table",
+          "phase": "P5",
+          "columns": [
+            { "key": "name", "label": "Name", "type": "text", "pickFrom": { "question": "operations_staff_list", "column": "name" } },
+            { "key": "role", "label": "Role", "type": "text" },
+            { "key": "email", "label": "Email", "type": "email" },
+            { "key": "when", "label": "Alerts", "type": "text" }
+          ]
+        },
+        { "key": "operations_commission", "label": "How is commission worked out?", "type": "longtext", "phase": "P5", "audience": "owner" }
+      ]
+    },
+    {
+      "part": "Agreement",
+      "key": "legal_agreement",
+      "title": "Agreement",
+      "intro": "Who signs, and which option you are choosing. Only the owner sees this section.",
+      "audience": "owner",
+      "questions": [
+        { "key": "access_option", "label": "Which option are you choosing?", "type": "choice", "phase": "ALL", "options": ["The full system (all five phases)", "A smaller start (first phases only)", "Not decided yet"] },
+        { "key": "access_signer_name", "label": "Full name of the person signing", "type": "text", "phase": "ALL" },
+        { "key": "access_signer_email", "label": "Their email", "type": "email", "phase": "ALL" }
+      ]
+    },
+    {
+      "part": "Growth",
+      "key": "growth_reviews",
+      "title": "Reviews and campaigns",
+      "intro": "Where clients review you, and what you would like to send them.",
+      "questions": [
+        { "key": "growth_review_sites", "label": "Where do clients review you today?", "type": "multi", "phase": "P4", "options": ["Google", "Facebook", "Yelp", "Other"] },
+        { "key": "growth_review_sites_other", "label": "You picked Other. Tell us which.", "type": "text", "phase": "P4", "showIf": "growth_review_sites=Other" },
+        { "key": "growth_campaign_ideas", "label": "Campaigns you would like to run", "type": "longtext", "phase": "P4" },
+        { "key": "growth_launch_budget", "label": "Monthly budget for ads, if any", "type": "money", "phase": "P4" }
+      ]
+    },
+    {
+      "part": "Your own app",
+      "key": "app_what",
+      "title": "Your own app",
+      "intro": "Only if you are interested in the optional app.",
+      "questions": [
+        { "key": "access_app_interest", "label": "Are you interested in your own app?", "type": "yesno", "phase": "APP" },
+        { "key": "access_app_other", "label": "Anything the app should do?", "type": "longtext", "phase": "APP", "showIf": "access_app_interest=Yes" },
+        { "key": "access_app_icon_file", "label": "Icon design", "type": "file", "phase": "APP", "fileNote": "No clients in any photo, video or file.", "showIf": "access_app_interest=Yes" }
+      ]
+    }
+  ]
+}

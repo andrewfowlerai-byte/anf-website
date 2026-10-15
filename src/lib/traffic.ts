@@ -68,12 +68,23 @@ function referrer(): string | null {
 let lastPath: string | null = null
 
 /**
+ * Paths that carry a secret are recorded without it. /onboard/<token> is a
+ * client's private form link, and site_traffic is readable by staff and Dash,
+ * so it is counted as plain /onboard.
+ */
+export function redactPath(path: string): string {
+  if (path === '/onboard' || path.startsWith('/onboard/')) return '/onboard'
+  return path
+}
+
+/**
  * Record one pageview. Safe to call on every route change.
  *
  * Repeated calls for the same path are ignored, because React Router fires on
  * search-param changes too and a filter click is not a new pageview.
  */
-export function recordPageview(path: string): void {
+export function recordPageview(rawPath: string): void {
+  const path = redactPath(rawPath)
   if (path === lastPath) return
   lastPath = path
 
