@@ -184,6 +184,11 @@ export const QuestionBlock = memo(function QuestionBlock({ q, answer, eyebrow }:
   const stored = answer?.v
 
   const set = (v: unknown, typed = false) => c.setAnswer(q.key, v, { typed })
+  // What we found on their website, offered until they answer (never saved for them).
+  const isEmpty = stored == null || stored === '' || (Array.isArray(stored) && stored.length === 0)
+  const suggestion = q.suggest !== undefined && isEmpty && !state && q.type !== 'table' && q.type !== 'file' && q.type !== 'check'
+    ? (Array.isArray(q.suggest) ? q.suggest.join(', ') : q.suggest)
+    : ''
 
   let control: ReactNode
   switch (q.type) {
@@ -259,6 +264,22 @@ export const QuestionBlock = memo(function QuestionBlock({ q, answer, eyebrow }:
         )}
       </div>
       {q.help && <p id={helpId} className="mt-1 max-w-[68ch] text-sm leading-relaxed text-silver-500">{q.help}</p>}
+
+      {suggestion && (
+        <div className="mt-3 flex max-w-[68ch] flex-wrap items-center gap-x-3 gap-y-2 rounded-md border border-flame-400/30 bg-flame-500/[0.06] px-3 py-2.5">
+          <p className="min-w-0 flex-1 text-sm text-silver-300">
+            <span className="text-silver-500">Is this right? We found this on your website: </span>
+            <span className="break-words text-silver-100">{suggestion}</span>
+          </p>
+          <button
+            type="button"
+            onClick={() => set(q.suggest)}
+            className="shrink-0 rounded-md border border-flame-400/50 px-3 py-1.5 text-sm font-medium text-flame-300 transition-colors hover:bg-flame-500/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-flame-400"
+          >
+            Use this
+          </button>
+        </div>
+      )}
 
       <div className={`mt-3 transition-opacity ${state ? 'opacity-55' : ''}`}>{control}</div>
 

@@ -339,6 +339,12 @@ export function TableEditor({ q }: { q: OnboardingQuestion }) {
       )}
       {refused && <p role="alert" className="mt-2 text-sm text-rose-300">{REFUSED_MESSAGES[refused] ?? 'Some cells were not saved.'}</p>}
 
+      {!readOnly && rows.some((r) => r.virtual && !r.fromSource) && (
+        <p className="mt-2 max-w-[68ch] text-[13px] text-silver-500">
+          Shaded rows are a start we filled in for you. A row is kept once you fill in or change any cell in it. Remove any you no longer offer.
+        </p>
+      )}
+
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
         {!readOnly && (
           <button type="button" onClick={add} className={btnSecondary}>

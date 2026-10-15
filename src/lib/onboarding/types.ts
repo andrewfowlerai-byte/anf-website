@@ -46,6 +46,12 @@ export interface OnboardingQuestion {
   defaultRows?: { id: string; cells: Record<string, string> }[]
   /** File questions: the one-line note above the drop zone. Without it, the blank-forms note shows. */
   fileNote?: string
+  /**
+   * Per form only (the CRM's prefill): what we already found, for example on
+   * the client's website. Shown as "Is this right?" until someone answers. Never
+   * saved as an answer until the client taps "Use this" or types.
+   */
+  suggest?: string | string[]
   /** Authoring only: the help the team link shows instead. buildFormSnapshot applies it and removes it. */
   helpTeam?: string
 }
@@ -73,6 +79,19 @@ export interface OnboardingTemplate {
   sensitivePatterns?: { name: string; rule: string }[]
   phaseLabels?: Record<Phase, string>
   sections: OnboardingSection[]
+  /** Per form only: which stage and parts this form holds (the CRM's onboardingScope). The website ignores it. */
+  scope?: FormScope
+}
+
+export interface FormScope {
+  /** 1-based stage number, and how many stages the template has. */
+  stage: number
+  stages: number
+  stageLabel: string
+  /** The optional parts switched on. */
+  modules: string[]
+  /** The prefill set used, or null. */
+  prefill: string | null
 }
 
 /** What a form stores and the website renders: no conventions, no sensitivePatterns, phaseLabels always set. */
