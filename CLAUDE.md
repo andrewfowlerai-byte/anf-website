@@ -1,60 +1,32 @@
 # anf-website
 
-The public ANF Consulting marketing site: **anfconsult.com**.
+The public ANF Consulting marketing site: **anfconsult.com**. Static SPA with no `api/` directory; anything server-side runs in **anf-crm** (shared Supabase, anon key, so tables must be RLS-readable by visitors).
 
-React 19 + TypeScript + Vite + Tailwind v3 + react-router-dom. Three.js / React Three Fiber
-powers the hero and showcase visuals. Deploys to Vercel automatically on push to `main`.
+## Stack
 
-There is **no `api/` directory**. This is a pure static SPA (`vercel.json` rewrites everything
-to `/`). Anything that needs a server runs in **anf-crm**, which shares the same Supabase
-project. This repo talks to Supabase directly with the anon key, so every table it touches
-must be readable under RLS by anonymous visitors.
+React 19, TypeScript, Vite, Tailwind v3, react-router-dom, Three.js / React Three Fiber (hero and showcase visuals).
+
+## Scripts
+
+- `npm run dev` Vite; `npm run lint` ESLint
+- `npm run build` = `tsc -b && vite build`. Unused vars and type errors block the deploy, so clean before pushing.
+
+## Deploy
+
+Vercel auto-deploys on push to `main`.
 
 ## Layout
 
-- `src/pages/` — one file per route. `Home`, `Services`, `Work`, `About`, `Book`, `Start`
-  (client intake), `Audit` (free lead-magnet audit), `Refer`, `Events`, `FreeClass` +
-  `ClassMaterial` + `Handouts` (the review-gated class workbook), `Reviews`, `Invest`,
-  `Demos`, `Signature`, `Privacy`, `Terms`, `NotFound`.
-- `src/components/` — shared shell (`Layout`, `Header`, `Footer`), plus `LeadChat`,
-  `Testimonials`, `ProductShowcase`, `WatchItWork`, `JsonLd`, `ErrorBoundary`.
-- `src/lib/` — Supabase-backed data access, one module per feature (`leads`, `intake`,
-  `events`, `reviews`, `refer`, `audit`, `siteContent`, `showcase`, `classMaterials`,
-  `freeClass`) plus `pageSeo` / `useSeo` for per-route meta.
-- Every page except `Home` is `React.lazy`-loaded in `App.tsx`. Keep it that way; the 3D
-  dependencies are heavy and the first paint budget depends on it.
+Pages in `src/pages/` (all lazy-loaded except `Home`; keep it that way), shared shell in `src/components/`, Supabase data modules in `src/lib/`. Map and details: `.claude/rules/site-layout.md`. Check `siteContent` (CRM-managed copy) before hardcoding a headline.
 
 ## Conventions
 
-- **EASTERN TIME, ALWAYS.** Every date, time, schedule, and "today" boundary defaults to
-  Eastern unless Andrew explicitly says otherwise. ANF and its clients are in Northeast Ohio.
-  In this repo the trap is **display formatting**: `toLocaleDateString(undefined, ...)` renders
-  in the *visitor's* timezone, so a 6pm ET class reads as 3pm to someone in California. Always
-  pass `timeZone: 'America/New_York'` for anything dated that a visitor sees, and add
-  `timeZoneName: 'short'` on times so the hour is unambiguous (see `EventCard` in
-  `src/pages/Events.tsx`). If server-side or scheduled code is ever added here, the same rule
-  applies: `new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' })` for a
-  YYYY-MM-DD Eastern day, never `toISOString().slice(0, 10)` (that rolls over at 8pm ET).
-  Comparing two instants (`starts_at >= new Date().toISOString()`) is fine; that derives no
-  calendar day.
-- **No "book a call" CTAs. Anywhere on this site or any subsite.** The site is request-first:
-  the CTA is **"Send a request"** and it opens the contact form. `BookCallButton` already
-  defaults to that label. `/book` is a **request-a-call form** (name, number, email, best time,
-  what they need) and nothing else: Cal.com was removed on 2026-10-14 (Andrew: people submit
-  their info and request a call from him). It posts to the CRM's `inbound-lead` with
-  `callRequested: true`, which makes a "Call ..." Inbox card and push. Do not add a scheduler back.
-- **The one catchphrase is "Clarity. Integration. Automation."** Use it consistently.
-- **No em-dashes** anywhere in copy. They read as AI. Use periods, commas, colons, or parens.
-- **No "boutique"**. Ever.
-- **Brand voice**: calm, steady, practical. Clarity, structure, integrity, practicality.
-  ANF gives **equal weight** to marketing, infrastructure, AI, and education. Not AI-first.
-- **ANF does not sell social media management.** It was exited in June 2026. Never re-pitch it
-  or leave it in copy.
-- **Never share Supabase keys, Stripe keys, or any secret in chat.** Reference env var names.
-- **Mobile**: every page must be usable on a phone. Tailwind grids need an explicit base
-  `grid-cols-1` (not just `md:grid-cols-2`) or they overflow the right edge.
-- **Forms persist.** Any form a visitor types into should survive a tab switch or reload.
-- **Build gates the deploy.** `npm run build` runs `tsc -b && vite build`, so unused vars and
-  type errors block the deploy. Clean before pushing.
-- **Site copy is partly live-editable** from the CRM via the `siteContent` module. Before
-  hardcoding a headline, check whether it is already CRM-managed.
+- **EASTERN TIME, ALWAYS.** ANF and its clients are in Northeast Ohio. `toLocaleDateString(undefined, ...)` renders in the *visitor's* timezone, so always pass `timeZone: 'America/New_York'` for any date a visitor sees, plus `timeZoneName: 'short'` on times (see `EventCard` in `src/pages/Events.tsx`). For a YYYY-MM-DD Eastern day use `toLocaleDateString('en-CA', { timeZone: 'America/New_York' })`, never `toISOString().slice(0, 10)`. Comparing two instants is fine.
+- **No "book a call" CTAs, anywhere.** The CTA is **"Send a request"** (opens the contact form; `BookCallButton` defaults to it). `/book` is a request-a-call form that posts to the CRM `inbound-lead` with `callRequested: true`. Cal.com was removed 2026-10-14; do not add a scheduler back.
+- **The one catchphrase is "Clarity. Integration. Automation."**
+- **No em-dashes** in copy (use periods, commas, colons, parens). **No "boutique"**.
+- **Brand voice**: calm, steady, practical. Marketing, infrastructure, AI and education weigh equally; not AI-first.
+- **ANF does not sell social media management** (exited June 2026). Never pitch it or leave it in copy.
+- **Never share Supabase keys, Stripe keys or any secret in chat.** Use env var names.
+- **Mobile**: usable on a phone. Tailwind grids need an explicit base `grid-cols-1` or they overflow the right edge.
+- **Forms persist**: anything a visitor types survives a tab switch or reload.
