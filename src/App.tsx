@@ -164,6 +164,19 @@ function App() {
             </Suspense>
           }
         />
+        {/* A link cut short (no code) or with extra text after the code gets the
+            form's own "This link does not work" screen, not the site 404. */}
+        {['/onboard', '/onboard/:token/*'].map((p) => (
+          <Route
+            key={p}
+            path={p}
+            element={
+              <Suspense fallback={<div className="min-h-screen bg-[#07102B]" />}>
+                <Onboard />
+              </Suspense>
+            }
+          />
+        ))}
         {/* Code-locked class worksheet (scan a QR, enter the code). */}
         <Route path="/class" element={<ClassMaterial />} />
         {/* Immersive 3D experience demo (standalone, full-screen, lazy-loaded). */}
