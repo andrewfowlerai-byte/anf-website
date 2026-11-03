@@ -74,6 +74,7 @@ let lastPath: string | null = null
  */
 export function redactPath(path: string): string {
   if (path === '/onboard' || path.startsWith('/onboard/')) return '/onboard'
+  if (path === '/testimonial' || path.startsWith('/testimonial/')) return '/testimonial'
   return path
 }
 

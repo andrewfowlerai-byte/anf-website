@@ -12,7 +12,7 @@ paths:
   (client intake), `Audit` (free lead-magnet audit), `Refer`, `Events`, `FreeClass` +
   `ClassMaterial` + `Handouts` (the review-gated class workbook), `Reviews`, `Invest`,
   `Demos`, `Signature`, `Privacy`, `Terms`, `NotFound`, plus the client onboarding form
-  at `/onboard/:token`.
+  at `/onboard/:token` and a client's personal testimonial link at `/testimonial/:token`.
 - `src/components/` — shared shell (`Layout`, `Header`, `Footer`), plus `LeadChat`,
   `Testimonials`, `ProductShowcase`, `WatchItWork`, `JsonLd`, `ErrorBoundary`.
 - `src/lib/` — Supabase-backed data access, one module per feature (`leads`, `intake`,

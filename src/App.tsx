@@ -33,6 +33,9 @@ const CardAndrew = lazy(() => import('./pages/CardAndrew').then((m) => ({ defaul
 // code and its template never ride along in the main bundle.
 const Onboard = lazy(() => import('./pages/Onboard').then((m) => ({ default: m.Onboard })))
 
+// A client's personal testimonial link (/testimonial/:token). Standalone and lazy.
+const Testimonial = lazy(() => import('./pages/Testimonial').then((m) => ({ default: m.Testimonial })))
+
 // Heavy WebGL bundle, code-split so it only loads on /experience.
 const Experience = lazy(() => import('./experience/Experience'))
 
@@ -173,6 +176,20 @@ function App() {
             element={
               <Suspense fallback={<div className="min-h-screen bg-[#07102B]" />}>
                 <Onboard />
+              </Suspense>
+            }
+          />
+        ))}
+        {/* A client's personal testimonial link. Private per person, like the
+            onboarding form: no marketing shell, noindex, token kept out of analytics.
+            A cut-short link gets the page's own "does not work" screen. */}
+        {['/testimonial', '/testimonial/:token', '/testimonial/:token/*'].map((p) => (
+          <Route
+            key={p}
+            path={p}
+            element={
+              <Suspense fallback={<div className="min-h-screen bg-[#07102B]" />}>
+                <Testimonial />
               </Suspense>
             }
           />

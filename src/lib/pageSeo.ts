@@ -151,6 +151,12 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     description: 'Private onboarding form for an ANF Consulting client.',
     noindex: true,
   },
+  // A client's personal testimonial link (/testimonial/<token>). Same idea.
+  '/testimonial': {
+    title: 'Share how it went',
+    description: 'A private page for an ANF Consulting client.',
+    noindex: true,
+  },
 }
 
 /** Falls back to the /demos entry for any demo slug we have not written copy for yet. */
@@ -159,6 +165,7 @@ export function seoForPath(pathname: string): PageSeo | null {
   if (PAGE_SEO[clean]) return PAGE_SEO[clean]
   if (clean.startsWith('/demos/')) return PAGE_SEO['/demos']
   if (clean.startsWith('/onboard/')) return PAGE_SEO['/onboard']
+  if (clean.startsWith('/testimonial/')) return PAGE_SEO['/testimonial']
   // A referral partner's link. It is on their signed agreement and gets shared
   // in messages, so it must never render as "Page Not Found" in a tab or a link
   // preview. noindex because every code is a different URL for the same page.
