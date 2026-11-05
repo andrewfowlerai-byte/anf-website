@@ -16,5 +16,6 @@ Disallow: /rsvp
 # rewrite in vercel.json, noindexed there as well.
 Disallow: /poprealty
 Disallow: /brokerage
+Disallow: /windingriversample
 
 Sitemap: https://anfconsult.com/sitemap.xml

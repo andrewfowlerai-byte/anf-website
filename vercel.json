@@ -2,13 +2,15 @@
   "redirects": [
     { "source": "/experience", "has": [{ "type": "query", "key": "src", "value": "card" }], "destination": "/andrew", "permanent": false },
     { "source": "/realtors", "destination": "/demos", "permanent": false },
-    { "source": "/preview/:id", "destination": "https://concept.anfconsult.com/:id", "permanent": false }
+    { "source": "/preview/:id", "destination": "https://concept.anfconsult.com/:id", "permanent": false },
+    { "source": "/windingriversample", "destination": "/windingriversample/", "permanent": false }
   ],
   "rewrites": [
     { "source": "/poprealty", "destination": "https://pop-realty.vercel.app/poprealty" },
     { "source": "/poprealty/(.*)", "destination": "https://pop-realty.vercel.app/poprealty/$1" },
     { "source": "/brokerage", "destination": "https://brokerage-demo-steel.vercel.app/brokerage" },
     { "source": "/brokerage/(.*)", "destination": "https://brokerage-demo-steel.vercel.app/brokerage/$1" },
+    { "source": "/windingriversample/(.*)", "destination": "https://winding-river-lists.vercel.app/windingriversample/$1" },
     { "source": "/(.*)", "destination": "/" }
   ],
   "headers": [
@@ -46,6 +48,13 @@
       "source": "/brokerage(.*)",
       "headers": [
         { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+      ]
+    },
+    {
+      "source": "/windingriversample(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
+        { "key": "Referrer-Policy", "value": "no-referrer" }
       ]
     },
     {
