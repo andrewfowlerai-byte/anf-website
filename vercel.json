@@ -3,7 +3,8 @@
     { "source": "/experience", "has": [{ "type": "query", "key": "src", "value": "card" }], "destination": "/andrew", "permanent": false },
     { "source": "/realtors", "destination": "/demos", "permanent": false },
     { "source": "/preview/:id", "destination": "https://concept.anfconsult.com/:id", "permanent": false },
-    { "source": "/windingriversample", "destination": "/windingriversample/", "permanent": false }
+    { "source": "/windingriversample", "destination": "/windingriversample/", "permanent": false },
+    { "source": "/stop/:code([0-9a-fA-F]{16})", "destination": "https://crm.anfconsult.com/optout/:code", "permanent": false }
   ],
   "rewrites": [
     { "source": "/poprealty", "destination": "https://pop-realty.vercel.app/poprealty" },
