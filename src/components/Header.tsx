@@ -57,6 +57,11 @@ export function Header() {
               )}
             </NavLink>
           ))}
+          {/* Solden, ANF's own app, in its own gold (2026-11-16). */}
+          <Link to="/#solden" className="inline-flex items-center gap-1.5 text-sm font-medium tracking-wide text-[#F2B544] hover:text-[#F7CB72] transition-colors">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#F2B544]" aria-hidden />
+            Solden
+          </Link>
         </div>
 
         <div className="flex items-center gap-2.5">
@@ -108,6 +113,9 @@ export function Header() {
                 {n.label}
               </NavLink>
             ))}
+            <Link to="/#solden" onClick={() => setOpen(false)} className="px-3 py-2.5 rounded-lg text-base text-[#F2B544] hover:bg-white/5 transition-colors">
+              Solden, our app
+            </Link>
             <div className="h-px bg-white/[0.06] my-2" />
             <Link to="/start" onClick={() => setOpen(false)} className="px-3 py-2.5 rounded-lg text-base text-silver-200 hover:bg-white/5 transition-colors">
               Start a project

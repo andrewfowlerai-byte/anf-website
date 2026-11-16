@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { BookCallButton } from '../components/BookCallButton'
 import { Testimonials } from '../components/Testimonials'
 import { ProductShowcase } from '../components/ProductShowcase'
+import { SoldenFeature } from '../components/SoldenFeature'
 import { Reveal } from '../components/Reveal'
 
 const PILLARS = [
@@ -83,6 +84,8 @@ export function Home() {
             </Link>
           </div>
           <p className="mt-6 text-sm text-silver-500">
+            <a href="#solden" className="text-[#F2B544] hover:text-[#F7CB72] transition-colors">Meet Solden, our app</a>
+            <span className="mx-2.5 text-silver-700">/</span>
             <Link to="/demos" className="hover:text-flame-400 transition-colors">See live demos</Link>
             <span className="mx-2.5 text-silver-700">/</span>
             <Link to="/experience" className="hover:text-flame-400 transition-colors">Enter the 3D experience</Link>
@@ -104,6 +107,8 @@ export function Home() {
           </div>
         </div>
       </section>
+
+      <SoldenFeature />
 
       <Reveal><ProductShowcase /></Reveal>
 
