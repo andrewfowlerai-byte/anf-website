@@ -13,26 +13,49 @@ import { Reveal } from '../Reveal'
  * never empty. Their words match the CRM's.
  */
 
+/**
+ * What "real estate brokerage" answers with (Andrew, 2026-11-23: "it should be the build that is at
+ * anfconsult.com/brokerage, not the first North Ridgeville build"). The whole-brokerage system is not a row in the
+ * CRM's showcase, so it ships with the site and leads the list. The office toolkit at brokerage.anfconsult.com is
+ * still a CRM row and still on /work.
+ */
+const BROKERAGE: Build = {
+  title: 'Whole-Brokerage System',
+  category: 'Brokerage System',
+  tags: ['Real Estate', 'Brokerage', 'Office', 'Recruiting', 'Commissions', 'Compliance'],
+  image_url: '/showcase/brokerage-system.jpg',
+  live_url: 'https://anfconsult.com/brokerage',
+  blurb: 'One system for a whole brokerage, built as a sample: a desk for everyone from the broker-owner to a new agent, commission plans and the trust ledger, lead routing, compliance and recruiting. Walk one deal from a website request to the agent’s payout.',
+}
+
 const SEED: Build[] = [
-  { title: 'Brokerage Office Toolkit', category: 'Office Ops', tags: ['CRM', 'Real Estate', 'Recruiting'], image_url: '/showcase/brokerage.jpg', live_url: 'https://brokerage.anfconsult.com', blurb: 'A brokerage office manager toolkit: a speed-to-lead engine plus an agent-recruiting CRM.' },
+  BROKERAGE,
   { title: 'Strive Field-Service Platform', category: 'Field Service', tags: ['Web App', 'Home Services', 'Infrastructure'], image_url: '/showcase/strive.png', live_url: 'https://field-service.anfconsult.com', blurb: 'A three-in-one field-service platform: a homeowner app, a technician field app, and an admin console, replacing four disconnected tools.' },
   { title: 'Realtor Personal OS', category: 'AI Dashboard', tags: ['AI', 'Dashboard', 'Real Estate'], image_url: '/showcase/kiki-christakos.png', live_url: 'https://realtor-os.anfconsult.com', blurb: 'A realtor personal operating system: an AI chief-of-staff with a command-center dashboard that ties the whole business together.' },
   { title: 'CoachFlow', category: 'Coaching CRM', tags: ['CRM', 'Coaching', 'Sample'], image_url: '/showcase/coachflow.png', live_url: 'https://coaching.anfconsult.com', blurb: 'A CRM built for coaches and consultants: client roster, session notes, packages, and payments, all in one calm place.' },
   { title: "A family's whole life, in one app", category: 'Family Operating System', tags: ['Family', 'Web App', 'AI', 'Mobile'], image_url: '/showcase/home-base.png', live_url: 'https://aubreeseverything.com', blurb: 'A shared calendar, meal planning that turns into a grocery list, every kid’s details and appointments, chores and travel, in one place.' },
 ]
 
-// Andrew, 2026-11-23: lead with the brokerage build, not the solo agent's CRM.
+// Andrew, 2026-11-23: lead with the brokerage build (BROKERAGE above), not the solo agent's CRM.
 const FIRST = 'real estate brokerage'
 const TRY = ['HVAC company', 'coach', 'family of five', 'bar']
 
 export function TypedBuilds() {
   const [typed, setTyped] = useState(FIRST)
   const [builds, setBuilds] = useState<Build[]>(SEED)
+  // How many builds /work lists (the CRM's published rows), for the link under the chips.
+  const [listed, setListed] = useState(0)
 
   useEffect(() => {
     let on = true
     listShowcaseProjects()
-      .then((rows) => { if (on && rows.length) setBuilds(rows.map((r) => ({ title: r.title, category: r.category, blurb: r.blurb, live_url: r.live_url, tags: r.tags ?? [], image_url: currentImage(r) }))) })
+      .then((rows) => {
+        if (!on || !rows.length) return
+        const fromCrm = rows.map((r) => ({ title: r.title, category: r.category, blurb: r.blurb, live_url: r.live_url, tags: r.tags ?? [], image_url: currentImage(r) }))
+        // The site's own brokerage build leads; a CRM row at the same address would be the same build twice.
+        setBuilds([BROKERAGE, ...fromCrm.filter((b) => hostOf(b.live_url) !== hostOf(BROKERAGE.live_url))])
+        setListed(rows.length)
+      })
       .catch(() => { /* the builds that ship with the site stay */ })
     return () => { on = false }
   }, [])
@@ -97,7 +120,7 @@ export function TypedBuilds() {
             ))}
           </div>
           <p className="t-body" style={{ marginTop: '1.5rem' }}>
-            <Link to="/work" className="link">{builds.length > SEED.length ? `See all ${builds.length} builds` : 'See every build'}</Link>
+            <Link to="/work" className="link">{listed ? `See all ${listed} builds` : 'See every build'}</Link>
           </p>
         </div>
 

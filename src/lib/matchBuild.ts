@@ -18,7 +18,7 @@ export interface Build {
 const MEANS: [RegExp, string[]][] = [
   [/hvac|heat|cool|furnace|plumb|electric|roof|contract|landscap|lawn|clean|handyman|remodel|trade|field|home serv/i, ['home services', 'field service', 'field-service']],
   [/real ?estate|realtor|agent|listing|homes?\b/i, ['real estate', 'realtor']],
-  [/broker|office|team lead|recruit/i, ['brokerage', 'office', 'recruiting']],
+  [/broker|office|team lead|sales manager|recruit/i, ['brokerage', 'office', 'recruiting']],
   [/coach|consult|mentor|therap|trainer/i, ['coaching', 'coach']],
   [/family|famil|kids|household|parent|mom|dad/i, ['family']],
   [/bar\b|restaurant|cafe|coffee|food|hospitality|brewery|martini/i, ['hospitality', 'bar']],
@@ -54,8 +54,11 @@ export function matchBuild(typed: string, builds: Build[]): Build | null {
   return top >= 3 ? best : null
 }
 
-/** A live address as a person reads it: "field-service.anfconsult.com". */
+/** A live address as a person reads it: "field-service.anfconsult.com", or "anfconsult.com/brokerage" for a path. */
 export function hostOf(url: string | null): string {
   if (!url) return ''
-  try { return new URL(url).host.replace(/^www\./, '') } catch { return '' }
+  try {
+    const u = new URL(url)
+    return u.host.replace(/^www\./, '') + u.pathname.replace(/\/+$/, '')
+  } catch { return '' }
 }
