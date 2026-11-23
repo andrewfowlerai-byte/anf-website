@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+import { PageHero } from '../components/PageHero'
 import { useEffect, useState } from 'react'
 import { BookCallButton } from '../components/BookCallButton'
 import { JsonLd } from '../components/JsonLd'
@@ -216,52 +218,31 @@ export function Services() {
 
   return (
     <>
-      <section className="relative overflow-hidden">
-        <div aria-hidden className="absolute inset-0 -z-10">
-          <div className="absolute inset-x-0 top-0 h-[120%]" style={{ background: 'radial-gradient(ellipse 55% 50% at 50% 0%, rgba(242,107,29,0.13), transparent 70%)' }} />
-          <div
-            className="absolute inset-0 opacity-40"
-            style={{
-              backgroundImage: 'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)',
-              backgroundSize: '60px 60px',
-              WebkitMaskImage: 'radial-gradient(ellipse 60% 50% at 50% 18%, #000, transparent 72%)',
-              maskImage: 'radial-gradient(ellipse 60% 50% at 50% 18%, #000, transparent 72%)',
-            }}
-          />
-        </div>
-        <div className="max-w-4xl mx-auto px-6 pt-20 md:pt-28 pb-12 text-center">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-[11px] sm:text-xs tracking-[0.22em] uppercase text-silver-300 mb-7">
-            <span className="w-1.5 h-1.5 rounded-full bg-flame-500" /> 2026 Service Menu
-          </div>
-          <h1 className="text-4xl md:text-6xl font-display text-silver-100 mb-6 leading-tight">
-            Everything we do, <span className="text-flame-400">priced in the open</span>
-          </h1>
-          <p className="text-lg md:text-xl text-silver-400 leading-relaxed">
-            A complete menu of services and engagement options. Each is a starting point we shape around your business, not a box you squeeze into. And it is priced in the open: where pricing varies you see the range, where it is fixed you see the number. These are starting points rather than quotes, because every project is different. You get a firm price in writing before any work begins.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        title="Everything we do, priced in the open"
+        subtitle="A complete menu of services and engagement options. Each is a starting point we shape around your business, not a box you squeeze into. And it is priced in the open: where pricing varies you see the range, where it is fixed you see the number. These are starting points rather than quotes, because every project is different. You get a firm price in writing before any work begins."
+      />
 
-      <section className="max-w-5xl mx-auto px-6 py-12">
-        <h2 className="text-center text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">At a glance</h2>
-        <p className="text-center text-silver-400 text-sm max-w-2xl mx-auto mb-6">Every number here is a starting point. The final build is shaped around your business, your workflow, and your goals.</p>
-        <div className="overflow-hidden border border-white/[0.07] rounded-2xl bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors hover:border-flame-500/30">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-midnight-900/80 text-silver-100">
+      <section className="px-[var(--edge)] py-12">
+        <h2 className="t-head mb-5">At a glance</h2>
+        <p className="max-w-2xl mb-6">Every number here is a starting point. The final build is shaped around your business, your workflow, and your goals.</p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead className="bg-midnight-100">
               <tr>
-                <th className="px-4 py-3 font-display font-medium">Service Line</th>
-                <th className="px-4 py-3 font-display font-medium hidden sm:table-cell">Format</th>
-                <th className="px-4 py-3 font-display font-medium text-right">Starting</th>
+                <th className="px-4 py-3 font-extrabold tracking-[-0.03em] font-medium">Service Line</th>
+                <th className="px-4 py-3 font-extrabold tracking-[-0.03em] font-medium hidden sm:table-cell">Format</th>
+                <th className="px-4 py-3 font-extrabold tracking-[-0.03em] font-medium text-right">Starting</th>
               </tr>
             </thead>
             <tbody>
               {overview.map((row, i) => (
-                <tr key={row.service} className={i % 2 === 0 ? 'bg-midnight-900/30' : ''}>
-                  <td className="px-4 py-3 text-silver-200">
-                    <a href={`#${row.anchor}`} className="hover:text-flame-400 transition-colors">{row.service}</a>
+                <tr key={row.service} className={i % 2 === 0 ? 'bg-silver-200' : ''}>
+                  <td className="px-4 py-3">
+                    <a href={`#${row.anchor}`} className="hover:underline transition-colors">{row.service}</a>
                   </td>
-                  <td className="px-4 py-3 text-silver-500 hidden sm:table-cell">{row.format}</td>
-                  <td className="px-4 py-3 text-flame-400 font-medium text-right">{row.starting}</td>
+                  <td className="px-4 py-3 text-midnight-500 hidden sm:table-cell">{row.format}</td>
+                  <td className="px-4 py-3 font-extrabold text-right tabular-nums">{row.starting}</td>
                 </tr>
               ))}
             </tbody>
@@ -277,13 +258,13 @@ export function Services() {
       >
         <div className="grid md:grid-cols-3 gap-4">
           {websiteTiers.map((t) => (
-            <div key={t.name} className="border border-white/[0.07] rounded-2xl p-6 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors hover:border-flame-500/30 flex flex-col">
-              <h4 className="font-display text-xl text-silver-100 mb-1">{t.name}</h4>
-              <p className="text-2xl font-display text-flame-400 mb-3">{t.price}</p>
-              <p className="text-xs uppercase tracking-wider text-silver-500 mb-2">Ideal for</p>
-              <p className="text-sm text-silver-300 mb-4">{t.idealFor}</p>
-              <p className="text-xs uppercase tracking-wider text-silver-500 mb-2">Scope</p>
-              <p className="text-sm text-silver-400 leading-relaxed">{t.scope}</p>
+            <div key={t.name} className="p-6 bg-silver-200 transition-colors flex flex-col">
+              <h4 className="font-extrabold tracking-[-0.03em] t-lead mb-1">{t.name}</h4>
+              <p className="t-lead font-extrabold tracking-[-0.03em] text-flame-700 mb-3">{t.price}</p>
+              <p className="text-[13px] text-midnight-500 mb-2">Ideal for</p>
+              <p className="mb-4">{t.idealFor}</p>
+              <p className="text-[13px] text-midnight-500 mb-2">Scope</p>
+              <p className="leading-relaxed">{t.scope}</p>
             </div>
           ))}
         </div>
@@ -300,17 +281,17 @@ export function Services() {
       >
         <div className="grid md:grid-cols-3 gap-4">
           {platformTiers.map((t) => (
-            <div key={t.name} className="border border-white/[0.07] rounded-2xl p-6 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors hover:border-flame-500/30 flex flex-col">
-              <h4 className="font-display text-xl text-silver-100 mb-1">{t.name}</h4>
-              <p className="text-2xl font-display text-flame-400 mb-3">{t.price}</p>
-              <p className="text-xs uppercase tracking-wider text-silver-500 mb-2">Best for</p>
-              <p className="text-sm text-silver-300 mb-4">{t.idealFor}</p>
-              <p className="text-xs uppercase tracking-wider text-silver-500 mb-2">What is included</p>
-              <p className="text-sm text-silver-400 leading-relaxed">{t.scope}</p>
+            <div key={t.name} className="p-6 bg-silver-200 transition-colors flex flex-col">
+              <h4 className="font-extrabold tracking-[-0.03em] t-lead mb-1">{t.name}</h4>
+              <p className="t-lead font-extrabold tracking-[-0.03em] text-flame-700 mb-3">{t.price}</p>
+              <p className="text-[13px] text-midnight-500 mb-2">Best for</p>
+              <p className="mb-4">{t.idealFor}</p>
+              <p className="text-[13px] text-midnight-500 mb-2">What is included</p>
+              <p className="leading-relaxed">{t.scope}</p>
             </div>
           ))}
         </div>
-        <div className="mt-6 text-center">
+        <div className="mt-6">
           <BookCallButton />
         </div>
         <FinePrint>
@@ -324,39 +305,39 @@ export function Services() {
         title="Proof-of-Work Marketing System"
         blurb="Turn the work you already do into your best marketing. Every completed job becomes proof: photos, a customer review, and local search pages that bring in the next customer. Built for home services and trades businesses that win on trust and reputation."
       >
-        <div className="border border-flame-500/40 rounded-2xl p-8 bg-midnight-900/60 shadow-flame-glow">
+        <div className="p-8 bg-silver-200">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-6">
-            <h4 className="font-display text-2xl text-silver-100">Proof-of-Work Marketing System</h4>
+            <h4 className="font-extrabold tracking-[-0.03em] t-lead">Proof-of-Work Marketing System</h4>
             <p className="text-right">
-              <span className="block text-3xl font-display text-flame-400">$4,000 build</span>
-              <span className="block text-sm text-silver-400 mt-1">then $250/mo</span>
+              <span className="block t-head font-extrabold tracking-[-0.03em] text-flame-700">$4,000 build</span>
+              <span className="block mt-1">then $250/mo</span>
             </p>
           </div>
-          <p className="text-xs uppercase tracking-wider text-silver-500 mb-3">Included</p>
+          <p className="text-[13px] text-midnight-500 mb-3">Included</p>
           <ul className="space-y-2 mb-6">
             {proofOfWorkIncluded.map((item) => (
-              <li key={item} className="flex items-start gap-3 text-silver-300">
-                <span className="text-flame-500 mt-1">·</span>
+              <li key={item} className="flex items-start gap-3">
+                <span className="text-flame-700 mt-1">·</span>
                 <span>{item}</span>
               </li>
             ))}
           </ul>
-          <div className="grid md:grid-cols-2 gap-6 pt-6 border-t border-midnight-700/40">
+          <div className="grid md:grid-cols-2 gap-6 pt-6">
             <div>
-              <p className="text-xs uppercase tracking-wider text-silver-500 mb-2">Best for</p>
-              <p className="text-sm text-silver-300 leading-relaxed">
+              <p className="text-[13px] text-midnight-500 mb-2">Best for</p>
+              <p className="leading-relaxed">
                 Home services and trades (HVAC, plumbing, electrical, roofing, landscaping, cleaning) and any local business that earns work by proving it has done the job well nearby.
               </p>
             </div>
             <div>
-              <p className="text-xs uppercase tracking-wider text-silver-500 mb-2">Why this exists</p>
-              <p className="text-sm text-silver-300 leading-relaxed">
+              <p className="text-[13px] text-midnight-500 mb-2">Why this exists</p>
+              <p className="leading-relaxed">
                 Most service businesses do great work that no one ever sees. This captures every completed job and turns it into proof that ranks on search, builds trust, and books the next customer. The work is already happening. This puts it to work for you.
               </p>
             </div>
           </div>
         </div>
-        <div className="mt-6 text-center">
+        <div className="mt-6">
           <BookCallButton />
         </div>
         <FinePrint>
@@ -372,11 +353,11 @@ export function Services() {
       >
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           {coachingPackages.map((p) => (
-            <div key={p.name} className="border border-white/[0.07] rounded-2xl p-5 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors hover:border-flame-500/30 flex flex-col">
-              <h4 className="font-display text-lg text-silver-100 mb-1">{p.name}</h4>
-              <p className="text-2xl font-display text-flame-400 mb-3">{p.price}</p>
-              <p className="text-sm text-silver-400 leading-relaxed mb-3 flex-1">{p.includes}</p>
-              <p className="text-xs text-silver-500 mt-auto pt-3 border-t border-midnight-700/40">Effective rate: {p.rate}</p>
+            <div key={p.name} className="p-5 bg-silver-200 transition-colors flex flex-col">
+              <h4 className="font-extrabold tracking-[-0.03em] t-lead mb-1">{p.name}</h4>
+              <p className="t-lead font-extrabold tracking-[-0.03em] text-flame-700 mb-3">{p.price}</p>
+              <p className="leading-relaxed mb-3 flex-1">{p.includes}</p>
+              <p className="text-[13px] text-midnight-500 mt-auto pt-3">Effective rate: {p.rate}</p>
             </div>
           ))}
         </div>
@@ -393,13 +374,13 @@ export function Services() {
       >
         <div className="grid md:grid-cols-2 gap-4">
           {strategyOfferings.map((o) => (
-            <div key={o.name} className="border border-white/[0.07] rounded-2xl p-6 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors hover:border-flame-500/30 flex flex-col">
-              <h4 className="font-display text-xl text-silver-100 mb-1">{o.name}</h4>
-              <p className="text-2xl font-display text-flame-400 mb-3">{o.price}</p>
-              <p className="text-xs uppercase tracking-wider text-silver-500 mb-2">What’s included</p>
-              <p className="text-sm text-silver-300 mb-4">{o.includes}</p>
-              <p className="text-xs uppercase tracking-wider text-silver-500 mb-2">Best for</p>
-              <p className="text-sm text-silver-400 leading-relaxed">{o.bestFor}</p>
+            <div key={o.name} className="p-6 bg-silver-200 transition-colors flex flex-col">
+              <h4 className="font-extrabold tracking-[-0.03em] t-lead mb-1">{o.name}</h4>
+              <p className="t-lead font-extrabold tracking-[-0.03em] text-flame-700 mb-3">{o.price}</p>
+              <p className="text-[13px] text-midnight-500 mb-2">What’s included</p>
+              <p className="mb-4">{o.includes}</p>
+              <p className="text-[13px] text-midnight-500 mb-2">Best for</p>
+              <p className="leading-relaxed">{o.bestFor}</p>
             </div>
           ))}
         </div>
@@ -416,23 +397,23 @@ export function Services() {
       >
         <div className="grid md:grid-cols-3 gap-4 mb-6">
           {implementationPackages.map((p) => (
-            <div key={p.name} className="border border-white/[0.07] rounded-2xl p-6 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors hover:border-flame-500/30 flex flex-col">
-              <h4 className="font-display text-xl text-silver-100 mb-1">{p.name}</h4>
-              <p className="text-2xl font-display text-flame-400 mb-3">{p.price}</p>
-              <p className="text-sm text-silver-300 leading-relaxed mb-3 flex-1">{p.body}</p>
-              <p className="text-xs text-flame-400/80 mt-auto pt-3 border-t border-midnight-700/40">{p.timeline}</p>
+            <div key={p.name} className="p-6 bg-silver-200 transition-colors flex flex-col">
+              <h4 className="font-extrabold tracking-[-0.03em] t-lead mb-1">{p.name}</h4>
+              <p className="t-lead font-extrabold tracking-[-0.03em] text-flame-700 mb-3">{p.price}</p>
+              <p className="leading-relaxed mb-3 flex-1">{p.body}</p>
+              <p className="text-[13px] text-flame-700 mt-auto pt-3">{p.timeline}</p>
             </div>
           ))}
         </div>
         <SubBlock title="Implementation add-ons">
           <div className="grid sm:grid-cols-2 gap-3">
             {implementationAddons.map((a) => (
-              <div key={a.addon} className="border border-midnight-700/40 rounded-md p-4 bg-midnight-900/30">
+              <div key={a.addon} className="p-4 bg-silver-200">
                 <div className="flex justify-between items-baseline gap-3 mb-2">
-                  <span className="text-silver-100 font-medium">{a.addon}</span>
-                  <span className="text-flame-400 text-sm whitespace-nowrap">{a.price}</span>
+                  <span className="font-medium">{a.addon}</span>
+                  <span className="text-flame-700 whitespace-nowrap">{a.price}</span>
                 </div>
-                <p className="text-xs text-silver-500 leading-relaxed">{a.includes}</p>
+                <p className="text-[13px] text-midnight-500 leading-relaxed">{a.includes}</p>
               </div>
             ))}
           </div>
@@ -445,77 +426,71 @@ export function Services() {
         title="Education & Workshops"
         blurb="ANF Consulting delivers continuing education and corporate training built on real-world AI experience. Andrew Fowler is a certified Ohio Real Estate Continuing Education provider and an active practitioner. Every session reflects how AI is actually being used today, not theoretical frameworks."
       >
-        <SubBlock title={<>Ohio Real Estate CE: <em className="text-silver-300 not-italic font-normal">Getting Real With AI</em></>}>
-          <p className="text-sm text-silver-400 leading-relaxed mb-4">
+        <SubBlock title={<>Ohio Real Estate CE: <em className="not-italic font-normal">Getting Real With AI</em></>}>
+          <p className="leading-relaxed mb-4">
             A 3-hour approved Ohio Real Estate CE course covering practical AI applications for residential and commercial agents. Available as open enrollment sessions or as a private booking for brokerages.
           </p>
           <div className="grid md:grid-cols-2 gap-4">
             {ceChannels.map((c) => (
-              <div key={c.channel} className="border border-white/[0.07] rounded-2xl p-5 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors hover:border-flame-500/30 flex flex-col">
+              <div key={c.channel} className="p-5 bg-silver-200 transition-colors flex flex-col">
                 <div className="flex justify-between items-baseline mb-2">
-                  <h5 className="font-display text-silver-100">{c.channel}</h5>
-                  <span className="text-flame-400 font-medium">{c.price}</span>
+                  <h5 className="font-extrabold tracking-[-0.03em]">{c.channel}</h5>
+                  <span className="text-flame-700 font-medium">{c.price}</span>
                 </div>
-                <p className="text-sm text-silver-400 leading-relaxed">{c.format}</p>
+                <p className="leading-relaxed">{c.format}</p>
               </div>
             ))}
           </div>
         </SubBlock>
 
         <SubBlock title="Corporate Workshops (Non-CE)">
-          <p className="text-sm text-silver-400 leading-relaxed mb-4">
+          <p className="leading-relaxed mb-4">
             Tailored AI and business training for non-real-estate audiences. Workshops are customized to your team, industry, and use cases. All formats available virtually; in-person available within Northeast Ohio.
           </p>
           <div className="grid md:grid-cols-3 gap-4">
             {corporateFormats.map((f) => (
-              <div key={f.format} className="border border-white/[0.07] rounded-2xl p-5 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors hover:border-flame-500/30 flex flex-col">
-                <h5 className="font-display text-silver-100 mb-1">{f.format}</h5>
-                <p className="text-xl font-display text-flame-400 mb-3">{f.price}</p>
-                <p className="text-sm text-silver-400 leading-relaxed">{f.includes}</p>
+              <div key={f.format} className="p-5 bg-silver-200 transition-colors flex flex-col">
+                <h5 className="font-extrabold tracking-[-0.03em] mb-1">{f.format}</h5>
+                <p className="t-lead font-extrabold tracking-[-0.03em] text-flame-700 mb-3">{f.price}</p>
+                <p className="leading-relaxed">{f.includes}</p>
               </div>
             ))}
           </div>
         </SubBlock>
       </ServiceSection>
 
-      <section className="max-w-5xl mx-auto px-6 py-16 md:py-24">
-        <div className="text-center mb-12">
-          <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">How to engage</p>
-          <h2 className="text-3xl md:text-4xl font-display text-silver-100">The process</h2>
-          <p className="mt-4 text-silver-400 max-w-2xl mx-auto">
+      <section className="px-[var(--edge)] py-16 md:py-24">
+        <div className="mb-12">
+          <h2 className="t-head">The process</h2>
+          <p className="mt-4 max-w-2xl">
             Engaging ANF Consulting is straightforward. Most engagements begin with a no-obligation discovery call to understand fit, scope, and goals.
           </p>
         </div>
         <div className="grid md:grid-cols-4 gap-4">
           {processSteps.map((s) => (
-            <div key={s.step} className="border border-white/[0.07] rounded-2xl p-6 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors hover:border-flame-500/30">
-              <p className="font-display text-3xl text-flame-500 mb-3">{s.step}</p>
-              <h4 className="font-display text-silver-100 mb-2">{s.title}</h4>
-              <p className="text-sm text-silver-400 leading-relaxed">{s.body}</p>
+            <div key={s.step} className="p-6 bg-silver-200 transition-colors">
+              <p className="font-extrabold tracking-[-0.03em] t-head text-flame-700 mb-3">{s.step}</p>
+              <h4 className="font-extrabold tracking-[-0.03em] mb-2">{s.title}</h4>
+              <p className="leading-relaxed">{s.body}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="max-w-3xl mx-auto px-6 py-16 md:py-20">
-        <div className="text-center mb-10">
-          <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">Payment terms</p>
-          <h2 className="text-3xl md:text-4xl font-display text-silver-100">Clear, predictable, transparent</h2>
+      <section className="max-w-3xl px-[var(--edge)] py-16 md:py-20">
+        <div className="mb-10">
+          <h2 className="t-head">Clear, predictable, transparent</h2>
         </div>
-        <ul className="space-y-3 text-silver-300">
+        <ul className="grid gap-3 list-disc pl-[1.2em] marker:text-flame-500">
           {paymentTerms.map((term) => (
-            <li key={term} className="flex items-start gap-3">
-              <span className="text-flame-500 mt-1">·</span>
-              <span>{term}</span>
-            </li>
+            <li key={term}>{term}</li>
           ))}
         </ul>
       </section>
 
-      <section className="max-w-3xl mx-auto px-6 py-16 md:py-20">
-        <div className="text-center mb-10">
-          <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">FAQ</p>
-          <h2 className="text-3xl md:text-4xl font-display text-silver-100">Common questions</h2>
+      <section className="max-w-3xl px-[var(--edge)] py-16 md:py-20">
+        <div className="mb-10">
+          <h2 className="t-head">Common questions</h2>
         </div>
         <JsonLd
           data={{
@@ -528,36 +503,36 @@ export function Services() {
             })),
           }}
         />
-        <div className="border-t border-midnight-700/40">
+        <div>
           {faqs.map((item) => (
-            <details key={item.q} className="group border-b border-midnight-700/40 py-5">
+            <details key={item.q} className="group py-5">
               <summary className="flex justify-between items-start cursor-pointer list-none gap-4 marker:hidden [&::-webkit-details-marker]:hidden">
-                <h3 className="font-display text-lg text-silver-100 group-hover:text-flame-400 transition-colors">
+                <h3 className="font-extrabold tracking-[-0.03em] t-lead group-hover:text-flame-700 transition-colors">
                   {item.q}
                 </h3>
                 <span
                   aria-hidden
-                  className="text-flame-500 text-2xl leading-none flex-shrink-0 transition-transform group-open:rotate-45 mt-1"
+                  className="text-flame-700 t-lead leading-none flex-shrink-0 transition-transform group-open:rotate-45 mt-1"
                 >
                   +
                 </span>
               </summary>
-              <p className="mt-4 text-silver-400 leading-relaxed">{item.a}</p>
+              <p className="mt-4 leading-relaxed">{item.a}</p>
             </details>
           ))}
         </div>
-        <p className="mt-8 text-sm text-silver-500 text-center">
+        <p className="mt-8 text-midnight-500">
           Still wondering? Send a request and you will have a real answer within a business day.
         </p>
       </section>
 
-      <section className="max-w-4xl mx-auto px-6 py-16 md:py-24 text-center">
-        <h2 className="text-3xl md:text-5xl font-display text-silver-100 mb-4">Ready to start?</h2>
-        <p className="text-lg text-silver-400 mb-8 max-w-2xl mx-auto">
+      <section className="ch ch-flame" style={{ minHeight: 0 }}>
+        <h2 className="t-display">Ready to start?</h2>
+        <p className="t-lead mt-6 mb-8 max-w-2xl">
           It starts with a short request: what you&rsquo;re trying to do, in your own words. We read it, then set up a free 30-minute call. No pitch, no pressure.
         </p>
-        <BookCallButton size="lg" />
-        <p className="mt-10 text-xs text-silver-500">Pricing effective May 2026 · Subject to change.</p>
+        <Link to="/book" className="btn btn-ink">Send a request</Link>
+        <p className="mt-10 text-[13px]">Pricing effective May 2026. Subject to change.</p>
       </section>
     </>
   )
@@ -565,19 +540,19 @@ export function Services() {
 
 interface ServiceSectionProps {
   id: string
-  kicker: string
+  /** No longer shown: a label above a heading says nothing the heading does not. */
+  kicker?: string
   title: string
   blurb: string
   children: React.ReactNode
 }
 
-function ServiceSection({ id, kicker, title, blurb, children }: ServiceSectionProps) {
+function ServiceSection({ id, title, blurb, children }: ServiceSectionProps) {
   return (
-    <section id={id} className="max-w-6xl mx-auto px-6 py-16 md:py-20 scroll-mt-20">
+    <section id={id} className="svc px-[var(--edge)] py-16 md:py-24 scroll-mt-20">
       <div className="mb-8 md:mb-10 max-w-3xl">
-        <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">{kicker}</p>
-        <h2 className="text-3xl md:text-4xl font-display text-silver-100 mb-4 leading-tight">{title}</h2>
-        <p className="text-silver-400 leading-relaxed">{blurb}</p>
+        <h2 className="t-head mb-5">{title}</h2>
+        <p className="leading-relaxed">{blurb}</p>
       </div>
       {children}
     </section>
@@ -587,7 +562,7 @@ function ServiceSection({ id, kicker, title, blurb, children }: ServiceSectionPr
 function SubBlock({ title, children }: { title: React.ReactNode; children: React.ReactNode }) {
   return (
     <div className="mt-8">
-      <h3 className="text-sm uppercase tracking-[0.2em] text-silver-300 font-display mb-4">{title}</h3>
+      <h3 className="font-extrabold tracking-[-0.03em] mb-4">{title}</h3>
       {children}
     </div>
   )
@@ -595,7 +570,7 @@ function SubBlock({ title, children }: { title: React.ReactNode; children: React
 
 function FinePrint({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mt-6 text-xs text-silver-500 italic leading-relaxed max-w-3xl">
+    <p className="mt-6 text-[13px] text-midnight-500 italic leading-relaxed max-w-3xl">
       {children}
     </p>
   )

@@ -7,7 +7,7 @@ import {
 } from '../lib/intake'
 
 const inputClass =
-  'w-full px-4 py-2.5 rounded-lg bg-midnight-900/60 border border-midnight-700/50 text-silver-100 placeholder-silver-500 focus:outline-none focus:border-flame-500/60 transition-colors'
+  'field'
 
 // Program types let someone focus the catalog on what they actually want, so a
 // personal/life build is not buried under CRMs and newsletters (and the reverse).
@@ -36,20 +36,19 @@ function Section({ step, title, subtitle, children, open, onToggle, done }: {
   done?: boolean
 }) {
   return (
-    <section className={`border rounded-2xl bg-midnight-900/40 transition-colors ${open ? 'border-flame-500/35' : 'border-midnight-700/30'}`}>
+    <section className="bg-silver-200">
       <button
         onClick={onToggle}
         aria-expanded={open}
         className="w-full text-left flex items-baseline gap-3 p-5 md:p-6"
       >
-        <span className={`text-xs font-mono ${done ? 'text-flame-400' : 'text-flame-500'}`}>
-          {done ? 'OK' : String(step).padStart(2, '0')}
-        </span>
+        {/* The order is in the page; a finished step says so in a word. */}
+        <span className="text-[13px] font-semibold w-10 shrink-0" data-step={step}>{done ? 'Done' : ''}</span>
         <div className="flex-1 min-w-0">
-          <h2 className="text-lg md:text-xl font-display text-silver-100">{title}</h2>
-          {subtitle && <p className="text-sm text-silver-500 mt-0.5">{subtitle}</p>}
+          <h2 className="t-lead font-extrabold tracking-[-0.03em]">{title}</h2>
+          {subtitle && <p className="text-midnight-500 mt-0.5">{subtitle}</p>}
         </div>
-        <svg viewBox="0 0 24 24" className={`w-4 h-4 shrink-0 text-silver-500 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
+        <span className="text-[13px] font-semibold shrink-0">{open ? 'Close' : 'Open'}</span>
       </button>
       {open && <div className="px-5 md:px-6 pb-5 md:pb-6">{children}</div>}
     </section>
@@ -79,13 +78,13 @@ const CategoryTile = memo(function CategoryTile({
   const chosen = items.filter((f) => selected.has(f.slug)).length
   return (
     <div
-      className={`rounded-2xl border transition-colors ${
-        open
-          ? 'border-flame-500/40 bg-midnight-900/60 sm:col-span-2 lg:col-span-3'
-          : chosen > 0
-          ? 'border-flame-500/30 bg-flame-500/[0.06]'
-          : 'border-midnight-700/40 bg-midnight-900/30 hover:border-midnight-700/80'
-      }`}
+      className={`transition-colors ${
+ open
+ ? ' bg-silver-200 sm:col-span-2 lg:col-span-3'
+ : chosen > 0
+ ? ' bg-midnight-100'
+ : ' bg-silver-200 '
+ }`}
     >
       <button
         onClick={() => onOpen(category)}
@@ -93,19 +92,13 @@ const CategoryTile = memo(function CategoryTile({
         className="w-full text-left p-4 md:p-5 flex items-start gap-3"
       >
         <div className="min-w-0 flex-1">
-          <p className="font-display text-base md:text-lg text-silver-100 leading-tight">{category}</p>
-          <p className="mt-1 text-xs text-silver-500">
+          <p className="font-extrabold tracking-[-0.03em] md:t-lead leading-tight">{category}</p>
+          <p className="mt-1 text-[13px] text-midnight-500">
             {items.length} option{items.length === 1 ? '' : 's'}
-            {chosen > 0 && <span className="text-flame-400 font-medium"> &middot; {chosen} picked</span>}
+            {chosen > 0 && <span className="text-flame-700 font-medium"> &middot; {chosen} picked</span>}
           </p>
         </div>
-        <svg
-          viewBox="0 0 24 24"
-          className={`w-4 h-4 mt-1 shrink-0 text-silver-500 transition-transform ${open ? 'rotate-45' : ''}`}
-          fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
-        >
-          <path d="M12 5v14M5 12h14" />
-        </svg>
+        <span className="text-[13px] font-semibold shrink-0">{open ? 'Close' : 'Open'}</span>
       </button>
 
       {open && (
@@ -116,15 +109,15 @@ const CategoryTile = memo(function CategoryTile({
               <button
                 key={f.slug}
                 onClick={() => onToggle(f.slug)}
-                className={`text-left p-3 rounded-xl border transition-colors ${on ? 'border-flame-500/60 bg-flame-500/10' : 'border-midnight-700/40 bg-midnight-950/40 hover:border-midnight-700/80'}`}
+                className={`text-left p-3 transition-colors ${on ? 'bg-midnight-950 text-silver-100' : 'bg-silver-100'}`}
               >
                 <div className="flex items-start gap-2">
-                  <span className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center shrink-0 ${on ? 'bg-flame-500 border-flame-500' : 'border-silver-600'}`}>
+                  <span className={`mt-0.5 w-4 h-4 flex items-center justify-center shrink-0 ${on ? 'bg-flame-500 text-midnight-950' : 'outline outline-2 -outline-offset-2 outline-midnight-950'}`}>
                     {on && <svg viewBox="0 0 24 24" className="w-3 h-3 text-midnight-950" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>}
                   </span>
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-silver-100">{f.label}</p>
-                    {f.description && <p className="text-xs text-silver-500 mt-0.5 leading-snug">{f.description}</p>}
+                    <p className="font-medium">{f.label}</p>
+                    {f.description && <p className="text-[13px] text-midnight-500 mt-0.5 leading-snug">{f.description}</p>}
                   </div>
                 </div>
               </button>
@@ -282,12 +275,12 @@ export function Start() {
   // --- Success ---
   if (done) {
     return (
-      <div className="max-w-2xl mx-auto px-6 py-24 text-center">
-        <div className="w-16 h-16 mx-auto rounded-full bg-flame-500/15 flex items-center justify-center mb-6">
-          <svg viewBox="0 0 24 24" className="w-8 h-8 text-flame-400" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      <div className="max-w-2xl px-[var(--edge)] py-24">
+        <div className="w-16 h-16 bg-midnight-100 flex items-center justify-center mb-6">
+          <svg viewBox="0 0 24 24" className="w-8 h-8 text-flame-700" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </div>
-        <h1 className="text-3xl md:text-4xl font-display text-silver-100 mb-4">Thank you{form.contact_name ? `, ${form.contact_name.split(' ')[0]}` : ''}.</h1>
-        <p className="text-lg text-silver-400 leading-relaxed">
+        <h1 className="t-head font-extrabold tracking-[-0.03em] mb-4">Thank you{form.contact_name ? `, ${form.contact_name.split(' ')[0]}` : ''}.</h1>
+        <p className="t-lead leading-relaxed">
           We have everything we need to get started. Andrew will review it, put together your plan, and reach out shortly. If you forgot something, just reply to his email or send another note.
         </p>
       </div>
@@ -296,24 +289,22 @@ export function Start() {
 
   // --- Form (open to anyone; an access code is optional and personalizes it) ---
   return (
-    <div className="max-w-3xl mx-auto px-5 md:px-6 py-12 md:py-16">
-      <header className="mb-10">
-        <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">Client intake</p>
-        <h1 className="text-3xl md:text-5xl font-display text-silver-100 leading-tight">
+    <>
+      <header className="page-hero on-flame">
+        <h1 className="t-head page-hero-title is-long">
           {info?.intro
             ? info.intro
             : info?.client_name
               ? `Welcome, ${info.client_name}. Let's build your project.`
               : `Let's build your project.`}
         </h1>
-        <p className="text-silver-400 mt-4 leading-relaxed">
+        <p className="t-lead page-hero-sub">
           Tell us about your business and pick what you want. Nothing here is locked in. It just gives Andrew everything he needs to put together your plan.
         </p>
 
         {/* Optional access code. The form works without one; a code just personalizes it. */}
         {info ? (
-          <p className="mt-4 inline-flex items-center gap-1.5 text-xs text-flame-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-flame-400" />
+          <p className="mt-4 font-extrabold">
             Access code applied{info.client_name ? `: ${info.client_name}` : ''}
           </p>
         ) : showCode ? (
@@ -323,24 +314,25 @@ export function Start() {
               onChange={(e) => setCode(e.target.value.toUpperCase())}
               onKeyDown={(e) => { if (e.key === 'Enter') void unlock(code) }}
               placeholder="Access code"
-              className={`${inputClass} max-w-[220px] font-mono tracking-widest`}
+              className={`${inputClass} max-w-[220px]`}
             />
             <button
               onClick={() => void unlock(code)}
               disabled={checking || !code.trim()}
-              className="px-4 py-2.5 rounded-lg bg-flame-500 hover:bg-flame-400 disabled:opacity-50 text-midnight-950 font-semibold text-sm transition-colors"
+              className="btn btn-ink disabled:opacity-50"
             >
               {checking ? 'Checking...' : 'Apply'}
             </button>
-            {gateError && <p role="alert" className="w-full text-sm text-flame-400">{gateError}</p>}
+            {gateError && <p role="alert" className="w-full text-flame-700">{gateError}</p>}
           </div>
         ) : (
-          <button onClick={() => setShowCode(true)} className="mt-4 text-sm text-flame-400 hover:text-flame-300">
+          <button onClick={() => setShowCode(true)} className="mt-4 link">
             Have an access code?
           </button>
         )}
       </header>
 
+      <div className="max-w-3xl px-[var(--edge)] py-12 md:py-16">
       {/* Honeypot: parked off-screen, invisible to people. Only bots fill it. */}
       <div aria-hidden className="absolute -left-[9999px] top-0 h-px w-px overflow-hidden">
         <label>Company URL
@@ -350,9 +342,9 @@ export function Start() {
 
       <div className="space-y-5">
         {/* Focus picker: narrow the catalog to what they actually want. */}
-        <section className="border border-midnight-700/30 rounded-2xl p-5 md:p-6 bg-midnight-900/40">
-          <h2 className="text-lg md:text-xl font-display text-silver-100">What are you looking for?</h2>
-          <p className="text-sm text-silver-500 mt-0.5">Pick any that apply and we will focus the options below. You can still open everything.</p>
+        <section className="p-5 md:p-6 bg-silver-200">
+          <h2 className="t-lead font-extrabold tracking-[-0.03em]">What are you looking for?</h2>
+          <p className="text-midnight-500 mt-0.5">Pick any that apply and we will focus the options below. You can still open everything.</p>
           <div className="mt-4 flex flex-wrap gap-2">
             {PROGRAM_TYPES.map((t) => {
               const on = programs.has(t.key)
@@ -361,7 +353,7 @@ export function Start() {
                   key={t.key}
                   onClick={() => toggleIn(setPrograms, t.key)}
                   aria-pressed={on}
-                  className={`px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors ${on ? 'border-flame-500/60 bg-flame-500/10 text-silver-100' : 'border-midnight-700/40 bg-midnight-900/30 text-silver-300 hover:border-midnight-700/70'}`}
+                  className="chip"
                 >
                   {t.label}
                 </button>
@@ -372,22 +364,22 @@ export function Start() {
 
         <Section step={1} title="About you" subtitle="The basics so we can reach you." done={Boolean(form.contact_name && form.email)} {...sec(1)}>
           <div className="grid sm:grid-cols-2 gap-4">
-            <label className="text-sm text-silver-400">Your name *
+            <label>Your name *
               <input value={form.contact_name} onChange={(e) => setForm({ ...form, contact_name: e.target.value })} className={`mt-1 ${inputClass}`} placeholder="Jane Smith" />
             </label>
-            <label className="text-sm text-silver-400">Business name
+            <label>Business name
               <input value={form.business_name} onChange={(e) => setForm({ ...form, business_name: e.target.value })} className={`mt-1 ${inputClass}`} placeholder="Smith & Co." />
             </label>
-            <label className="text-sm text-silver-400">Email *
+            <label>Email *
               <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={`mt-1 ${inputClass}`} placeholder="you@business.com" />
             </label>
-            <label className="text-sm text-silver-400">Phone
+            <label>Phone
               <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={`mt-1 ${inputClass}`} placeholder="(555) 123-4567" />
             </label>
-            <label className="text-sm text-silver-400">Current website
+            <label>Current website
               <input value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} className={`mt-1 ${inputClass}`} placeholder="yoursite.com (if any)" />
             </label>
-            <label className="text-sm text-silver-400">Industry
+            <label>Industry
               <input value={form.industry} onChange={(e) => setForm({ ...form, industry: e.target.value })} className={`mt-1 ${inputClass}`} placeholder="HVAC, real estate, coaching..." />
             </label>
           </div>
@@ -396,10 +388,10 @@ export function Start() {
         <Section step={2} title="Your goals" subtitle="What would make this a win for you?" done={Boolean(form.goals)} {...sec(2)}>
           <textarea value={form.goals} onChange={(e) => setForm({ ...form, goals: e.target.value })} rows={4} className={`${inputClass} resize-y`} placeholder="What do you want this to do for your business? What is not working today?" />
           <div className="grid sm:grid-cols-2 gap-4 mt-4">
-            <label className="block text-sm text-silver-400">Ideal timeline
+            <label className="block">Ideal timeline
               <input value={form.timeline} onChange={(e) => setForm({ ...form, timeline: e.target.value })} className={`mt-1 ${inputClass}`} placeholder="e.g. live within 6 weeks" />
             </label>
-            <label className="block text-sm text-silver-400">Budget range
+            <label className="block">Budget range
               <input value={form.budget} onChange={(e) => setForm({ ...form, budget: e.target.value })} className={`mt-1 ${inputClass}`} placeholder="e.g. $3k to $6k, or not sure yet" />
             </label>
           </div>
@@ -407,7 +399,7 @@ export function Start() {
 
         <Section step={3} title="What you'd like" subtitle={selected.size > 0 ? `${selected.size} picked so far` : 'Open whichever areas matter to you.'} done={selected.size > 0} {...sec(3)}>
           {selected.size > 0 && (
-            <p className="mb-4 text-sm text-flame-400">
+            <p className="mb-4 text-flame-700">
               {selected.size} selected so far. Nothing is committed, this just tells us what to shape the plan around.
             </p>
           )}
@@ -425,7 +417,7 @@ export function Start() {
             ))}
           </div>
           {programs.size > 0 && (
-            <button onClick={() => setShowAll((v) => !v)} className="mt-5 text-sm text-flame-400 hover:text-flame-300">
+            <button onClick={() => setShowAll((v) => !v)} className="mt-5 link">
               {showAll ? 'Show only what fits what I picked' : 'Show all options'}
             </button>
           )}
@@ -440,15 +432,15 @@ export function Start() {
                   <button
                     key={f.slug}
                     onClick={() => toggleIn(setPersonal, f.slug)}
-                    className={`text-left p-3 rounded-xl border transition-colors ${on ? 'border-flame-500/60 bg-flame-500/10' : 'border-midnight-700/40 bg-midnight-900/30 hover:border-midnight-700/70'}`}
+                    className={`text-left p-3 transition-colors ${on ? 'bg-midnight-950 text-silver-100' : 'bg-silver-100'}`}
                   >
                     <div className="flex items-start gap-2">
-                      <span className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center shrink-0 ${on ? 'bg-flame-500 border-flame-500' : 'border-silver-600'}`}>
+                      <span className={`mt-0.5 w-4 h-4 flex items-center justify-center shrink-0 ${on ? 'bg-flame-500 text-midnight-950' : 'outline outline-2 -outline-offset-2 outline-midnight-950'}`}>
                         {on && <svg viewBox="0 0 24 24" className="w-3 h-3 text-midnight-950" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>}
                       </span>
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-silver-100">{f.label}</p>
-                        {f.description && <p className="text-xs text-silver-500 mt-0.5 leading-snug">{f.description}</p>}
+                        <p className="font-medium">{f.label}</p>
+                        {f.description && <p className="text-[13px] text-midnight-500 mt-0.5 leading-snug">{f.description}</p>}
                       </div>
                     </div>
                   </button>
@@ -464,25 +456,25 @@ export function Start() {
               <div key={i} className="grid sm:grid-cols-[1fr_1.5fr_auto] gap-2 items-start">
                 <input value={c.title} onChange={(e) => setCustom(custom.map((x, idx) => idx === i ? { ...x, title: e.target.value } : x))} className={inputClass} placeholder="What is it?" />
                 <input value={c.detail} onChange={(e) => setCustom(custom.map((x, idx) => idx === i ? { ...x, detail: e.target.value } : x))} className={inputClass} placeholder="A bit more detail" />
-                <button onClick={() => setCustom(custom.filter((_, idx) => idx !== i))} className="px-3 py-2.5 text-silver-500 hover:text-flame-400 text-sm">Remove</button>
+                <button onClick={() => setCustom(custom.filter((_, idx) => idx !== i))} className="px-3 py-2.5 text-midnight-500 hover:underline">Remove</button>
               </div>
             ))}
-            <button onClick={() => setCustom([...custom, { title: '', detail: '' }])} className="text-sm text-flame-400 hover:text-flame-300">+ Add a custom request</button>
+            <button onClick={() => setCustom([...custom, { title: '', detail: '' }])} className="link">+ Add a custom request</button>
           </div>
         </Section>
 
         <Section step={personalShown ? 6 : 5} title="Share your files" subtitle="Logo, brand assets, photos, anything you have. Optional." {...sec(6)}>
-          <label className="flex flex-col items-center justify-center gap-2 py-8 rounded-xl border border-dashed border-midnight-700/60 bg-midnight-900/30 cursor-pointer hover:border-flame-500/50 transition-colors">
+          <label className="flex flex-col items-center justify-center gap-2 py-8 border-dashed bg-silver-200 cursor-pointer transition-colors">
             <input type="file" multiple className="hidden" onChange={(e) => void onFiles(e.target.files)} />
-            <span className="text-sm text-silver-400">{uploading ? 'Uploading...' : 'Click to upload files'}</span>
-            <span className="text-xs text-silver-600">Images, PDFs, docs</span>
+            <span>{uploading ? 'Uploading...' : 'Click to upload files'}</span>
+            <span className="text-[13px] text-midnight-500">Images, PDFs, docs</span>
           </label>
           {files.length > 0 && (
             <div className="mt-3 flex flex-wrap gap-2">
               {files.map((f, i) => (
-                <span key={i} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-midnight-900/60 border border-midnight-700/50 text-xs text-silver-300">
+                <span key={i} className="inline-flex items-center gap-2 px-3 py-1.5 bg-silver-200 text-[13px]">
                   {f.name}
-                  <button onClick={() => setFiles(files.filter((_, idx) => idx !== i))} className="text-silver-500 hover:text-flame-400">x</button>
+                  <button onClick={() => setFiles(files.filter((_, idx) => idx !== i))} className="text-midnight-500 hover:underline">x</button>
                 </span>
               ))}
             </div>
@@ -491,23 +483,24 @@ export function Start() {
       </div>
 
       {/* Running summary + submit (stays in view while you pick) */}
-      <div className="sticky bottom-4 mt-5 z-20 rounded-2xl border border-midnight-700/50 bg-midnight-950/90 backdrop-blur shadow-2xl shadow-black/40">
+      <div className="sticky bottom-4 mt-5 z-20 bg-midnight-950 text-silver-100">
         <div className="px-4 md:px-5 py-3 flex items-center gap-4">
-          <p className="flex-1 min-w-0 text-sm text-silver-300 truncate">
+          <p className="flex-1 min-w-0 truncate">
             {selected.size > 0 ? `${selected.size} ${selected.size === 1 ? 'item' : 'items'} selected` : 'Pick what you would like'}
-            <span className="text-silver-500"> · we tailor your plan to your choices</span>
+            <span className="hidden sm:inline">. We tailor your plan to your choices.</span>
           </p>
           <button
             onClick={() => void submit()}
             disabled={!canSubmit}
-            className="shrink-0 px-6 py-3 rounded-lg bg-flame-500 hover:bg-flame-400 disabled:opacity-40 text-midnight-950 font-semibold transition-colors"
+            className="shrink-0 px-6 py-3 bg-flame-500 hover:bg-flame-400 disabled:opacity-40 text-midnight-950 font-semibold transition-colors"
           >
             {submitting ? 'Sending...' : 'Submit'}
           </button>
         </div>
-        {submitError && <p role="alert" className="px-4 md:px-5 pb-2 text-[11px] text-flame-400">{submitError}</p>}
-        {!canSubmit && !submitting && <p className="px-4 md:px-5 pb-2 text-[11px] text-silver-600">Add your name and email to submit.</p>}
+        {submitError && <p role="alert" className="px-4 md:px-5 pb-2 text-[13px] text-flame-700">{submitError}</p>}
+        {!canSubmit && !submitting && <p className="px-4 md:px-5 pb-2 text-[13px]">Add your name and email to submit.</p>}
       </div>
-    </div>
+      </div>
+    </>
   )
 }

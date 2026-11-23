@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { listShowcaseProjects } from '../../lib/showcase'
+import { currentImage, listShowcaseProjects } from '../../lib/showcase'
 import { hostOf, matchBuild, type Build } from '../../lib/matchBuild'
 import { Reveal } from '../Reveal'
 
@@ -21,12 +21,6 @@ const SEED: Build[] = [
   { title: "A family's whole life, in one app", category: 'Family Operating System', tags: ['Family', 'Web App', 'AI', 'Mobile'], image_url: '/showcase/home-base.png', live_url: 'https://aubreeseverything.com', blurb: 'A shared calendar, meal planning that turns into a grocery list, every kid’s details and appointments, chores and travel, in one place.' },
 ]
 
-/**
- * A build whose picture in the CRM is older than the build itself gets its current screen from here, by its live
- * address. The brokerage toolkit was rebuilt on 2026-11-10 and its showcase picture still shows the old one.
- */
-const FRESH: Record<string, string> = { 'brokerage.anfconsult.com': '/showcase/brokerage.jpg' }
-
 // Andrew, 2026-11-23: lead with the brokerage build, not the solo agent's CRM.
 const FIRST = 'real estate brokerage'
 const TRY = ['HVAC company', 'coach', 'family of five', 'bar']
@@ -38,7 +32,7 @@ export function TypedBuilds() {
   useEffect(() => {
     let on = true
     listShowcaseProjects()
-      .then((rows) => { if (on && rows.length) setBuilds(rows.map((r) => ({ title: r.title, category: r.category, blurb: r.blurb, live_url: r.live_url, tags: r.tags ?? [], image_url: FRESH[hostOf(r.live_url)] ?? r.image_url }))) })
+      .then((rows) => { if (on && rows.length) setBuilds(rows.map((r) => ({ title: r.title, category: r.category, blurb: r.blurb, live_url: r.live_url, tags: r.tags ?? [], image_url: currentImage(r) }))) })
       .catch(() => { /* the builds that ship with the site stay */ })
     return () => { on = false }
   }, [])

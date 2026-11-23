@@ -24,16 +24,14 @@ export function About() {
   return (
     <>
       <PageHero
-        eyebrow="About"
         title="Built around your business."
         subtitle="Steady guidance through change. Simple systems that hold up. One partner, one roadmap, one team."
       />
 
-      <section className="max-w-6xl mx-auto px-6 py-16 md:py-20">
-        <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3 text-center">Meet the founder</p>
-        <h2 className="text-3xl md:text-4xl font-display text-silver-100 mb-12 text-center">Andrew Fowler</h2>
-        <div className="grid md:grid-cols-[auto_1fr] gap-10 md:gap-12 items-start max-w-5xl mx-auto">
-          <div className="md:w-72 mx-auto md:mx-0">
+      <section className="px-[var(--edge)] py-16 md:py-20">
+        <h2 className="t-head font-extrabold tracking-[-0.03em] mb-12">Andrew Fowler</h2>
+        <div className="grid md:grid-cols-[auto_1fr] gap-10 md:gap-12 items-start">
+          <div className="md:w-72 md:mx-0">
             <img
               src="/founder.webp"
               alt="Andrew Fowler, founder of ANF Consulting"
@@ -41,10 +39,10 @@ export function About() {
               height={1024}
               loading="lazy"
               decoding="async"
-              className="w-full rounded-2xl border border-midnight-700/40 shadow-lg"
+              className="w-full"
             />
           </div>
-          <div className="space-y-5 text-silver-300 leading-relaxed">
+          <div className="space-y-5 leading-relaxed">
             <p>
               ANF Consulting was founded by Andrew Fowler, a systems-minded professional with years of experience working directly with modern tools and emerging technology. Andrew built this company after seeing how quickly the landscape was changing and how unprepared many professionals felt as new tools became part of everyday work.
             </p>
@@ -61,12 +59,11 @@ export function About() {
         </div>
       </section>
 
-      <section className="max-w-3xl mx-auto px-6 py-16 md:py-20">
-        <div className="text-center mb-10">
-          <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">Our mission</p>
-          <h2 className="text-3xl md:text-4xl font-display text-silver-100">What we exist to do</h2>
+      <section className="max-w-3xl px-[var(--edge)] py-16 md:py-20">
+        <div className="mb-10">
+          <h2 className="t-head font-extrabold tracking-[-0.03em]">What we exist to do</h2>
         </div>
-        <div className="space-y-5 text-silver-300 text-lg leading-relaxed border-l-2 border-flame-500/60 pl-6 md:pl-8">
+        <div className="space-y-5 t-lead leading-relaxed pl-6 md:pl-8">
           <p>
             ANF Consulting exists to help people navigate a world where modern technology is no longer optional. The tools around us are changing quickly and they are becoming a permanent part of how work gets done. We believe this shift should feel empowering rather than overwhelming.
           </p>
@@ -79,27 +76,25 @@ export function About() {
         </div>
       </section>
 
-      <section className="max-w-6xl mx-auto px-6 py-16 md:py-20">
-        <div className="text-center mb-12">
-          <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">Our values</p>
-          <h2 className="text-3xl md:text-4xl font-display text-silver-100">What we believe</h2>
+      <section className="px-[var(--edge)] py-16 md:py-20">
+        <div className="mb-12">
+          <h2 className="t-head font-extrabold tracking-[-0.03em]">What we believe</h2>
         </div>
         <div className="grid md:grid-cols-2 gap-6">
           {values.map((v) => (
-            <div key={v.title} className="border border-white/[0.07] hover:border-flame-500/40 rounded-2xl p-7 bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors">
-              <h3 className="text-xl font-display text-flame-400 mb-3">{v.title}</h3>
-              <p className="text-silver-400 leading-relaxed">{v.body}</p>
+            <div key={v.title} className="p-7 bg-silver-200 transition-colors">
+              <h3 className="t-lead font-extrabold tracking-[-0.03em] text-flame-700 mb-3">{v.title}</h3>
+              <p className="leading-relaxed">{v.body}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="max-w-3xl mx-auto px-6 py-16 md:py-20">
-        <div className="text-center mb-10">
-          <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">Our story</p>
-          <h2 className="text-3xl md:text-4xl font-display text-silver-100">How ANF came to be</h2>
+      <section className="max-w-3xl px-[var(--edge)] py-16 md:py-20">
+        <div className="mb-10">
+          <h2 className="t-head font-extrabold tracking-[-0.03em]">How ANF came to be</h2>
         </div>
-        <div className="space-y-5 text-silver-300 text-lg leading-relaxed">
+        <div className="space-y-5 t-lead leading-relaxed">
           <p>
             ANF Consulting began inside the real estate world, where clear communication and strong systems are essential. Early in his real estate career, our founder, Andrew Fowler, saw how quickly modern tools were becoming part of everyday work. He realized that professionals who learned to use these tools with clarity and intention would have a real advantage, while those who avoided them would eventually fall behind.
           </p>
@@ -115,31 +110,30 @@ export function About() {
         </div>
       </section>
 
-      <section className="max-w-6xl mx-auto px-6 py-16 md:py-20">
-        <div className="rounded-3xl border border-flame-500/30 bg-midnight-900/60 overflow-hidden shadow-flame-glow">
+      <section className="px-[var(--edge)] py-16 md:py-20">
+        <div className="bg-silver-200 overflow-hidden">
           <div className="grid md:grid-cols-2 gap-0 items-stretch">
             <div className="p-8 md:p-12 flex flex-col justify-center">
-              <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-4">Also building</p>
-              <h2 className="text-4xl md:text-5xl font-display text-silver-100 mb-3 leading-tight">
+              <h2 className="t-head font-extrabold tracking-[-0.03em] mb-3 leading-tight">
                 Everlee
               </h2>
-              <p className="text-lg text-silver-200 leading-relaxed mb-4">
+              <p className="t-lead leading-relaxed mb-4">
                 A daily content and consistency app for real estate agents and small business owners.
               </p>
-              <p className="text-silver-400 leading-relaxed mb-6">
+              <p className="leading-relaxed mb-6">
                 Everlee generates social media posts, blog content, and AI images tailored to your business, tracks your posting streak to keep you accountable, and stores all your media in one library. The idea is simple. Show up every day, let Everlee handle the content, build momentum over time.
               </p>
               <a
                 href="https://useeverlee.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-flame-500 hover:bg-flame-600 text-white font-medium px-6 py-3 rounded-md shadow-flame-glow hover:shadow-lg transition-all self-start"
+                className="inline-flex items-center gap-2 bg-flame-500 hover:bg-flame-400 font-medium px-6 py-3 transition-all self-start"
               >
                 Try Everlee
                 <span aria-hidden>↗</span>
               </a>
             </div>
-            <div className="bg-midnight-950/40 p-6 md:p-8 flex items-center justify-center border-t md:border-t-0 md:border-l border-midnight-700/30">
+            <div className="bg-silver-200 p-6 md:p-8 flex items-center justify-center">
               <img
                 src="/everlee-home.webp"
                 alt="Everlee app showing daily content, streak tracking, and posting checklist"
@@ -154,9 +148,9 @@ export function About() {
         </div>
       </section>
 
-      <section className="max-w-4xl mx-auto px-6 py-16 md:py-24 text-center">
-        <h2 className="text-3xl md:text-5xl font-display text-silver-100 mb-4">Work with us</h2>
-        <p className="text-lg text-silver-400 mb-8 max-w-2xl mx-auto">
+      <section className="max-w-4xl px-[var(--edge)] py-16 md:py-24">
+        <h2 className="t-head font-extrabold tracking-[-0.03em] mb-4">Work with us</h2>
+        <p className="t-lead mb-8 max-w-2xl">
           Tell us what you're trying to build. Andrew reads every request and gets back to you within one business day. No pitch, no pressure.
         </p>
         <BookCallButton size="lg" />

@@ -28,22 +28,21 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     if (!this.state.hasError) return this.props.children
     return (
-      <div className="max-w-xl mx-auto px-6 py-24 text-center">
-        <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">Something went wrong</p>
-        <h1 className="text-3xl md:text-4xl font-display text-silver-100 mb-3">This page hit a snag</h1>
-        <p className="text-silver-400 mb-8">
+      <div className="max-w-xl px-[var(--edge)] py-24">
+        <h1 className="t-head font-extrabold tracking-[-0.03em] mb-3">This page hit a snag</h1>
+        <p className="mb-8">
           An unexpected error stopped this page from loading. Try reloading, or head back home.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button
             onClick={() => window.location.reload()}
-            className="inline-flex items-center justify-center rounded-md bg-flame-500 hover:bg-flame-600 text-white font-medium px-6 py-3 transition-colors"
+            className="inline-flex items-center justify-center bg-flame-500 hover:bg-flame-400 font-medium px-6 py-3 transition-colors"
           >
             Reload the page
           </button>
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md border border-white/10 text-silver-200 hover:border-flame-500/50 px-6 py-3 transition-colors"
+            className="inline-flex items-center justify-center px-6 py-3 transition-colors"
           >
             Go home
           </Link>

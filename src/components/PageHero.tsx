@@ -1,47 +1,32 @@
 import { type ReactNode } from 'react'
 
 /**
- * Shared page hero: a status badge, a big display headline, an optional subtitle,
- * and optional CTAs (children), over the same layered backdrop (flame radial glow
- * plus a masked grid) used on the homepage. Keeps every inner page consistent.
+ * The header of every inner page (redesigned 2026-11-23, DESIGN.md): one flame field with the title set large and
+ * left, a supporting sentence, and whatever the page wants beneath (a button, a form's first line). It replaced a
+ * centred headline under a pill label over a glow and a grid.
+ *
+ * A short title is set at the display size; a longer one steps down so it still fits two lines on a phone. There is
+ * no label above the title any more: `eyebrow` is still accepted so old call sites compile, and is not shown. What a
+ * label used to say belongs in the title or the sentence under it.
  */
 export function PageHero({
-  eyebrow,
   title,
   subtitle,
   children,
 }: {
-  eyebrow: string
+  /** No longer shown. Fold anything it said into the title or subtitle. */
+  eyebrow?: string
   title: ReactNode
   subtitle?: ReactNode
   children?: ReactNode
 }) {
+  const length = typeof title === 'string' ? title.length : 36
+  const size = length <= 28 ? 't-display page-hero-title is-short' : length <= 44 ? 't-head page-hero-title is-long' : 't-head page-hero-title is-xlong'
   return (
-    <section className="relative overflow-hidden">
-      <div aria-hidden className="absolute inset-0 -z-10">
-        <div
-          className="absolute inset-x-0 top-0 h-[120%]"
-          style={{ background: 'radial-gradient(ellipse 55% 50% at 50% 0%, rgba(242,107,29,0.13), transparent 70%)' }}
-        />
-        <div
-          className="absolute inset-0 opacity-40"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)',
-            backgroundSize: '60px 60px',
-            WebkitMaskImage: 'radial-gradient(ellipse 60% 50% at 50% 18%, #000, transparent 72%)',
-            maskImage: 'radial-gradient(ellipse 60% 50% at 50% 18%, #000, transparent 72%)',
-          }}
-        />
-      </div>
-      <div className="max-w-4xl mx-auto px-6 pt-20 md:pt-28 pb-10 md:pb-12 text-center">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-[11px] sm:text-xs tracking-[0.22em] uppercase text-silver-300 mb-7">
-          <span className="w-1.5 h-1.5 rounded-full bg-flame-500" /> {eyebrow}
-        </div>
-        <h1 className="text-4xl md:text-6xl font-display text-silver-100 leading-tight">{title}</h1>
-        {subtitle && <p className="mt-6 text-lg md:text-xl text-silver-400 leading-relaxed max-w-2xl mx-auto">{subtitle}</p>}
-        {children && <div className="mt-9">{children}</div>}
-      </div>
+    <section className="page-hero on-flame">
+      <h1 className={size}>{title}</h1>
+      {subtitle && <p className="t-lead page-hero-sub">{subtitle}</p>}
+      {children && <div className="page-hero-more">{children}</div>}
     </section>
   )
 }

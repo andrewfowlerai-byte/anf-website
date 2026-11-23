@@ -47,12 +47,11 @@ export function WatchItWork({ accent, label, steps }: { accent: string; label: s
   const done = !playing && shown >= steps.length
 
   return (
-    <div ref={ref} className="mt-12 md:mt-16 max-w-2xl mx-auto">
-      <div className="text-center mb-6">
-        <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">See it run</p>
-        <h2 className="text-2xl md:text-3xl font-display text-silver-100">{label}</h2>
+    <div ref={ref} className="mt-12 md:mt-16 max-w-2xl">
+      <div className="mb-6">
+        <h2 className="t-head font-extrabold tracking-[-0.03em]">{label}</h2>
       </div>
-      <div className="rounded-2xl border border-midnight-700/40 bg-midnight-900/40 p-5 md:p-7">
+      <div className="bg-silver-200 p-5 md:p-7">
         <div className="space-y-0">
           {steps.map((st, i) => {
             const on = i < shown
@@ -61,7 +60,7 @@ export function WatchItWork({ accent, label, steps }: { accent: string; label: s
               <div key={i} className="flex gap-3.5 pb-5 last:pb-0">
                 <div className="flex flex-col items-center">
                   <span
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 transition-all duration-500"
+                    className="w-8 h-8 flex items-center justify-center font-bold shrink-0 transition-all duration-500"
                     style={{
                       background: on ? accent : 'rgba(255,255,255,0.06)',
                       color: on ? '#0b1220' : '#64748b',
@@ -72,15 +71,15 @@ export function WatchItWork({ accent, label, steps }: { accent: string; label: s
                     {on && last ? '✓' : i + 1}
                   </span>
                   {!last && (
-                    <span className="w-0.5 flex-1 mt-1 rounded-full transition-all duration-700" style={{ background: on ? accent : 'rgba(255,255,255,0.08)', minHeight: 22 }} />
+                    <span className="w-0.5 flex-1 mt-1 transition-all duration-700" style={{ background: on ? accent : 'rgba(255,255,255,0.08)', minHeight: 22 }} />
                   )}
                 </div>
                 <div
                   className="min-w-0 flex-1 pt-1 transition-all duration-500"
                   style={{ opacity: on ? 1 : 0.3, transform: on ? 'translateY(0)' : 'translateY(6px)' }}
                 >
-                  <p className="text-sm md:text-base font-medium text-silver-100 leading-snug">{st.t}</p>
-                  {st.s && <p className="text-xs md:text-sm text-silver-400 mt-0.5">{st.s}</p>}
+                  <p className="font-medium leading-snug">{st.t}</p>
+                  {st.s && <p className="text-[13px] mt-0.5">{st.s}</p>}
                 </div>
               </div>
             )
@@ -91,7 +90,7 @@ export function WatchItWork({ accent, label, steps }: { accent: string; label: s
           <button
             onClick={play}
             disabled={playing}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white disabled:opacity-60 transition-opacity"
+            className="inline-flex items-center gap-2 px-4 py-2 font-semibold disabled:opacity-60 transition-opacity"
             style={{ background: accent }}
           >
             {playing ? (
@@ -103,7 +102,7 @@ export function WatchItWork({ accent, label, steps }: { accent: string; label: s
               </>
             )}
           </button>
-          {done && <span className="text-xs text-silver-400">All of that, while you were doing something else.</span>}
+          {done && <span className="text-[13px]">All of that, while you were doing something else.</span>}
         </div>
       </div>
     </div>

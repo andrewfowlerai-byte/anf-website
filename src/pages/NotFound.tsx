@@ -1,32 +1,39 @@
 import { Link } from 'react-router-dom'
+import { PageHero } from '../components/PageHero'
 
 /**
  * Real 404 page. Rendered by the catch-all route inside the marketing Layout,
  * which also hands it noindex metadata (see Layout's SEO fallback) so junk URLs
  * are not treated as soft-404 duplicates of the home page.
  */
+const PLACES = [
+  { to: '/work', label: 'The builds', line: 'Every system ANF has made, open to click through.' },
+  { to: '/services', label: 'The service menu', line: 'What ANF does, priced in the open.' },
+  { to: '/about', label: 'About Andrew', line: 'Who is behind it.' },
+  { to: '/reviews', label: 'Reviews', line: 'What clients and class attendees said.' },
+  { to: '/book', label: 'Send a request', line: 'Tell Andrew what you are trying to build.' },
+]
+
 export function NotFound() {
   return (
-    <div className="max-w-xl mx-auto px-6 py-24 md:py-32 text-center">
-      <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3">404</p>
-      <h1 className="text-3xl md:text-4xl font-display text-silver-100 mb-3">Page not found</h1>
-      <p className="text-silver-400 mb-8">
-        The page you are looking for moved or never existed. Let's get you back on track.
-      </p>
-      <div className="flex flex-col sm:flex-row gap-3 justify-center">
-        <Link
-          to="/"
-          className="inline-flex items-center justify-center rounded-md bg-flame-500 hover:bg-flame-600 text-white font-medium px-6 py-3 transition-colors"
-        >
-          Back home
-        </Link>
-        <Link
-          to="/services"
-          className="inline-flex items-center justify-center rounded-md border border-white/10 text-silver-200 hover:border-flame-500/50 px-6 py-3 transition-colors"
-        >
-          See what we do
-        </Link>
-      </div>
-    </div>
+    <>
+      <PageHero
+        title="Page not found"
+        subtitle="The page you are looking for moved or never existed. Let's get you back on track."
+      >
+        <Link to="/" className="btn btn-ink">Back home</Link>
+      </PageHero>
+      <section className="px-[var(--edge)] pt-[clamp(3rem,6vw,5rem)] pb-[clamp(7rem,14vw,11rem)]">
+        <h2 className="t-head">Or start here</h2>
+        <ul className="mt-8 grid gap-5">
+          {PLACES.map((p) => (
+            <li key={p.to}>
+              <Link to={p.to} className="link t-lead">{p.label}</Link>
+              <span className="block mt-1">{p.line}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </>
   )
 }

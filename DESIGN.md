@@ -78,7 +78,26 @@ One loud move: the hero's lines rise from behind their baselines. Elsewhere text
 pictures and filled tiles are uncovered from their top edge, and every control answers a press or hover. All of it
 stands down for reduced motion.
 
+## Inner pages
+
+Every page inside the site shell stands on paper with ink text (`main.on-paper`, set in `Layout`). Its header is
+`PageHero`: one flame field with the title set large and left, sized by its length, with no label above it. Body
+sections sit on the page margin (`px-[var(--edge)]`), left-aligned. The one "card" is a filled panel a tone from the
+paper (`.panel`, or `bg-silver-200`). Form fields are `.field` (white, a 2px ink outline). A page can drop in a full
+chapter (`.ch .ch-flame` and so on) for its one big thing, usually its close.
+
+- Services: the shared header, a real price table, each service line a band alternating paper and mist.
+- Work: one build per band with its real screen large (`.wk-row`). The six interactive demos have real
+  screenshots in `public/showcase/demo-*.jpg`. No drawn browser windows, numbers or badges.
+- Book: the form beside "What happens next" as a real ordered list.
+- Handouts: white sheets that still print one to a page.
+- The chat: a small square button. Its teaser shows on the first screen of wide screens only and tucks away on
+  scroll, so it never sits on a heading.
+
 ## What is still the old design
 
-Only the home page is rebuilt. Services, Work, About, Book and the rest picked up the new header, footer, typeface
-and button but still carry the old card layouts. Each needs its own pass against this page.
+Pages outside the shell or behind a link: the client onboarding form (`/onboard/:token`), the personal testimonial
+link (`/testimonial/:token`), the class workbook (`/class`), the email signature tool, the digital business card
+(`/andrew`), the six industry demos (they bring their own look on purpose) and the 3D experience. They share the
+typeface only. The onboarding and testimonial forms were left alone deliberately: they cannot be opened without a
+client's link, so a restyle there could not be checked.

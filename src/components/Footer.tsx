@@ -35,6 +35,10 @@ export function Footer() {
       <p className="mt-5 text-[length:var(--step-lead)] font-extrabold tracking-tight text-silver-100">Clarity. Integration. Automation.</p>
 
       <nav aria-label="Footer" className="mt-14 grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-12 text-base leading-relaxed">
+        <ul className="col-span-2 md:col-span-12 lg:col-span-4 min-w-0 space-y-2 break-words">
+          <li><a href={`mailto:${email}`} className={`${foot} text-[length:var(--step-lead)] font-extrabold tracking-tight`}>{email}</a></li>
+          <li><a href={`tel:${phoneTel}`} className={`${foot} text-[length:var(--step-lead)] font-extrabold tracking-tight`}>{phoneDisplay}</a></li>
+        </ul>
         <ul className="md:col-span-3 lg:col-span-2 space-y-2">
           <li><Link to="/work" className={foot}>Our work</Link></li>
           <li><Link to="/work?show=demo" className={foot}>Live demos</Link></li>
@@ -57,18 +61,13 @@ export function Footer() {
           <li><Link to="/refer" className={foot}>Refer a business</Link></li>
           <li><a href="https://crm.anfconsult.com/portal" className={foot}>Client login</a></li>
         </ul>
-        <ul className="col-span-2 md:col-span-12 lg:col-span-4 min-w-0 space-y-2 lg:text-right break-words">
-          <li><a href={`mailto:${email}`} className={`${foot} text-[length:var(--step-lead)] font-extrabold tracking-tight`}>{email}</a></li>
-          <li><a href={`tel:${phoneTel}`} className={`${foot} text-[length:var(--step-lead)] font-extrabold tracking-tight`}>{phoneDisplay}</a></li>
-        </ul>
       </nav>
 
-      <div className="mt-14 flex flex-col gap-4 md:flex-row md:items-center md:justify-between text-[13px] text-silver-300">
+      <div className="mt-14 flex flex-col gap-4 md:flex-row md:items-center md:justify-between text-base text-silver-100">
         <span>© {new Date().getFullYear()} ANF Consulting LLC. All rights reserved. Invoicing via Stripe.</span>
         <span className="flex items-center gap-5">
           <Link to="/privacy" className={foot}>Privacy Policy</Link>
           <Link to="/terms" className={foot}>Terms</Link>
-          <Link to="/book" className="inline-flex h-10 items-center bg-flame-500 px-4 font-semibold text-midnight-950 transition-colors hover:bg-flame-400">Send a request</Link>
         </span>
       </div>
     </footer>

@@ -13,8 +13,8 @@ const UPDATED = 'July 17, 2026'
 function Section({ id, title, children }: { id?: string; title: string; children: React.ReactNode }) {
   return (
     <section id={id} className="scroll-mt-24">
-      <h2 className="text-2xl font-display text-silver-100 mb-4">{title}</h2>
-      <div className="space-y-4 text-silver-300 leading-relaxed">{children}</div>
+      <h2 className="t-lead font-extrabold tracking-[-0.03em] mb-4">{title}</h2>
+      <div className="space-y-4 leading-relaxed">{children}</div>
     </section>
   )
 }
@@ -23,13 +23,12 @@ export function Privacy() {
   return (
     <>
       <PageHero
-        eyebrow="Legal"
         title="Privacy Policy"
         subtitle="How ANF Consulting collects, uses, and protects information. Plain language, no surprises."
       />
 
-      <div className="max-w-3xl mx-auto px-6 py-16 md:py-20 space-y-12">
-        <p className="text-sm text-silver-500">Last updated: {UPDATED}</p>
+      <div className="max-w-3xl px-[var(--edge)] py-16 md:py-20 space-y-12">
+        <p className="text-midnight-500">Last updated: {UPDATED}</p>
 
         <Section title="Who we are">
           <p>
@@ -44,21 +43,21 @@ export function Privacy() {
           <p>We collect only what we need to provide our services.</p>
           <ul className="list-disc pl-6 space-y-2">
             <li>
-              <span className="text-silver-100">Information you give us.</span> Your name, email, phone number,
+              <span>Information you give us.</span> Your name, email, phone number,
               business details, and anything you send through our forms, intake pages, proposals, or messages.
             </li>
             <li>
-              <span className="text-silver-100">Connected accounts.</span> When you choose to connect an account
+              <span>Connected accounts.</span> When you choose to connect an account
               such as Facebook, Instagram, Google Calendar, or YouTube, we store the access credentials that
               connection provides so we can perform the actions you ask for, such as publishing a post you
               approved or adding an event to your calendar. We request only the permissions those actions require.
             </li>
             <li>
-              <span className="text-silver-100">Payment information.</span> Payments and invoices are handled by
+              <span>Payment information.</span> Payments and invoices are handled by
               Stripe. We do not store your full card details on our servers.
             </li>
             <li>
-              <span className="text-silver-100">Usage information.</span> Basic technical data such as pages
+              <span>Usage information.</span> Basic technical data such as pages
               visited and general device information, used to keep the service working and secure.
             </li>
           </ul>
@@ -111,7 +110,7 @@ export function Privacy() {
               href="https://developers.google.com/terms/api-services-user-data-policy"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-flame-400 hover:text-flame-300 underline"
+              className="link underline"
             >
               Google API Services User Data Policy
             </a>

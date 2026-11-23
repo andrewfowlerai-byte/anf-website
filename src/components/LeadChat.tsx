@@ -56,6 +56,15 @@ export function LeadChat() {
     return () => clearTimeout(t)
   }, [open])
 
+  // The teaser is an opener for the first screen. Once the visitor scrolls on, it tucks away (the Ask ANF button
+  // stays), so it never sits on top of a heading further down the page.
+  useEffect(() => {
+    if (!teaser) return
+    const onScroll = () => { if (window.scrollY > window.innerHeight * 0.6) setTeaser(false) }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [teaser])
+
   // The teaser stands down while a section marked data-quiet-chat is on screen (the home page's request form):
   // a bubble asking what they want must not sit on top of the field where they are typing exactly that.
   const [quiet, setQuiet] = useState(false)
@@ -141,10 +150,11 @@ export function LeadChat() {
         <button
           onClick={openChat}
           aria-label="Chat with ANF"
-          className="fixed bottom-5 right-5 z-50 inline-flex h-12 items-center gap-2 bg-midnight-950 px-4 text-silver-100 transition-colors hover:bg-midnight-800 active:translate-y-px"
+          title="Ask ANF"
+          className="fixed bottom-5 right-5 z-50 inline-flex h-12 w-12 items-center justify-center bg-midnight-950 text-silver-100 transition-colors hover:bg-midnight-800 active:translate-y-px"
         >
           <MessageCircle className="h-5 w-5" />
-          <span className="hidden text-base font-semibold sm:inline">Ask ANF</span>
+          <span className="sr-only">Ask ANF</span>
         </button>
       )}
 

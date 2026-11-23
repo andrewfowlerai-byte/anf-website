@@ -34,9 +34,9 @@ const DRAFT_KEYS = [
 ] as const
 
 const fieldCls =
-  'w-full rounded-xl border border-midnight-700/60 bg-midnight-900/60 px-4 py-2.5 text-silver-100 placeholder-silver-700 focus:border-flame-500 focus:outline-none'
-const labelCls = 'block text-sm text-silver-300 mb-1.5'
-const helpCls = 'text-xs text-silver-500 mb-2'
+  'field'
+const labelCls = 'block   mb-1.5'
+const helpCls = 'text-[13px] text-midnight-500 mb-2'
 
 export function Reviews() {
   const [name, setName] = useLocalDraft('review.name', '')
@@ -98,7 +98,6 @@ export function Reviews() {
   if (status === 'done') {
     return (
       <PageHero
-        eyebrow="Review received"
         title={`Thank you, ${name.split(' ')[0] || 'so much'}.`}
         subtitle="Your words mean a lot and genuinely help other business owners know what to expect. We appreciate you taking the time."
       >
@@ -107,7 +106,7 @@ export function Reviews() {
             href={googleUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-flame-500 hover:bg-flame-400 text-midnight-950 font-semibold px-6 py-3 transition-colors"
+            className="inline-flex items-center justify-center gap-2 bg-flame-500 hover:bg-flame-400 text-midnight-950 font-semibold px-6 py-3 transition-colors"
           >
             If you have one more minute, leave it on Google too
           </a>
@@ -119,13 +118,12 @@ export function Reviews() {
   return (
     <>
       <PageHero
-        eyebrow="Reviews"
         title="What our clients say"
         subtitle="Real words from people we've worked with. Read a few, or leave your own below."
       >
         <a
           href="#leave"
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-flame-500 hover:bg-flame-400 text-midnight-950 font-semibold px-6 py-3 transition-colors"
+          className="inline-flex items-center justify-center gap-2 bg-flame-500 hover:bg-flame-400 text-midnight-950 font-semibold px-6 py-3 transition-colors"
         >
           Leave a review
         </a>
@@ -134,15 +132,14 @@ export function Reviews() {
       {/* Auto-wired 5-star reviews (consented public reviews, pulled from the CRM). */}
       <Testimonials fiveStarOnly limit={30} hideHeader />
 
-      <section id="leave" className="max-w-2xl mx-auto px-6 pb-20 scroll-mt-24">
-        <div className="text-center mb-7">
-          <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-2">Your turn</p>
-          <h2 className="text-3xl md:text-4xl font-display text-silver-100">Leave a review</h2>
-          <p className="mt-3 text-silver-400">A few quick prompts. Two minutes, tops, and a real help to us.</p>
+      <section id="leave" className="max-w-2xl px-[var(--edge)] pb-20 scroll-mt-24">
+        <div className="mb-7">
+          <h2 className="t-head font-extrabold tracking-[-0.03em]">Leave a review</h2>
+          <p className="mt-3">A few quick prompts. Two minutes, tops, and a real help to us.</p>
         </div>
         <form
           onSubmit={onSubmit}
-          className="space-y-5 rounded-2xl border border-white/[0.07] bg-gradient-to-b from-white/[0.05] to-white/[0.01] p-6 md:p-8"
+          className="space-y-5 bg-silver-200 p-6 md:p-8"
         >
           <input
             type="text"
@@ -157,7 +154,7 @@ export function Reviews() {
           <div className="grid sm:grid-cols-2 gap-5">
             <label className="block">
               <span className={labelCls}>
-                Your name<span className="text-flame-500"> *</span>
+                Your name<span className="text-flame-700"> *</span>
               </span>
               <input className={fieldCls} value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" />
             </label>
@@ -186,11 +183,11 @@ export function Reviews() {
             <label className="block">
               <span className={labelCls}>What did we help with?</span>
               <select className={`${fieldCls} appearance-none`} value={serviceSel} onChange={(e) => setServiceSel(e.target.value)}>
-                <option value="" className="bg-midnight-900">
+                <option value="" className="bg-silver-200">
                   Choose one
                 </option>
                 {SERVICE_OPTIONS.map((s) => (
-                  <option key={s} value={s} className="bg-midnight-900">
+                  <option key={s} value={s} className="bg-silver-200">
                     {s}
                   </option>
                 ))}
@@ -209,7 +206,7 @@ export function Reviews() {
 
           <div>
             <span id="rating-label" className={labelCls}>
-              How was it overall?<span className="text-flame-500"> *</span>
+              How was it overall?<span className="text-flame-700"> *</span>
             </span>
             <div role="radiogroup" aria-labelledby="rating-label" className="flex items-center gap-1.5 mt-1" onMouseLeave={() => setHover(0)}>
               {[1, 2, 3, 4, 5].map((n) => {
@@ -227,7 +224,7 @@ export function Reviews() {
                   >
                     <svg
                       viewBox="0 0 24 24"
-                      className={`w-9 h-9 transition-colors ${active ? 'text-flame-500' : 'text-silver-700'}`}
+                      className={`w-9 h-9 transition-colors ${active ? 'text-flame-700' : 'text-midnight-500'}`}
                       fill={active ? 'currentColor' : 'none'}
                       stroke="currentColor"
                       strokeWidth={active ? 0 : 1.5}
@@ -240,7 +237,6 @@ export function Reviews() {
             </div>
           </div>
 
-          <div className="h-px bg-white/[0.06]" />
 
           <label className="block">
             <span className={labelCls}>Where were you before working with us?</span>
@@ -270,17 +266,17 @@ export function Reviews() {
               onChange={(e) => setAllowPublic(e.target.checked)}
               className="mt-0.5 w-4 h-4 accent-flame-500"
             />
-            <span className="text-sm text-silver-400">
+            <span>
               You may share my review publicly as a testimonial (first name and business only).
             </span>
           </label>
 
-          {err && <p role="alert" className="text-sm text-flame-400">{err}</p>}
+          {err && <p role="alert" className="text-flame-700">{err}</p>}
 
           <button
             type="submit"
             disabled={status === 'sending'}
-            className="w-full rounded-xl bg-flame-500 hover:bg-flame-400 disabled:opacity-60 text-midnight-950 font-semibold px-6 py-3 transition-colors"
+            className="w-full bg-flame-500 hover:bg-flame-400 disabled:opacity-60 text-midnight-950 font-semibold px-6 py-3 transition-colors"
           >
             {status === 'sending' ? 'Sending...' : 'Send review'}
           </button>

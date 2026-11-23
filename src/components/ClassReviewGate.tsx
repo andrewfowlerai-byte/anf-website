@@ -115,13 +115,13 @@ export default function ClassReviewGate({
 
   return (
     <div className="grid min-h-screen place-items-center bg-slate-100 px-4 py-10">
-      <div className="w-full max-w-lg rounded-2xl bg-white p-8 shadow-xl">
-        <div className="mb-1 flex items-center gap-2 text-flame-600">
+      <div className="w-full max-w-lg bg-white p-8">
+        <div className="mb-1 flex items-center gap-2 text-flame-700">
           <Gift className="h-4 w-4" />
-          <span className="text-xs font-semibold uppercase tracking-[0.25em]">One quick step</span>
+          <span className="text-[13px] font-semibold">One quick step</span>
         </div>
-        <h1 className="text-2xl font-bold text-midnight-900">Leave a quick review to open your workbook</h1>
-        <p className="mt-2 text-[15px] leading-relaxed text-slate-600">
+        <h1 className="t-lead font-bold text-midnight-900">Leave a quick review to open your workbook</h1>
+        <p className="mt-2 text-[13px] leading-relaxed text-slate-600">
           Your honest feedback unlocks the free workbook and helps other agents decide to attend. The more specific you are, the more it helps. Takes about a minute.
         </p>
 
@@ -138,7 +138,7 @@ export default function ClassReviewGate({
           />
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-midnight-900">How was the class?</label>
+            <label className="mb-1.5 block font-medium text-midnight-900">How was the class?</label>
             <div className="flex gap-1">
               {[1, 2, 3, 4, 5].map((n) => (
                 <button
@@ -152,8 +152,8 @@ export default function ClassReviewGate({
                 >
                   <Star
                     className={`h-8 w-8 transition-colors ${
-                      (hover || rating) >= n ? 'fill-flame-500 text-flame-500' : 'text-slate-300'
-                    }`}
+ (hover || rating) >= n ? 'fill-flame-500 text-flame-700' : 'text-slate-300'
+ }`}
                   />
                 </button>
               ))}
@@ -187,7 +187,7 @@ export default function ClassReviewGate({
           />
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-midnight-900">
+            <label className="mb-1.5 block font-medium text-midnight-900">
               Would you recommend this class to others?
             </label>
             <div className="flex gap-2">
@@ -196,11 +196,11 @@ export default function ClassReviewGate({
                   key={opt}
                   type="button"
                   onClick={() => setRecommend(opt)}
-                  className={`flex-1 rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors ${
-                    recommend === opt
-                      ? 'border-flame-500 bg-flame-500/10 text-flame-700'
-                      : 'border-slate-300 bg-white text-slate-600 hover:border-slate-400'
-                  }`}
+                  className={`flex-1 px-4 py-2.5  font-medium transition-colors ${
+ recommend === opt
+ ? ' bg-midnight-100 text-flame-700'
+ : 'border-slate-300 bg-white text-slate-600 hover:border-slate-400'
+ }`}
                 >
                   {opt}
                 </button>
@@ -208,12 +208,12 @@ export default function ClassReviewGate({
             </div>
           </div>
 
-          <label className="flex items-start gap-2.5 text-sm text-slate-600">
+          <label className="flex items-start gap-2.5 text-slate-600">
             <input
               type="checkbox"
               checked={allowPublic}
               onChange={(e) => setAllowPublic(e.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-slate-300 text-flame-500 focus:ring-flame-500/40"
+              className="mt-0.5 h-4 w-4 border-slate-300 text-flame-700 focus:ring-flame-500/40"
             />
             <span>
               It's okay for ANF to share my review publicly (website and social media). You'll get the workbook either way.
@@ -229,15 +229,15 @@ export default function ClassReviewGate({
               placeholder="you@email.com"
               required={notify}
             />
-            <p className="mt-1 text-xs text-slate-400">So Andrew can say thank you. Never shared, never spammed.</p>
+            <p className="mt-1 text-[13px] text-slate-400">So Andrew can say thank you. Never shared, never spammed.</p>
           </div>
 
-          <label className="flex items-start gap-2.5 text-sm text-slate-600">
+          <label className="flex items-start gap-2.5 text-slate-600">
             <input
               type="checkbox"
               checked={notify}
               onChange={(e) => setNotify(e.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-slate-300 text-flame-500 focus:ring-flame-500/40"
+              className="mt-0.5 h-4 w-4 border-slate-300 text-flame-700 focus:ring-flame-500/40"
             />
             <span>Notify me when ANF Consulting hosts more events.</span>
           </label>
@@ -245,14 +245,14 @@ export default function ClassReviewGate({
           <button
             type="submit"
             disabled={submitting}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-flame-500 px-5 py-3 font-medium text-white transition-colors hover:bg-flame-600 disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 bg-flame-500 px-5 py-3 font-medium transition-colors hover:bg-flame-400 disabled:opacity-60"
           >
             {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
             Submit and open workbook
           </button>
-          {error && <p className="text-center text-sm text-red-600">{error}</p>}
+          {error && <p className="text-red-600">{error}</p>}
         </form>
-        <p className="mt-6 text-center text-xs text-slate-400">ANF Consulting · anfconsult.com</p>
+        <p className="mt-6 text-[13px] text-slate-400">ANF Consulting · anfconsult.com</p>
       </div>
     </div>
   )
@@ -275,14 +275,14 @@ function Field({
 }) {
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-medium text-midnight-900">{label}</label>
+      <label className="mb-1.5 block font-medium text-midnight-900">{label}</label>
       <input
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         required={required}
-        className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-midnight-900 placeholder-slate-300 focus:border-flame-500 focus:outline-none focus:ring-1 focus:ring-flame-500/40"
+        className='field'
       />
     </div>
   )
@@ -307,10 +307,10 @@ function TextArea({
 }) {
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-medium text-midnight-900">{label}</label>
+      <label className="mb-1.5 block font-medium text-midnight-900">{label}</label>
       {suggestions && suggestions.length > 0 && (
         <div className="mb-2">
-          <p className="mb-1.5 text-xs text-slate-400">Tap to add, then make it your own:</p>
+          <p className="mb-1.5 text-[13px] text-slate-400">Tap to add, then make it your own:</p>
           <div className="flex flex-wrap gap-1.5">
             {suggestions.map((s) => {
               const picked = value.includes(s)
@@ -319,11 +319,11 @@ function TextArea({
                   type="button"
                   key={s}
                   onClick={() => onChange(appendSuggestion(value, s))}
-                  className={`rounded-full border px-2.5 py-1 text-xs transition-colors ${
-                    picked
-                      ? 'border-flame-500 bg-flame-500/10 text-flame-700'
-                      : 'border-slate-300 bg-white text-slate-600 hover:border-flame-400 hover:text-flame-600'
-                  }`}
+                  className={`px-2.5 py-1 text-[13px] transition-colors ${
+ picked
+ ? ' bg-midnight-100 text-flame-700'
+ : 'border-slate-300 bg-white text-slate-600 hover:underline'
+ }`}
                 >
                   {picked ? '✓ ' : '+ '}
                   {s}
@@ -338,9 +338,9 @@ function TextArea({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         rows={rows}
-        className="w-full resize-y rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-[15px] leading-relaxed text-midnight-900 placeholder-slate-400 focus:border-flame-500 focus:outline-none focus:ring-1 focus:ring-flame-500/40"
+        className='field'
       />
-      {hint && <p className="mt-1 text-xs text-slate-400">{hint}</p>}
+      {hint && <p className="mt-1 text-[13px] text-slate-400">{hint}</p>}
     </div>
   )
 }

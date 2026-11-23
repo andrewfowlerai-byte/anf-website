@@ -60,15 +60,15 @@ export function ReferralLanding() {
   }, [done, name, navigate])
 
   return (
-    <div className="flex min-h-[60vh] items-center justify-center px-6 py-24">
-      <div className="text-center">
-        <p className="text-sm uppercase tracking-[0.2em] text-flame-500">
+    <div className="flex min-h-[60vh] items-center justify-center px-[var(--edge)] py-24">
+      <div>
+        <p className="text-flame-700">
           {name ? 'Welcome' : 'One moment'}
         </p>
-        <h1 className="mt-3 text-3xl font-semibold text-silver-100 sm:text-4xl">
+        <h1 className="mt-3 t-head font-semibold sm:t-head">
           {name ? `${name} sent you.` : 'Taking you in.'}
         </h1>
-        <p className="mx-auto mt-4 max-w-md text-silver-400">
+        <p className="mt-4 max-w-md">
           {name
             ? 'We will make sure they get the credit. Have a look around.'
             : 'Loading the site.'}
@@ -76,7 +76,7 @@ export function ReferralLanding() {
         <button
           type="button"
           onClick={() => navigate('/', { replace: true })}
-          className="mt-8 rounded-full border border-midnight-700/60 px-6 py-2.5 text-sm text-silver-100 transition hover:border-flame-500 hover:text-flame-500"
+          className="mt-8 px-6 py-2.5 transition hover:underline"
         >
           Continue
         </button>

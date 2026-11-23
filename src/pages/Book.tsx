@@ -32,30 +32,32 @@ export function Book() {
   return (
     <>
       <PageHero
-        eyebrow="Start Here"
         title="Let's talk."
         subtitle="Leave your name, your number and a line about what you need. Andrew reads every request and calls you back within one business day. No pitch, no pressure."
       />
 
-      <section className="max-w-3xl mx-auto px-6 pb-4">
-        <p className="text-center text-xs tracking-[0.3em] uppercase text-flame-500 mb-6">What happens next</p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {[
-            { n: '1', t: 'Request a call', b: 'Your name, your number and a few lines about what you need. Two minutes, tops.' },
-            { n: '2', t: 'Andrew calls you', b: 'Within one business day, at the time you pick. About 30 minutes: your goals, what you have now, and where you are stuck. A conversation, not a pitch.' },
-            { n: '3', t: 'You get a plan', b: 'A clear proposal with scope and price within two business days. If it fits, we start. If not, the plan is yours to keep.' },
-          ].map((s) => (
-            <div key={s.n} className="rounded-2xl border border-white/[0.07] bg-gradient-to-b from-white/[0.05] to-white/[0.01] p-5">
-              <div className="w-8 h-8 rounded-full bg-flame-500/15 border border-flame-400/40 text-flame-300 flex items-center justify-center font-semibold text-sm mb-3">{s.n}</div>
-              <p className="text-silver-100 font-medium mb-1">{s.t}</p>
-              <p className="text-silver-400 text-sm leading-relaxed">{s.b}</p>
-            </div>
-          ))}
+      {/* The form leads on a phone; on a wide screen what happens next sits beside it. */}
+      <section className="ch-grid px-[var(--edge)] py-[clamp(3.5rem,7vw,6rem)] gap-y-12">
+        <div id="request" className="col-span-12 lg:col-span-6 lg:col-start-7 lg:row-start-1 scroll-mt-24 min-w-0">
+          <RequestCallForm />
         </div>
-      </section>
 
-      <section id="request" className="max-w-2xl mx-auto px-6 pt-8 pb-24 scroll-mt-24">
-        <RequestCallForm />
+        <div className="col-span-12 lg:col-span-5 lg:col-start-1 lg:row-start-1 min-w-0">
+          <h2 className="t-head">What happens next</h2>
+          {/* A real ordered list: the order is the information. */}
+          <ol className="mt-8 grid gap-7 list-decimal pl-[1.4em] t-lead marker:font-extrabold">
+            {[
+              { t: 'Request a call', b: 'Your name, your number and a few lines about what you need. Two minutes, tops.' },
+              { t: 'Andrew calls you', b: 'Within one business day, at the time you pick. About 30 minutes: your goals, what you have now, and where you are stuck. A conversation, not a pitch.' },
+              { t: 'You get a plan', b: 'A clear proposal with scope and price within two business days. If it fits, we start. If not, the plan is yours to keep.' },
+            ].map((s) => (
+              <li key={s.t}>
+                <strong className="font-extrabold">{s.t}.</strong>
+                <span className="block mt-1 text-[length:var(--step-body)] leading-normal">{s.b}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
       </section>
     </>
   )
@@ -98,9 +100,9 @@ function RequestCallForm() {
 
   if (state === 'success' && sent) {
     return (
-      <div role="status" className="rounded-2xl border border-flame-500/40 p-8 bg-midnight-900/60 text-center">
-        <h2 className="text-2xl font-display text-silver-100 mb-2">Got it{sent.firstName ? `, ${sent.firstName}` : ''}.</h2>
-        <p className="text-silver-300">
+      <div role="status" className="panel">
+        <h2 className="t-head mb-4">Got it{sent.firstName ? `, ${sent.firstName}` : ''}.</h2>
+        <p>
           Andrew will call you{sent.phone ? ` at ${sent.phone}` : ''} within one business day
           {sent.bestTime ? `, ${sent.bestTime.toLowerCase()} if he can` : ''}. A confirmation is on its way to your email.
         </p>
@@ -111,9 +113,9 @@ function RequestCallForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-5 rounded-2xl border border-white/[0.07] p-6 md:p-8 bg-gradient-to-b from-white/[0.05] to-white/[0.01]"
+      className="panel grid gap-5"
     >
-      <h2 className="text-xl font-display text-silver-100">Request a call</h2>
+      <h2 className="t-head">Request a call</h2>
       <Field label="Your name" name="name" autoComplete="name" required value={draft.name} onChange={set('name')} />
       <Field label="Business name" name="business" autoComplete="organization" value={draft.business} onChange={set('business')} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -121,7 +123,7 @@ function RequestCallForm() {
         <Field label="Email" name="email" type="email" autoComplete="email" required value={draft.email} onChange={set('email')} />
       </div>
       <label className="block">
-        <span className="block text-sm text-silver-300 mb-2">Best time to call</span>
+        <span className="block mb-2 font-semibold">Best time to call</span>
         <select
           name="bestTime"
           value={draft.bestTime}
@@ -132,12 +134,12 @@ function RequestCallForm() {
             <option key={t.label} value={t.value}>{t.label}</option>
           ))}
         </select>
-        <span className="block text-xs text-silver-500 mt-1.5">Eastern time. Andrew is in Northeast Ohio.</span>
+        <span className="block text-[13px] text-midnight-500 mt-1.5">Eastern time. Andrew is in Northeast Ohio.</span>
       </label>
       <Field label="What would you like to talk about?" name="message" textarea value={draft.message} onChange={set('message')} />
 
       {state === 'error' && (
-        <p role="alert" className="text-sm text-flame-400">
+        <p role="alert" className="text-flame-700">
           Couldn&rsquo;t send your request: {errorMsg}. Try emailing{' '}
           <a href="mailto:admin@anfconsult.com" className="underline">admin@anfconsult.com</a> directly.
         </p>
@@ -146,23 +148,23 @@ function RequestCallForm() {
       <button
         type="submit"
         disabled={state === 'submitting'}
-        className="w-full bg-flame-500 hover:bg-flame-600 disabled:opacity-60 text-white font-medium px-6 py-3 rounded-md shadow-flame-glow transition-all"
+        className="btn w-full disabled:opacity-60"
       >
         {state === 'submitting' ? 'Sending…' : 'Request a call'}
       </button>
 
-      <p className="text-xs text-silver-500 text-center pt-2">
+      <p className="pt-2">
         Or reach out directly:{' '}
-        <a href="mailto:admin@anfconsult.com" className="text-silver-300 hover:text-flame-400">admin@anfconsult.com</a>
-        {' · '}
-        <a href="tel:+15732769756" className="text-silver-300 hover:text-flame-400">(573) 276-9756</a>
+        <a href="mailto:admin@anfconsult.com" className="hover:underline">admin@anfconsult.com</a>
+        {' or '}
+        <a href="tel:+15732769756" className="hover:underline">(573) 276-9756</a>
       </p>
     </form>
   )
 }
 
 const FIELD_CLASS =
-  'w-full bg-midnight-950/60 border border-midnight-700 focus:border-flame-500 focus:outline-none focus:ring-1 focus:ring-flame-500/40 rounded-md px-4 py-3 text-silver-100 placeholder-silver-500 transition-colors'
+  'field'
 
 interface FieldProps {
   label: string
@@ -178,9 +180,9 @@ interface FieldProps {
 function Field({ label, name, value, onChange, type = 'text', required = false, textarea = false, autoComplete }: FieldProps) {
   return (
     <label className="block">
-      <span className="block text-sm text-silver-300 mb-2">
+      <span className="block mb-2 font-semibold">
         {label}
-        {required && <span className="text-flame-500 ml-1">*</span>}
+        {required && <span className="text-flame-700 ml-1">*</span>}
       </span>
       {textarea ? (
         <textarea name={name} required={required} rows={4} value={value} onChange={(e) => onChange(e.target.value)} className={FIELD_CLASS} />

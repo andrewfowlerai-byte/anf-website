@@ -34,7 +34,8 @@ export function Layout() {
       </a>
       <ScrollToTop />
       <Header />
-      <main id="main" tabIndex={-1} className="flex-1 outline-none">
+      {/* Every page stands on paper with ink text (DESIGN.md), except the industry demos, which bring their own look. */}
+      <main id="main" tabIndex={-1} className={`flex-1 outline-none ${isDemoDetail ? '' : 'on-paper'}`}>
         {/* A render error in one page shows a recover fallback instead of white-
             screening the SPA (keyed by path so navigating away clears it).
             Suspense covers the lazily-loaded page chunks. */}

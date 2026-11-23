@@ -11,8 +11,8 @@ const UPDATED = 'July 18, 2026'
 function Section({ id, title, children }: { id?: string; title: string; children: React.ReactNode }) {
   return (
     <section id={id} className="scroll-mt-24">
-      <h2 className="text-2xl font-display text-silver-100 mb-4">{title}</h2>
-      <div className="space-y-4 text-silver-300 leading-relaxed">{children}</div>
+      <h2 className="t-lead font-extrabold tracking-[-0.03em] mb-4">{title}</h2>
+      <div className="space-y-4 leading-relaxed">{children}</div>
     </section>
   )
 }
@@ -21,13 +21,12 @@ export function Terms() {
   return (
     <>
       <PageHero
-        eyebrow="Legal"
         title="Terms of Service"
         subtitle="The basics of working with ANF Consulting and using our tools. Plain language, no fine-print games."
       />
 
-      <div className="max-w-3xl mx-auto px-6 py-16 md:py-20 space-y-12">
-        <p className="text-sm text-silver-500">Last updated: {UPDATED}</p>
+      <div className="max-w-3xl px-[var(--edge)] py-16 md:py-20 space-y-12">
+        <p className="text-midnight-500">Last updated: {UPDATED}</p>
 
         <Section title="Agreement">
           <p>
@@ -119,7 +118,7 @@ export function Terms() {
             You may stop using our services at any time, subject to any commitments in your service agreement. We may
             suspend or end access if these Terms or an agreement are violated, or where required by law or a connected
             platform. On termination, you can request an export of your data as described in our{' '}
-            <a href="/privacy" className="text-flame-400 hover:text-flame-300 underline">Privacy Policy</a>.
+            <a href="/privacy" className="link underline">Privacy Policy</a>.
           </p>
         </Section>
 
