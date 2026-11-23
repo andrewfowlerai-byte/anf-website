@@ -30,38 +30,33 @@ export function Answers() {
       />
 
       <PageHero
-        eyebrow="Answers"
-        title={
-          <>
-            Straight answers, <span className="text-flame-400">with the numbers</span>
-          </>
-        }
+        title="Straight answers, with the numbers"
         subtitle="The questions owners actually ask us, answered properly. Real prices, real trade-offs, and the parts most people selling this will not tell you."
       />
 
-      <section className="max-w-4xl mx-auto px-6 pb-20">
+      <section className="max-w-4xl px-[var(--edge)] pb-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {ANSWERS.map((a) => (
             <Link
               key={a.slug}
               to={`/answers/${a.slug}`}
-              className="group rounded-2xl border border-midnight-700/60 bg-midnight-900/40 p-6 hover:border-flame-500/50 transition-colors"
+              className="group slab"
             >
-              <p className="text-[11px] uppercase tracking-[0.18em] text-flame-400/80 mb-3">{a.audience}</p>
-              <h2 className="text-xl font-display text-silver-100 leading-snug group-hover:text-white transition-colors">
+              <p className="text-[13px] text-flame-700 mb-3">{a.audience}</p>
+              <h2 className="t-lead font-extrabold tracking-[-0.03em] leading-snug group-hover: transition-colors">
                 {a.question}
               </h2>
-              <p className="mt-3 text-sm text-silver-400 leading-relaxed">{a.answer}</p>
-              <span className="mt-4 inline-flex items-center gap-1.5 text-sm text-flame-400">
-                Read it <span aria-hidden>→</span>
+              <p className="mt-3 leading-relaxed">{a.answer}</p>
+              <span className="mt-4 inline-flex items-center gap-1.5 text-flame-700">
+                Read it
               </span>
             </Link>
           ))}
         </div>
 
-        <div className="mt-14 rounded-2xl border border-midnight-700/60 bg-midnight-900/40 p-8 text-center">
-          <h2 className="text-2xl font-display text-silver-100">Not the question you had?</h2>
-          <p className="mt-3 text-silver-400 max-w-xl mx-auto leading-relaxed">
+        <div className="mt-14 slab">
+          <h2 className="t-lead font-extrabold tracking-[-0.03em]">Not the question you had?</h2>
+          <p className="mt-3 max-w-xl leading-relaxed">
             Send it over. If it is worth answering properly it probably belongs on this page, and you will get
             an answer either way.
           </p>

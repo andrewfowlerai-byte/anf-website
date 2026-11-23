@@ -73,26 +73,25 @@ export function Events({ focusCode }: { focusCode?: string } = {}) {
   return (
     <>
       <PageHero
-        eyebrow="Events"
         title="Workshops, classes, and gatherings."
         subtitle="Open sessions, invite-only roundtables, and the occasional dinner. Public events are listed below. If you have a private code, unlock yours next."
       />
 
       {/* Public events */}
-      <section className="max-w-6xl mx-auto px-6 pb-16">
-        <h2 className="text-2xl md:text-3xl font-display text-silver-100 mb-8 text-center">
+      <section className="px-[var(--edge)] pb-16">
+        <h2 className="t-head font-extrabold tracking-[-0.03em] mb-8">
           Upcoming public events
         </h2>
 
         {loadingPublic ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-6 h-6 text-flame-400 animate-spin" />
+            <Loader2 className="w-6 h-6 text-flame-700 animate-spin" />
           </div>
         ) : publicEvents.length === 0 ? (
-          <div className="border border-dashed border-midnight-700/60 rounded-2xl px-8 py-12 text-center bg-gradient-to-b from-white/[0.05] to-white/[0.01]">
-            <Calendar className="w-6 h-6 text-flame-400/60 mx-auto mb-3" />
-            <p className="text-silver-300 font-display text-lg">No public events right now.</p>
-            <p className="text-silver-400 text-sm mt-2 max-w-md mx-auto leading-relaxed">
+          <div className="border-dashed px-8 py-12 bg-silver-200">
+            <Calendar className="w-6 h-6 text-flame-700 mb-3" />
+            <p className="font-extrabold tracking-[-0.03em] t-lead">No public events right now.</p>
+            <p className="mt-2 max-w-md leading-relaxed">
               Check back soon, or use the code from your invitation below to unlock a private event.
             </p>
           </div>
@@ -108,16 +107,15 @@ export function Events({ focusCode }: { focusCode?: string } = {}) {
       </section>
 
       {/* Private code unlock */}
-      <section className="max-w-2xl mx-auto px-6 pb-24">
-        <div className="rounded-2xl border border-flame-500/30 bg-gradient-to-b from-white/[0.05] to-white/[0.01] p-6 md:p-8">
+      <section className="max-w-2xl px-[var(--edge)] pb-24">
+        <div className="slab">
           <div className="flex items-center gap-2 mb-2">
-            <Lock className="w-4 h-4 text-flame-400" />
-            <p className="text-xs tracking-[0.3em] uppercase text-flame-500">Private invitation</p>
+            <Lock className="w-4 h-4 text-flame-700" />
           </div>
-          <h2 className="text-2xl md:text-3xl font-display text-silver-100 mb-3">
+          <h2 className="t-head font-extrabold tracking-[-0.03em] mb-3">
             Have a private event code?
           </h2>
-          <p className="text-silver-400 text-sm md:text-base leading-relaxed mb-5">
+          <p className="leading-relaxed mb-5">
             Type the code from your invitation to unlock event details and grab your seat.
           </p>
           <form onSubmit={handleUnlock} className="flex flex-col sm:flex-row gap-2">
@@ -128,23 +126,22 @@ export function Events({ focusCode }: { focusCode?: string } = {}) {
               placeholder="ENTER CODE"
               maxLength={32}
               autoComplete="off"
-              className="flex-1 bg-midnight-950/60 border border-midnight-700 focus:border-flame-500 focus:outline-none focus:ring-1 focus:ring-flame-500/40 rounded-md px-4 py-3 text-silver-100 placeholder-silver-500 font-mono uppercase tracking-wider transition-colors"
+              className="field flex-1"
             />
             <button
               type="submit"
               disabled={unlocking || !code.trim()}
-              className="bg-flame-500 hover:bg-flame-600 disabled:opacity-60 text-white font-medium px-6 py-3 rounded-md shadow-flame-glow transition-all inline-flex items-center justify-center gap-1.5"
+              className="bg-flame-500 hover:bg-flame-400 disabled:opacity-60 font-medium px-6 py-3 transition-all inline-flex items-center justify-center gap-1.5"
             >
               {unlocking ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
               Unlock event
             </button>
           </form>
-          {codeError && <p className="text-sm text-flame-400 mt-3">{codeError}</p>}
+          {codeError && <p className="text-flame-700 mt-3">{codeError}</p>}
         </div>
 
         {unlockedEvent && (
           <div className="mt-8">
-            <p className="text-xs tracking-[0.3em] uppercase text-flame-500 mb-3 text-center">Your private event</p>
             <EventCard event={unlockedEvent} highlight code={code} />
           </div>
         )}
@@ -219,11 +216,11 @@ function EventCard({ event, highlight = false, code, autoOpen = false }: { event
   return (
     <article
       ref={cardRef}
-      className={`relative overflow-hidden rounded-2xl border bg-gradient-to-b from-white/[0.05] to-white/[0.01] transition-colors ${
-        highlight
-          ? 'border-flame-500/60 shadow-[0_0_40px_-10px_rgba(242,107,29,0.45)]'
-          : 'border-white/[0.08] hover:border-flame-500/40'
-      }`}
+      className={`relative overflow-hidden bg-silver-200 transition-colors ${
+ highlight
+ ? ' shadow-[0_0_40px_-10px_rgba(242,107,29,0.45)]'
+ : ' '
+ }`}
     >
       <JsonLd
         data={{
@@ -247,7 +244,7 @@ function EventCard({ event, highlight = false, code, autoOpen = false }: { event
         }}
       />
       {event.cover_image_url && (
-        <div className="aspect-[16/9] w-full overflow-hidden bg-midnight-950">
+        <div className="aspect-[16/9] w-full overflow-hidden bg-silver-200">
           <img
             src={event.cover_image_url}
             alt={event.title || 'Event'}
@@ -258,31 +255,31 @@ function EventCard({ event, highlight = false, code, autoOpen = false }: { event
       )}
       <div className="p-6 md:p-7">
         {event.visibility === 'private' && (
-          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-violet-400/40 bg-violet-500/10 text-violet-300 text-[10px] uppercase tracking-widest font-semibold mb-3">
+          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 border-violet-400/40 bg-violet-500/10 text-violet-300 text-[13px] font-semibold mb-3">
             <Lock className="w-2.5 h-2.5" />
             Private invitation
           </div>
         )}
 
-        <h3 className="font-display text-2xl md:text-3xl text-silver-100 leading-tight mb-3">
+        <h3 className="font-extrabold tracking-[-0.03em] t-head leading-tight mb-3">
           {event.title}
         </h3>
 
         <div className="space-y-1 mb-4">
-          <p className="flex items-center gap-2 text-sm text-silver-300">
-            <Calendar className="w-3.5 h-3.5 text-flame-400" />
-            {dateLine} <span className="text-silver-500">·</span> {timeLine}
+          <p className="flex items-center gap-2">
+            <Calendar className="w-3.5 h-3.5 text-flame-700" />
+            {dateLine} <span className="text-midnight-500">·</span> {timeLine}
           </p>
           {event.location && (
-            <p className="flex items-center gap-2 text-sm text-silver-300">
-              <MapPin className="w-3.5 h-3.5 text-flame-400" />
+            <p className="flex items-center gap-2">
+              <MapPin className="w-3.5 h-3.5 text-flame-700" />
               {event.location}
             </p>
           )}
         </div>
 
         {event.description && (
-          <p className="text-silver-300 text-sm leading-relaxed mb-5 whitespace-pre-line">
+          <p className="leading-relaxed mb-5 whitespace-pre-line">
             {event.description}
           </p>
         )}
@@ -290,33 +287,33 @@ function EventCard({ event, highlight = false, code, autoOpen = false }: { event
         {/* Show location details only on unlocked private events
             so the public listing doesn't leak street addresses */}
         {highlight && event.location_details && (
-          <div className="mb-5 p-3 bg-midnight-950/60 border border-midnight-700/60 rounded-lg text-xs text-silver-300 leading-relaxed">
-            <p className="font-mono text-[10px] uppercase tracking-widest text-flame-400 mb-1">
+          <div className="mb-5 p-3 bg-silver-200 text-[13px] leading-relaxed">
+            <p className="text-[13px] text-flame-700 mb-1">
               Details
             </p>
             <p className="whitespace-pre-line">{event.location_details}</p>
           </div>
         )}
 
-        <div className="flex items-center justify-between gap-3 flex-wrap pt-2 border-t border-midnight-700/40">
+        <div className="flex items-center justify-between gap-3 flex-wrap pt-2">
           <div>
             {isFree ? (
-              <span className="text-emerald-400 font-medium text-sm">Free</span>
+              <span className="text-emerald-400 font-medium">Free</span>
             ) : (
-              <span className="text-silver-100 text-lg font-display">
+              <span className="t-lead font-extrabold tracking-[-0.03em]">
                 ${(event.price_cents / 100).toLocaleString()}
-                <span className="text-silver-400 text-xs ml-1">per seat</span>
+                <span className="text-[13px] ml-1">per seat</span>
               </span>
             )}
             {event.capacity != null && (
-              <span className="text-silver-500 text-xs ml-2">· {event.capacity} seats</span>
+              <span className="text-midnight-500 text-[13px] ml-2">· {event.capacity} seats</span>
             )}
           </div>
           {nativeRsvp ? (
             <button
               type="button"
               onClick={() => { setRsvpOpen((o) => !o); setRsvpError(null) }}
-              className="inline-flex items-center gap-1.5 bg-flame-500 hover:bg-flame-600 text-white text-sm font-medium px-5 py-2.5 rounded-md transition-colors"
+              className="inline-flex items-center gap-1.5 bg-flame-500 hover:bg-flame-400 font-medium px-5 py-2.5 transition-colors"
             >
               <Ticket className="w-4 h-4" />
               {rsvpDone ? "You're in" : 'RSVP'}
@@ -326,7 +323,7 @@ function EventCard({ event, highlight = false, code, autoOpen = false }: { event
               href={ctaUrl}
               target={ctaUrl.startsWith('http') ? '_blank' : undefined}
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 bg-flame-500 hover:bg-flame-600 text-white text-sm font-medium px-5 py-2.5 rounded-md transition-colors"
+              className="inline-flex items-center gap-1.5 bg-flame-500 hover:bg-flame-400 font-medium px-5 py-2.5 transition-colors"
             >
               <Ticket className="w-4 h-4" />
               {ctaLabel}
@@ -335,14 +332,14 @@ function EventCard({ event, highlight = false, code, autoOpen = false }: { event
         </div>
 
         {nativeRsvp && rsvpDone && (
-          <div className="mt-4 flex items-center gap-2 rounded-md border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">
+          <div className="mt-4 flex items-center gap-2 border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-emerald-300">
             <Check className="h-4 w-4 flex-shrink-0" />
             You're on the list. We'll be in touch with the details.
           </div>
         )}
 
         {nativeRsvp && rsvpOpen && !rsvpDone && (
-          <form onSubmit={submitRsvp} className="mt-4 space-y-2 rounded-md border border-midnight-700/60 bg-midnight-950/40 p-4">
+          <form onSubmit={submitRsvp} className="mt-4 space-y-2 slab">
             <input
               type="text"
               tabIndex={-1}
@@ -357,31 +354,31 @@ function EventCard({ event, highlight = false, code, autoOpen = false }: { event
               value={rsvpName}
               onChange={(e) => setRsvpName(e.target.value)}
               placeholder="Your name"
-              className="w-full rounded-md border border-midnight-700 bg-midnight-950/60 px-3 py-2 text-sm text-silver-100 placeholder-silver-500 focus:border-flame-500 focus:outline-none"
+              className='field'
             />
             <input
               type="email"
               value={rsvpEmail}
               onChange={(e) => setRsvpEmail(e.target.value)}
               placeholder="Email (so we can send you details)"
-              className="w-full rounded-md border border-midnight-700 bg-midnight-950/60 px-3 py-2 text-sm text-silver-100 placeholder-silver-500 focus:border-flame-500 focus:outline-none"
+              className='field'
             />
             <button
               type="submit"
               disabled={rsvpBusy}
-              className="inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-flame-500 hover:bg-flame-600 disabled:opacity-60 px-4 py-2 text-sm font-medium text-white transition-colors"
+              className="inline-flex w-full items-center justify-center gap-1.5 bg-flame-500 hover:bg-flame-400 disabled:opacity-60 px-4 py-2 font-medium transition-colors"
             >
               {rsvpBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
               Confirm RSVP
             </button>
-            {rsvpError && <p className="text-xs text-flame-300">{rsvpError}</p>}
+            {rsvpError && <p className="text-[13px] text-flame-700">{rsvpError}</p>}
           </form>
         )}
 
         {event.has_class_workbook && (
           <Link
             to="/class"
-            className="mt-4 flex items-center justify-center gap-2 rounded-md border border-flame-500/40 bg-flame-500/10 px-5 py-2.5 text-sm font-medium text-flame-300 transition-colors hover:bg-flame-500/20"
+            className="mt-4 flex items-center justify-center gap-2 bg-midnight-100 px-5 py-2.5 font-medium text-flame-700 transition-colors hover:bg-midnight-100"
           >
             <BookOpen className="h-4 w-4" />
             Access class workbook

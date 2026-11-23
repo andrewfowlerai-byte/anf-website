@@ -22,16 +22,16 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="block text-sm text-silver-300 mb-1.5">
+      <span className="block mb-1.5">
         {label}
-        {required && <span className="text-flame-500"> *</span>}
+        {required && <span className="text-flame-700"> *</span>}
       </span>
       <input
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-xl border border-midnight-700/60 bg-midnight-900/60 px-4 py-2.5 text-silver-100 placeholder-silver-600 focus:border-flame-500 focus:outline-none"
+        className='field'
       />
     </label>
   )
@@ -42,11 +42,11 @@ function ScoreBar({ label, score }: { label: string; score: number }) {
   return (
     <div>
       <div className="flex items-baseline justify-between mb-1.5">
-        <span className="text-sm text-silver-300">{label}</span>
-        <span className="text-sm font-semibold text-silver-100">{score}/100</span>
+        <span>{label}</span>
+        <span className="font-semibold">{score}/100</span>
       </div>
-      <div className="h-2 rounded-full bg-midnight-800 overflow-hidden">
-        <div className={`h-full rounded-full ${tone}`} style={{ width: `${Math.max(score, 3)}%` }} />
+      <div className="h-2 bg-silver-200 overflow-hidden">
+        <div className={`h-full ${tone}`} style={{ width: `${Math.max(score, 3)}%` }} />
       </div>
     </div>
   )
@@ -54,9 +54,9 @@ function ScoreBar({ label, score }: { label: string; score: number }) {
 
 function CheckRow({ ok, okText, badText }: { ok: boolean; okText: string; badText: string }) {
   return (
-    <li className="flex items-center gap-2 text-sm">
-      <span className={ok ? 'text-emerald-400' : 'text-flame-400'}>{ok ? '✓' : '✗'}</span>
-      <span className="text-silver-300">{ok ? okText : badText}</span>
+    <li className="flex items-center gap-2">
+      <span className={`font-extrabold ${ok ? 'text-emerald-700' : 'text-flame-700'}`}>{ok ? 'Good' : 'Fix'}</span>
+      <span>{ok ? okText : badText}</span>
     </li>
   )
 }
@@ -121,44 +121,43 @@ export function Audit() {
     return (
       <>
         <PageHero
-          eyebrow="Your audit"
           title={<>Here is what we found on {results.domain}</>}
           subtitle="The full copy is in your inbox. Reply to that email with any question and Andrew will answer it plainly, no pitch attached."
         />
-        <section className="max-w-2xl mx-auto px-6 pb-20 space-y-6">
-          <div className="rounded-2xl border border-white/[0.07] bg-gradient-to-b from-white/[0.05] to-white/[0.01] p-6 md:p-8 space-y-6">
+        <section className="max-w-2xl px-[var(--edge)] pb-20 space-y-6">
+          <div className="slab space-y-6">
             <div className="grid sm:grid-cols-2 gap-5">
               <ScoreBar label="Website need" score={results.webNeedScore} />
               <ScoreBar label="Lead system need" score={results.systemNeedScore} />
             </div>
-            <ul className="space-y-2 border-t border-white/[0.07] pt-5">
+            <ul className="space-y-2 pt-5">
               <CheckRow ok={results.reachable} okText="Site loads" badText="Site did not load when we checked" />
               <CheckRow ok={results.https} okText="Served over HTTPS" badText="Not served over HTTPS (browsers flag this)" />
               <CheckRow ok={results.mobileFriendly} okText="Set up for mobile" badText="Missing mobile setup" />
               {results.platform !== 'None' && results.platform !== 'Unreachable' && (
-                <li className="flex items-center gap-2 text-sm">
-                  <span className="text-silver-500">·</span>
-                  <span className="text-silver-300">Platform: {results.platform}</span>
+                <li className="flex items-center gap-2">
+                  <span className="text-midnight-500">·</span>
+                  <span>Platform: {results.platform}</span>
                 </li>
               )}
             </ul>
-            <div className="border-t border-white/[0.07] pt-5 space-y-3">
+            <div className="pt-5 space-y-3">
               {results.findings.map((f, i) => (
-                <p key={i} className="text-sm text-silver-300 leading-relaxed">
+                <p key={i} className="leading-relaxed">
                   {f}
                 </p>
               ))}
               {results.summary && (
-                <p className="text-sm text-silver-100 leading-relaxed border-l-2 border-flame-500 pl-4">
+                <p className="leading-relaxed pl-4">
                   {results.summary}
                 </p>
               )}
             </div>
           </div>
-          <div className="text-center">
+          <div>
             <Link
               to="/book"
-              className="inline-flex items-center gap-2 rounded-full bg-flame-500 hover:bg-flame-600 text-white font-semibold px-7 py-3.5 transition-colors shadow-flame-glow"
+              className="inline-flex items-center gap-2 bg-flame-500 hover:bg-flame-400 font-semibold px-7 py-3.5 transition-colors"
             >
               Talk it through with Andrew
             </Link>
@@ -171,13 +170,12 @@ export function Audit() {
   if (status === 'done') {
     return (
       <PageHero
-        eyebrow="Request received"
         title="Your audit is on the way"
         subtitle="We will review your website and lead flow and send a short, specific audit within two business days. Want to talk it through sooner? Send a request below."
       >
         <Link
           to="/book"
-          className="inline-flex items-center gap-2 rounded-full bg-flame-500 hover:bg-flame-600 text-white font-semibold px-7 py-3.5 transition-colors shadow-flame-glow"
+          className="inline-flex items-center gap-2 bg-flame-500 hover:bg-flame-400 font-semibold px-7 py-3.5 transition-colors"
         >
           Send a request
         </Link>
@@ -188,12 +186,11 @@ export function Audit() {
   return (
     <>
       <PageHero
-        eyebrow="Free, no obligation"
-        title={<>Free Website &amp; CRM Audit</>}
-        subtitle="Enter your website and get an instant, specific read: where your site and lead flow are costing you, and the highest-leverage fixes. Results on screen and in your inbox. No pitch attached."
+        title="Free Website & CRM Audit"
+        subtitle="Free, with no obligation. Enter your website and get an instant, specific read: where your site and lead flow are costing you, and the highest-leverage fixes. Results on screen and in your inbox. No pitch attached."
       />
-      <section className="max-w-2xl mx-auto px-6 pb-20">
-      <form onSubmit={onSubmit} className="space-y-5 rounded-2xl border border-white/[0.07] bg-gradient-to-b from-white/[0.05] to-white/[0.01] p-6 md:p-8">
+      <section className="max-w-2xl px-[var(--edge)] pb-20">
+      <form onSubmit={onSubmit} className="space-y-5 slab">
         <input
           type="text"
           value={hp}
@@ -208,24 +205,24 @@ export function Audit() {
         <Field label="Email" value={email} onChange={setEmail} type="email" required />
         <Field label="Website (if you have one)" value={website} onChange={setWebsite} placeholder="yourbusiness.com" />
         <label className="block">
-          <span className="block text-sm text-silver-300 mb-1.5">What are you hoping to improve?</span>
+          <span className="block mb-1.5">What are you hoping to improve?</span>
           <textarea
             value={goal}
             onChange={(e) => setGoal(e.target.value)}
             rows={3}
             placeholder="More leads, a better site, a CRM to stay organized..."
-            className="w-full rounded-xl border border-midnight-700/60 bg-midnight-900/60 px-4 py-2.5 text-silver-100 placeholder-silver-600 focus:border-flame-500 focus:outline-none"
+            className='field'
           />
         </label>
-        {err && <p role="alert" className="text-sm text-flame-400">{err}</p>}
+        {err && <p role="alert" className="text-flame-700">{err}</p>}
         <button
           type="submit"
           disabled={status === 'sending'}
-          className="w-full rounded-xl bg-flame-500 hover:bg-flame-400 disabled:opacity-60 text-midnight-950 font-semibold px-6 py-3 transition-colors"
+          className="w-full bg-flame-500 hover:bg-flame-400 disabled:opacity-60 text-midnight-950 font-semibold px-6 py-3 transition-colors"
         >
           {status === 'sending' ? 'Running your audit...' : 'Run my free audit'}
         </button>
-        <p className="text-center text-xs text-silver-600">
+        <p className="text-midnight-500">
           We will only use this to send your audit and follow up. No spam.
         </p>
       </form>

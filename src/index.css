@@ -6,10 +6,27 @@
   html {
     scroll-behavior: smooth;
   }
+  /* The 2026-11-23 redesign ("Colour chapters", see DESIGN.md): flat fields in the brand's own colours, one
+     typeface, five type steps. No gradients, glows or hairlines anywhere new. */
+  :root {
+    --paper: #F5F7FA;
+    --flame: #F26B1D;
+    --ink: #060F1F;
+    --midnight: #0B1A33;
+    --mist: #C5CDDC;
+    --night: #0A0F0D;
+    --step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+    --step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+    --step-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
+    --step-statement: clamp(1.375rem, 2.4vw, 2.25rem);
+    --step-head: clamp(2rem, 1.3rem + 3.2vw, 4rem);
+    --step-display: clamp(3rem, 9vw, 8.75rem);
+    --edge: clamp(1rem, 2.2vw, 2rem);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  }
   body {
     @apply bg-midnight-950 text-silver-300 font-sans antialiased;
-    background-image: radial-gradient(ellipse at 50% -10%, #1A2B4A 0%, #0B1A33 45%, #060F1F 100%);
-    background-attachment: fixed;
+    letter-spacing: -0.01em;
   }
   h1, h2, h3, h4 {
     @apply font-display text-silver-100;
@@ -17,9 +34,16 @@
   a {
     @apply transition-colors;
   }
+  /* The parts a browser draws by itself carry the palette too. */
   ::selection {
-    background: rgba(242, 107, 29, 0.4);
-    color: #F5F7FA;
+    background: #F26B1D;
+    color: #060F1F;
+  }
+  html {
+    scrollbar-color: #F26B1D #060F1F;
+  }
+  input, textarea {
+    caret-color: #F26B1D;
   }
   /* Visible keyboard focus ring. Many controls use focus:outline-none for mouse
      users; this restores a clear indicator for keyboard navigation. */

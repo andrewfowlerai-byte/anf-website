@@ -1,3 +1,4 @@
+import { PageHero } from '../components/PageHero'
 /**
  * Public class handouts. Agents visit anfconsult.com/handouts to read, print, or
  * save the Class 1 quick-start sheets. Deliberately light and paper-like rather
@@ -67,121 +68,90 @@ export function Handouts() {
   return (
     <>
       <style>{CSS}</style>
-      <div className="ho-page">
-        <div className="ho-intro">
-          <p className="ho-eyebrow">ANF Consulting</p>
-          <h1 className="ho-h1">Class handouts</h1>
-          <p className="ho-lede">
-            Your quick-start sheets from AI You Can Actually Use, Class 1. Read them here, or print a copy to keep.
-            For the full workbook, go to anfconsult.com/class and enter your class code.
-          </p>
-          <button type="button" className="ho-print" onClick={() => window.print()}>Print or save as PDF</button>
-        </div>
+      <PageHero
+        title="Class handouts"
+        subtitle="Your quick-start sheets from AI You Can Actually Use, Class 1. Read them here, or print a copy to keep. For the full workbook, go to anfconsult.com/class and enter your class code."
+      >
+        <button type="button" className="btn btn-ink" onClick={() => window.print()}>Print or save as PDF</button>
+      </PageHero>
 
+      <div className="ho-page">
         {HANDOUTS.map((h) => (
-          <div key={h.key} className={`ho-sheet ho-${h.key}`}>
-            <p className="ho-kicker">AI You Can Actually Use · Class 1</p>
+          <article key={h.key} className={`ho-sheet ho-${h.key}`}>
             <div className="ho-titlerow">
-              <div className="ho-mark">{h.mark}</div>
+              <div className="ho-mark" aria-hidden="true">{h.mark}</div>
               <h2 className="ho-title">{h.title}</h2>
             </div>
-            <p className="ho-sub">Quick start</p>
+            <p className="ho-sub">Quick start. AI You Can Actually Use, Class 1.</p>
 
-            <div className="ho-facts">
+            <dl className="ho-facts">
               <div className="ho-fact">
-                <div className="ho-k">What it is</div>
-                <div className="ho-v">{h.whatItIs}</div>
+                <dt>What it is</dt>
+                <dd>{h.whatItIs}</dd>
               </div>
               <div className="ho-fact">
-                <div className="ho-k">Get in</div>
-                <div className="ho-v">{h.getIn}</div>
+                <dt>Get in</dt>
+                <dd>{h.getIn}</dd>
               </div>
-            </div>
-
-            <hr className="ho-rule" />
+            </dl>
 
             <h3 className="ho-h3">The moves that matter</h3>
             <ol className="ho-moves">
               {h.moves.map((m) => (
-                <li key={m.lead}>
-                  <span><b>{m.lead}</b> {m.rest}</span>
-                </li>
+                <li key={m.lead}><b>{m.lead}</b> {m.rest}</li>
               ))}
             </ol>
 
             <div className="ho-try">
-              <p className="ho-k2">Try this at home</p>
+              <h3 className="ho-h4">Try this at home</h3>
               <p>{h.tryThis}</p>
             </div>
 
             <div className="ho-rules">
-              <p className="ho-k3">{h.rulesLabel}</p>
+              <h3 className="ho-h4">{h.rulesLabel}</h3>
               <ul>
                 {h.rules.map((r) => <li key={r}>{r}</li>)}
               </ul>
             </div>
 
-            <div className="ho-foot">
-              <span className="ho-brand">ANF Consulting</span>
-              <span className="ho-tag">Clarity. Integration. Automation.</span>
-            </div>
-          </div>
+            <p className="ho-foot">ANF Consulting. Clarity. Integration. Automation.</p>
+          </article>
         ))}
       </div>
     </>
   )
 }
 
+// The sheets print one to a page. On screen they are plain white sheets on the paper; on paper, just the sheet.
+// Redesigned 2026-11-23: the site's one typeface, no small capital labels, no rules or shadows.
 const CSS = `
-.ho-page{--paper:#F2F4F7;--card:#FFF;--ink:#151D30;--body:#3D4658;--muted:#6B7488;
-  --hair:#E2E6EC;--flame:#C4470F;--flame-soft:#FCEDE4;--gem:#2A5FBF;--canva:#0B7F74;
-  --serif:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
-  --mono:ui-monospace,'SF Mono',Consolas,monospace;
-  background:var(--paper);color:var(--body);min-height:100vh;padding:34px 16px 60px;
-  font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
-  font-size:15px;line-height:1.55;}
-.ho-intro{max-width:7.6in;margin:0 auto 26px;}
-.ho-eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;}
-.ho-h1{font-family:var(--serif);font-size:34px;font-weight:600;color:var(--ink);margin:0;letter-spacing:-.015em;}
-.ho-lede{color:var(--muted);margin:10px 0 16px;max-width:60ch;}
-.ho-print{background:var(--flame);color:#fff;border:0;border-radius:9px;padding:10px 18px;
-  font-size:14px;font-weight:600;cursor:pointer;}
-.ho-print:hover{filter:brightness(1.08);}
-.ho-sheet{max-width:7.6in;margin:0 auto 26px;background:var(--card);padding:40px 46px 34px;
-  box-shadow:0 4px 22px rgba(15,25,45,.09);}
-.ho-gem{--accent:var(--gem);}
-.ho-canva{--accent:var(--canva);}
-.ho-kicker{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin:0 0 14px;}
-.ho-titlerow{display:flex;align-items:center;gap:14px;}
-.ho-mark{width:34px;height:34px;border-radius:9px;flex:none;display:flex;align-items:center;justify-content:center;
-  font-family:var(--serif);font-size:19px;font-weight:700;color:#fff;background:var(--accent);}
-.ho-title{font-family:var(--serif);font-size:36px;font-weight:600;letter-spacing:-.015em;margin:0;color:var(--ink);line-height:1.08;}
-.ho-sub{font-size:14px;color:var(--muted);margin:7px 0 0;}
-.ho-facts{margin:24px 0 0;display:grid;gap:13px;}
-.ho-fact{display:grid;grid-template-columns:74px 1fr;gap:14px;align-items:baseline;}
-.ho-k{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding-top:2px;}
-.ho-v{color:var(--body);}
-.ho-rule{height:1px;background:var(--hair);margin:24px 0 20px;border:0;}
-.ho-h3{font-family:var(--serif);font-size:20px;font-weight:600;color:var(--ink);margin:0 0 14px;letter-spacing:-.01em;}
-.ho-moves{list-style:none;margin:0;padding:0;counter-reset:m;}
-.ho-moves li{counter-increment:m;display:grid;grid-template-columns:30px 1fr;gap:14px;padding:8px 0;align-items:baseline;}
-.ho-moves li::before{content:counter(m);font-family:var(--serif);font-size:19px;font-weight:700;line-height:1;color:var(--accent);text-align:right;}
-.ho-moves b{color:var(--ink);font-weight:700;}
-.ho-try{margin:22px 0 0;padding:17px 21px;border-radius:12px;background:var(--flame-soft);}
-.ho-k2{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--flame);margin:0 0 5px;font-weight:700;}
-.ho-try p:last-child{margin:0;color:var(--ink);}
-.ho-rules{margin:17px 0 0;padding:15px 21px;border:1px solid var(--hair);border-radius:12px;}
-.ho-k3{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 6px;font-weight:700;}
-.ho-rules ul{margin:0;padding-left:17px;}
-.ho-rules li{margin:4px 0;}
-.ho-foot{margin:28px 0 0;padding-top:14px;border-top:1px solid var(--hair);display:flex;
-  justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap;}
-.ho-brand{font-family:var(--serif);font-size:14px;color:var(--ink);}
-.ho-tag{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+.ho-page{padding:clamp(2rem,5vw,4rem) var(--edge) clamp(3rem,7vw,6rem);display:grid;gap:clamp(1.5rem,3vw,2.5rem);}
+.ho-sheet{max-width:7.6in;background:#fff;color:var(--ink);padding:clamp(1.5rem,4vw,2.75rem);}
+.ho-gem{--accent:#2A5FBF;}
+.ho-canva{--accent:#0B7F74;}
+.ho-titlerow{display:flex;align-items:center;gap:0.9rem;}
+.ho-mark{width:2.6rem;height:2.6rem;flex:none;display:grid;place-items:center;font-size:1.4rem;font-weight:800;color:#fff;background:var(--accent);}
+.ho-title{font-size:var(--step-head);font-weight:800;letter-spacing:-0.04em;line-height:0.98;margin:0;}
+.ho-sub{margin:0.6rem 0 0;color:#3A4A6B;}
+.ho-facts{margin:1.6rem 0 0;display:grid;gap:0.8rem;}
+.ho-fact{display:grid;grid-template-columns:6.5rem 1fr;gap:1rem;align-items:baseline;}
+.ho-fact dt{font-weight:800;}
+.ho-fact dd{margin:0;}
+.ho-h3{font-size:var(--step-lead);font-weight:800;letter-spacing:-0.03em;margin:2rem 0 0.9rem;}
+.ho-h4{font-size:1rem;font-weight:800;margin:0 0 0.35rem;}
+.ho-moves{margin:0;padding-left:1.5em;display:grid;gap:0.6rem;}
+.ho-moves li::marker{font-weight:800;color:var(--accent);}
+.ho-try{margin:1.6rem 0 0;padding:1.1rem 1.3rem;background:var(--mist);}
+.ho-try p{margin:0;}
+.ho-rules{margin:0.75rem 0 0;padding:1.1rem 1.3rem;background:#E6EAF0;}
+.ho-rules ul{margin:0;padding-left:1.2em;}
+.ho-rules li{margin:0.25rem 0;}
+.ho-foot{margin:1.75rem 0 0;font-size:var(--step-small);font-weight:600;color:#3A4A6B;}
 @media print{
-  .ho-page{background:#fff;padding:0;font-size:10.5pt;line-height:1.45;}
-  .ho-intro{display:none;}
-  .ho-sheet{max-width:none;margin:0;padding:0;box-shadow:none;}
+  header,footer,.page-hero,[aria-label="Chat with ANF"],.anf-pop{display:none !important;}
+  main.on-paper{background:#fff;font-size:10.5pt;line-height:1.45;}
+  .ho-page{padding:0;display:block;}
+  .ho-sheet{max-width:none;margin:0;padding:0;}
   .ho-sheet + .ho-sheet{break-before:page;}
   .ho-title{font-size:26pt;} .ho-h3{font-size:14pt;}
   .ho-mark{width:26px;height:26px;font-size:14pt;}

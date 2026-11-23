@@ -20,16 +20,16 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="block text-sm text-silver-300 mb-1.5">
+      <span className="block mb-1.5">
         {label}
-        {required && <span className="text-flame-500"> *</span>}
+        {required && <span className="text-flame-700"> *</span>}
       </span>
       <input
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-xl border border-midnight-700/60 bg-midnight-900/60 px-4 py-2.5 text-silver-100 placeholder-silver-600 focus:border-flame-500 focus:outline-none"
+        className='field'
       />
     </label>
   )
@@ -91,7 +91,6 @@ export function Refer() {
   if (status === 'done') {
     return (
       <PageHero
-        eyebrow="Referral received"
         title="Thank you"
         subtitle="Andrew will reach out to them personally and treat them well. If it turns into a project, he will follow up with you about a referral credit as a thank you."
       />
@@ -101,12 +100,11 @@ export function Refer() {
   return (
     <>
       <PageHero
-        eyebrow="Know someone we can help?"
         title="Refer a business"
-        subtitle="If you know a business drowning in manual work, a dated website, or leads slipping through the cracks, send them our way. If it turns into a project, you earn a referral credit. They get treated well either way."
+        subtitle="If you know a business drowning in manual work, a dated website, or leads slipping through the cracks, send them our way. If it turns into a project, there is a referral fee for you, under a short agreement Andrew will send. They get treated well either way."
       />
-      <section className="max-w-2xl mx-auto px-6 pb-20">
-        <form onSubmit={onSubmit} className="space-y-5 rounded-2xl border border-white/[0.07] bg-gradient-to-b from-white/[0.05] to-white/[0.01] p-6 md:p-8">
+      <section className="max-w-2xl px-[var(--edge)] pb-20">
+        <form onSubmit={onSubmit} className="space-y-5 slab">
           <input
             type="text"
             value={hp}
@@ -126,24 +124,24 @@ export function Refer() {
             <Field label="Their email or phone" value={contactInfo} onChange={setContactInfo} placeholder="So Andrew can reach them" />
           </div>
           <label className="block">
-            <span className="block text-sm text-silver-300 mb-1.5">Why did you think of them?</span>
+            <span className="block mb-1.5">Why did you think of them?</span>
             <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
               rows={3}
               placeholder="Their website is ten years old, they track jobs on paper, they keep missing calls..."
-              className="w-full rounded-xl border border-midnight-700/60 bg-midnight-900/60 px-4 py-2.5 text-silver-100 placeholder-silver-600 focus:border-flame-500 focus:outline-none"
+              className='field'
             />
           </label>
-          {err && <p role="alert" className="text-sm text-flame-400">{err}</p>}
+          {err && <p role="alert" className="text-flame-700">{err}</p>}
           <button
             type="submit"
             disabled={status === 'sending'}
-            className="w-full rounded-xl bg-flame-500 hover:bg-flame-400 disabled:opacity-60 text-midnight-950 font-semibold px-6 py-3 transition-colors"
+            className="w-full bg-flame-500 hover:bg-flame-400 disabled:opacity-60 text-midnight-950 font-semibold px-6 py-3 transition-colors"
           >
             {status === 'sending' ? 'Sending...' : 'Send the referral'}
           </button>
-          <p className="text-center text-xs text-silver-600">
+          <p className="text-midnight-500">
             We never cold-blast referrals. Andrew reaches out personally, once, and takes no for an answer.
           </p>
         </form>

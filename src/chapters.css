@@ -1,0 +1,402 @@
+/*
+ * The home page's chapters (2026-11-23 redesign, DESIGN.md). Every section is one flat field of a brand colour, floor
+ * to ceiling, butted against the next with no gap and no line. One typeface, five type steps, square corners.
+ * Plain CSS on purpose: the waterline hero, the mosaic and the spread need real geometry, not utility soup.
+ */
+
+/* ---------- type ---------- */
+.t-display { font-weight: 800; font-size: var(--step-display); line-height: 0.88; letter-spacing: -0.04em; }
+.t-head { font-weight: 800; font-size: var(--step-head); line-height: 0.95; letter-spacing: -0.04em; }
+.t-lead { font-size: var(--step-lead); line-height: 1.3; letter-spacing: -0.01em; }
+.t-body { font-size: var(--step-body); line-height: 1.45; }
+.t-small { font-size: var(--step-small); line-height: 1.4; font-weight: 600; }
+
+/* ---------- a chapter ---------- */
+.ch { position: relative; min-height: 90svh; padding: clamp(4.5rem, 9vw, 9rem) var(--edge); }
+.ch-paper { background: var(--paper); color: var(--ink); --cover: var(--paper); }
+.ch-flame { background: var(--flame); color: var(--ink); }
+.ch-midnight { background: var(--midnight); color: var(--paper); --cover: var(--midnight); }
+.ch-mist { background: var(--mist); color: var(--ink); }
+.ch-ink { background: var(--ink); color: var(--paper); }
+.ch h1, .ch h2, .ch h3, .ch h4 { color: inherit; }
+.ch a:not(.btn) { color: inherit; }
+.ch-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(0.75rem, 1.6vw, 1.5rem); }
+
+/* A plain text link: weight and a thick underline in the field's own ink. */
+.link { font-weight: 600; text-decoration: underline; text-decoration-thickness: 0.12em; text-underline-offset: 0.22em; transition: text-underline-offset 180ms var(--ease-out); }
+.link:hover { text-underline-offset: 0.38em; }
+
+/* The one button shape on the site: a flat flame rectangle, ink text. */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.85rem 1.35rem; background: var(--flame); color: var(--ink); font-weight: 600; font-size: var(--step-body); line-height: 1.1; border: 0; border-radius: 0; cursor: pointer; transition: transform 160ms var(--ease-out), background-color 160ms var(--ease-out); }
+.btn:hover { background: #F89259; transform: translateY(-2px); }
+.btn:active { transform: translateY(1px); }
+.btn-ink { background: var(--ink); color: var(--paper); }
+.btn-ink:hover { background: var(--midnight); }
+
+/* ---------- hero: the waterline ---------- */
+.hero { --seam: 50%; position: relative; height: calc(100svh - 4.5rem); min-height: 34rem; overflow: hidden; background: var(--flame); }
+.hero::before { content: ''; position: absolute; inset: 0 0 auto 0; height: var(--seam); background: var(--paper); }
+.hero-title { position: absolute; left: 0; right: 0; top: var(--seam); margin: 0; transform: translateY(-1.32em); font-weight: 800; font-size: var(--step-display); line-height: 0.88; letter-spacing: -0.04em; text-transform: uppercase; text-align: center; white-space: nowrap; }
+/* The words are flame above the seam. The second line carries its own lower half again in ink (one element, so
+   nothing lies on top of the headline): below the seam the letters read as if under water. */
+.hero-title { color: var(--flame); }
+.hero-title .line-split > span { position: relative; }
+.hero-title .line-split > span::after { content: attr(data-text); position: absolute; inset: 0; color: var(--ink); clip-path: inset(50% 0 0 0); }
+.hero-title .line { display: block; overflow: hidden; }
+.hero-title .line > span { display: block; animation: hero-rise 900ms var(--ease-out) both; }
+.hero-title .line + .line > span { animation-delay: 110ms; }
+@keyframes hero-rise { from { transform: translateY(105%); } to { transform: none; } }
+.hero-support { position: absolute; left: 50%; bottom: 2.5rem; width: min(44ch, calc(100% - 2 * var(--edge))); transform: translateX(-50%); margin: 0; text-align: center; color: var(--ink); font-size: var(--step-lead); line-height: 1.3; animation: hero-fade 700ms var(--ease-out) 620ms both; }
+@keyframes hero-fade { from { opacity: 0; transform: translate(-50%, 14px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+/* ---------- the headline you can type ---------- */
+.typed { position: relative; }
+.typed-input { display: block; width: 100%; height: 1.12em; padding: 0; border: 0; background: transparent; color: var(--ink); font: inherit; font-weight: 800; font-size: var(--step-display); line-height: 1; letter-spacing: -0.04em; }
+.typed-input::placeholder { color: var(--mist); }
+/* A block caret after the words while the field is not in use; the browser's own takes over on focus. */
+.typed-mirror { position: absolute; inset: 0 auto auto 0; height: 1.12em; max-width: 100%; overflow: hidden; white-space: pre; pointer-events: none; color: transparent; font-weight: 800; font-size: var(--step-display); line-height: 1; letter-spacing: -0.04em; }
+.typed-mirror i { display: inline-block; width: 0.08em; height: 0.78em; margin-left: 0.06em; background: var(--flame); animation: caret 1.1s steps(1) infinite; }
+.typed-input:focus ~ .typed-mirror { display: none; }
+@keyframes caret { 50% { opacity: 0; } }
+.typed-shot { display: block; width: 100%; height: auto; background: var(--mist); }
+.typed-none { display: grid; place-items: end start; aspect-ratio: 16 / 10; padding: 1.5rem; background: var(--midnight); color: var(--paper); }
+.chip { padding: 0.55rem 0.9rem; background: var(--mist); color: var(--ink); font-weight: 600; font-size: var(--step-body); border: 0; border-radius: 0; cursor: pointer; transition: background-color 160ms var(--ease-out), transform 160ms var(--ease-out); }
+.chip:hover { background: var(--flame); transform: translateY(-2px); }
+.chip[aria-pressed='true'] { background: var(--ink); color: var(--paper); }
+
+/* ---------- the mosaic of unlike tiles ---------- */
+.mosaic { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-auto-rows: 6rem; gap: 8px; }
+.tile { position: relative; overflow: hidden; padding: 1.5rem; }
+.tile-6x5 { grid-column: span 6; grid-row: span 5; }
+.tile-6x3 { grid-column: span 6; grid-row: span 3; }
+.tile-3x3 { grid-column: span 3; grid-row: span 3; }
+.tile-3x2 { grid-column: span 3; grid-row: span 2; }
+.tile-pic { padding: 0; }
+.tile-pic img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.tile-ink { background: var(--ink); color: var(--paper); }
+.tile-paper { background: var(--paper); color: var(--ink); }
+.tile-flame { background: var(--flame); color: var(--ink); }
+.tile-mist { background: var(--mist); color: var(--ink); }
+.tile-deep { background: #1A2B4A; color: var(--paper); }
+.tile-figure { font-weight: 800; font-size: var(--step-display); line-height: 0.82; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+a.tile { display: block; transition: transform 200ms var(--ease-out); }
+a.tile:hover { transform: translateY(-4px); }
+
+/* ---------- the founder: a portrait set into the first lines, like a drop capital ---------- */
+.founder { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(0.75rem, 1.6vw, 1.5rem); }
+.founder-facts { grid-column: 1 / span 2; display: grid; align-content: start; gap: 0.9rem; font-size: var(--step-small); font-weight: 600; line-height: 1.35; }
+.founder-facts p { margin: 0; }
+.founder-text { grid-column: 3 / span 10; font-size: var(--step-statement); line-height: 1.2; letter-spacing: -0.02em; color: var(--ink); }
+.founder-text p { margin: 0; }
+.founder-text > * + * { margin-top: 1.2em; }
+.founder-text strong { font-weight: 800; }
+.founder-portrait { float: left; width: 3.6em; height: 3.6em; margin: 0.06em 0.5em 0 0; object-fit: cover; object-position: 46% 26%; }
+
+/* ---------- one quotation, spread edge to edge ---------- */
+.spread { margin: 0; }
+.spread-line { display: flex; justify-content: space-between; gap: 0.25em; margin: 0; font-weight: 800; font-size: var(--step-display); line-height: 0.92; letter-spacing: -0.04em; }
+.spread-line + .spread-line { margin-top: 0.34em; }
+.spread-by { display: flex; justify-content: space-between; gap: 1rem; margin-top: clamp(2.5rem, 5vw, 4.5rem); font-size: var(--step-body); }
+
+/* ---------- the first step, already open ---------- */
+.start { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(0.75rem, 1.6vw, 1.5rem); align-items: end; min-height: calc(90svh - 2 * clamp(4.5rem, 9vw, 9rem)); }
+.start-words { grid-column: 1 / span 6; }
+.start-form { grid-column: 8 / span 5; align-self: center; padding: 1.75rem; background: var(--paper); color: var(--ink); }
+.field { display: block; width: 100%; padding: 0.75rem 0.85rem; background: #fff; color: var(--ink); border: 2px solid var(--ink); border-radius: 0; font: inherit; font-size: var(--step-body); line-height: 1.4; }
+.field::placeholder { color: #5C6478; }
+.field:focus { outline: 2px solid var(--flame); outline-offset: 2px; }
+select.field { appearance: auto; }
+.seg { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin: 0; padding: 0; border: 0; }
+.seg label { display: block; }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg span { display: block; padding: 0.6rem 0.25rem; background: var(--mist); color: var(--ink); text-align: center; font-weight: 600; font-size: var(--step-small); cursor: pointer; transition: background-color 160ms var(--ease-out); }
+.seg input:checked + span { background: var(--ink); color: var(--paper); }
+.seg input:focus-visible + span { outline: 2px solid var(--flame); outline-offset: 2px; }
+
+/* ---------- the mark, built large ---------- */
+.mark { display: flex; align-items: flex-end; gap: 4px; height: 34svh; min-height: 11rem; max-height: 22rem; margin: 0; }
+.mark span { flex: 1; display: grid; place-items: center; overflow: hidden; color: var(--ink); font-weight: 800; font-size: min(27svh, 24vw, 17rem); line-height: 1; letter-spacing: -0.04em; }
+.mark span:nth-child(1) { height: 100%; background: var(--flame); }
+.mark span:nth-child(2) { height: 72%; background: var(--paper); }
+.mark span:nth-child(3) { height: 86%; background: var(--mist); }
+
+/* ---------- entrances: text rises, pictures and tiles wipe in ---------- */
+/* A cover in the field's own colour slides off the picture from the top edge down. The picture itself is never
+   clipped or hidden: a browser will not load a lazy image it counts as off screen, and a clipped one counts. */
+.wipe { position: relative; }
+.wipe::after { content: ''; position: absolute; inset: -1px; background: var(--cover, var(--ink)); transform-origin: bottom; transition: transform 900ms var(--ease-out); transition-delay: inherit; pointer-events: none; }
+.wipe.is-in::after { transform: scaleY(0); }
+
+/* ---------- the phone is its own composition ---------- */
+@media (max-width: 760px) {
+  .hero { --seam: 46%; min-height: 30rem; }
+  .hero-title { font-size: 14.5vw; }
+  .hero-support { left: var(--edge); bottom: 1.5rem; width: calc(100% - 2 * var(--edge) - 4.5rem); transform: none; text-align: left; font-size: 1.0625rem; animation-name: hero-fade-left; }
+  @keyframes hero-fade-left { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  .typed-input, .typed-mirror { font-size: 11vw; }
+  .mosaic { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: auto; gap: 6px; }
+  .tile { padding: 1.15rem; }
+  .tile-6x5, .tile-6x3, .tile-3x3, .tile-3x2 { grid-column: span 2; grid-row: auto; }
+  .tile-pic { aspect-ratio: 4 / 3; }
+  .tile-half { grid-column: span 1; aspect-ratio: 1; }
+  .founder { display: flex; flex-direction: column-reverse; gap: 2rem; }
+  .founder-text { font-size: 1.375rem; line-height: 1.25; }
+  .founder-portrait { width: 5em; height: 5em; }
+  .founder-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; }
+  .spread-line { font-size: 9.5vw; }
+  .spread-by { flex-direction: column; gap: 0.25rem; }
+  .start { display: block; min-height: 0; }
+  .start-form { margin-top: 2.5rem; padding: 1.25rem; }
+  .seg { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mark { height: 22svh; min-height: 8rem; }
+}
+
+/* Inner pages: the parts of a section rise a little as they come on screen. Driven by the scroll itself, so
+   nothing is ever left hidden where a browser does not support it (it simply does not move there). */
+@keyframes enter-rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    main.on-paper > :not(.ch):not(.hero):not([data-motion]):not(.lean-stack) :is(h2, h3, h4, p, li, img, table, blockquote, details, form, .panel, .bg-silver-200, .wk-shot) {
+      animation: enter-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 38%;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-hero > * { animation: none; }
+  .hero-title .line > span, .hero-support { animation: none; }
+  .typed-mirror i { animation: none; }
+  .wipe::after { display: none; }
+  .btn, .chip, a.tile, .link { transition: none; }
+}
+
+/* ---------- inner pages (2026-11-23, second day of the redesign) ----------
+   Every page inside the shell stands on paper with ink text; its header is one flame field with the title set
+   large. A page can still drop in a full chapter (.ch .ch-midnight and so on) wherever it has one big thing to say. */
+.on-paper { background: var(--paper); color: var(--ink); font-size: var(--step-body); line-height: 1.5; }
+.on-mist { background: var(--mist); color: var(--ink); }
+.on-flame { background: var(--flame); color: var(--ink); }
+.on-midnight { background: var(--midnight); color: var(--paper); }
+.on-ink { background: var(--ink); color: var(--paper); }
+:is(.on-paper, .on-mist, .on-flame, .on-midnight, .on-ink) :is(h1, h2, h3, h4) { color: inherit; }
+/* A chapter inside a paper page keeps its own ink. */
+.on-paper :is(.ch-midnight, .ch-ink, .on-midnight, .on-ink) { color: var(--paper); }
+.on-paper :is(.ch-flame, .ch-mist, .on-flame, .on-mist) { color: var(--ink); }
+
+.page-hero { padding: clamp(5.5rem, 12vw, 10.5rem) var(--edge) clamp(2.5rem, 5vw, 4rem); }
+/* A short title is set as large as the page allows and still fits two lines on a phone. */
+.page-hero-title { text-wrap: balance; }
+.page-hero-title.is-short { font-size: clamp(2.125rem, 9vw, 8.75rem); }
+.page-hero-title.is-long { max-width: 30ch; }
+.page-hero > * { animation: page-rise 700ms var(--ease-out) both; }
+.page-hero > * + * { animation-delay: 90ms; }
+.page-hero > * + * + * { animation-delay: 180ms; }
+@keyframes page-rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+.page-hero-sub { margin-top: 1.5rem; max-width: 54ch; }
+.page-hero-more { margin-top: 2rem; }
+.page-hero-more > * { justify-content: flex-start; }
+
+/* A filled surface one tone from the paper: the only "card" there is. */
+.panel { background: #E6EAF0; padding: clamp(1.25rem, 2.4vw, 2rem); }
+/* Body copy on an inner page. */
+.copy { font-size: var(--step-body); line-height: 1.5; max-width: 68ch; }
+.copy > * + * { margin-top: 1em; }
+/* A long page title steps down, but stays the largest thing on its screen. */
+.page-hero-title.is-long { font-size: clamp(1.75rem, 0.6rem + 4.7vw, 5rem); line-height: 0.98; }
+
+/* The Services page: each service line is a band, alternating paper and mist, with its panels one step lighter. */
+.svc:nth-of-type(even) { background: var(--mist); }
+.svc:nth-of-type(even) .bg-silver-200 { background: var(--paper); }
+
+/* ---------- the Work page: one build per band, its real screen large ---------- */
+.wk-filters { display: flex; flex-wrap: wrap; gap: 6px; padding: clamp(1.5rem, 3vw, 2.5rem) var(--edge); }
+.wk-row { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(0.75rem, 1.6vw, 1.5rem); row-gap: 1.5rem; align-items: center; padding: clamp(3rem, 6vw, 5.5rem) var(--edge); }
+.wk-row:nth-child(even) { background: var(--mist); }
+.wk-row:nth-child(even) .chip { background: var(--paper); }
+.wk-media { grid-column: 1 / span 7; min-width: 0; }
+.wk-words { grid-column: 9 / span 4; min-width: 0; }
+.wk-row.is-flipped .wk-media { grid-column: 6 / span 7; grid-row: 1; }
+.wk-row.is-flipped .wk-words { grid-column: 1 / span 4; grid-row: 1; }
+.wk-shot { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top left; background: var(--mist); transition: transform 300ms var(--ease-out); }
+.wk-media a { display: block; overflow: hidden; }
+.wk-media a:hover .wk-shot { transform: scale(1.02); }
+.wk-plain { display: grid; place-items: end start; padding: 1.5rem; background: var(--midnight); color: var(--paper); }
+.wk-name { font-weight: 800; font-size: var(--step-statement); line-height: 1.02; letter-spacing: -0.035em; text-wrap: balance; }
+@media (max-width: 900px) {
+  .wk-media, .wk-words, .wk-row.is-flipped .wk-media, .wk-row.is-flipped .wk-words { grid-column: 1 / -1; grid-row: auto; }
+}
+/* A title that runs past a line and a half steps down again: a question as a page title still has to fit a phone. */
+.page-hero-title.is-xlong { font-size: clamp(1.375rem, 0.5rem + 4vw, 4.25rem); line-height: 1; max-width: 34ch; text-wrap: balance; }
+/* The first block under a page header arrives with it, part by part. */
+@media (prefers-reduced-motion: no-preference) {
+  main.on-paper > .page-hero + * > * { animation: page-rise 700ms var(--ease-out) both; animation-delay: 260ms; }
+  main.on-paper > .page-hero + * > * + * { animation-delay: 340ms; }
+  main.on-paper > .page-hero + * > * + * + * { animation-delay: 420ms; }
+}
+/* Copy on an inner page keeps a readable measure even in a full-width section. */
+main.on-paper > :not(.ch):not(.hero):not(.page-hero) p { max-width: 72ch; }
+/* Very long question titles on a phone. */
+@media (max-width: 760px) { .page-hero-title.is-xlong { font-size: 1.1875rem; letter-spacing: -0.035em; line-height: 1.08; } }
+/* Fields and rows of the first form under a page header arrive in turn. */
+@media (prefers-reduced-motion: no-preference) {
+  main.on-paper > .page-hero + * form > * { animation: page-rise 600ms var(--ease-out) both; animation-delay: 380ms; }
+  main.on-paper > .page-hero + * form > :nth-child(2) { animation-delay: 430ms; }
+  main.on-paper > .page-hero + * form > :nth-child(3) { animation-delay: 480ms; }
+  main.on-paper > .page-hero + * form > :nth-child(4) { animation-delay: 530ms; }
+  main.on-paper > .page-hero + * form > :nth-child(n+5) { animation-delay: 580ms; }
+}
+/* The first block under a page header starts a clear step below it. */
+main.on-paper .page-hero + :not(.ch):not(.wk-filters) { padding-top: clamp(2.5rem, 5vw, 4.5rem); }
+
+/* ---------- the motion layer (hooks/useMotion.ts) ----------
+   A page that sets data-motion on its root authors its own entrances; the general scroll rise stands down inside it. */
+main.on-paper { --cover: var(--paper); }
+.ch-mist, .on-mist, .svc:nth-of-type(even) { --cover: var(--mist); }
+.ch-flame, .on-flame { --cover: var(--flame); }
+.ch-ink, .on-ink { --cover: var(--ink); }
+
+@media screen and (prefers-reduced-motion: no-preference) {
+  /* One element rises. */
+  [data-motion] [data-reveal]:not([data-reveal='wipe']):not([data-reveal='draw']) { transition: opacity 800ms var(--ease-out), transform 800ms var(--ease-out); }
+  [data-motion] [data-reveal]:not([data-reveal='wipe']):not([data-reveal='draw']):not([data-in]) { opacity: 0; transform: translateY(26px); }
+
+  /* A picture is uncovered from its top edge and settles from a slight zoom. The picture itself is never clipped
+     or hidden (a lazy image a browser counts as off screen never loads): a cover in the field's colour slides off. */
+  [data-motion] [data-reveal='wipe'] { position: relative; overflow: hidden; }
+  [data-motion] [data-reveal='wipe']::after { content: ''; position: absolute; inset: -1px; background: var(--cover, var(--paper)); transform-origin: bottom; transition: transform 1000ms var(--ease-out); pointer-events: none; }
+  [data-motion] [data-reveal='wipe'][data-in]::after { transform: scaleY(0); }
+  [data-motion] [data-reveal='wipe'] img { transform: scale(1.09); transition: transform 1800ms var(--ease-out); }
+  [data-motion] [data-reveal='wipe'][data-in] img { transform: none; }
+
+  /* A filled bar draws from left to right. */
+  [data-motion] [data-reveal='draw'] { transform-origin: left; transform: scaleX(0); transition: transform 1100ms var(--ease-out); }
+  [data-motion] [data-reveal='draw'][data-in] { transform: none; }
+
+  /* Children arrive one after another. The entrance is an animation that lets go when it ends, so a hover or a
+     press on the same element answers at once. */
+  [data-motion] [data-stagger]:not([data-in]) > * { opacity: 0; }
+  [data-motion] [data-stagger][data-in] > * { animation: enter-rise 700ms var(--ease-out) backwards; animation-delay: calc(var(--step, 80ms) * var(--i, 0)); }
+  [data-motion] [data-stagger='wipe'][data-in] > * { animation-name: wipe-in; animation-duration: 800ms; }
+  [data-stagger] > :nth-child(1) { --i: 0; } [data-stagger] > :nth-child(2) { --i: 1; } [data-stagger] > :nth-child(3) { --i: 2; }
+  [data-stagger] > :nth-child(4) { --i: 3; } [data-stagger] > :nth-child(5) { --i: 4; } [data-stagger] > :nth-child(6) { --i: 5; }
+  [data-stagger] > :nth-child(7) { --i: 6; } [data-stagger] > :nth-child(8) { --i: 7; } [data-stagger] > :nth-child(9) { --i: 8; }
+  [data-stagger] > :nth-child(10) { --i: 9; } [data-stagger] > :nth-child(11) { --i: 10; } [data-stagger] > :nth-child(n+12) { --i: 11; }
+
+  /* A page title arrives word by word, each from behind its own baseline. */
+  .page-hero-title.has-words { animation: none; }
+  .page-hero-title .word { display: inline-block; overflow: hidden; vertical-align: top; padding-block: 0.12em; margin-block: -0.12em; }
+  .page-hero-title .word > span { display: inline-block; animation: hero-rise 850ms var(--ease-out) both; animation-delay: calc(var(--w, 0) * 55ms); }
+}
+@keyframes wipe-in { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+
+/* What a pointer or a press gets back. */
+.lift { transition: transform 220ms var(--ease-out), background-color 220ms var(--ease-out), color 220ms var(--ease-out); }
+.lift:hover { transform: translateY(-5px); }
+.lift-flame:hover { background: var(--flame); color: var(--ink); }
+.field { transition: outline-offset 160ms var(--ease-out), background-color 160ms var(--ease-out); }
+.row-tone { transition: background-color 180ms var(--ease-out); }
+.row-tone:hover { background: var(--mist); }
+
+/* The process bar on Services fills as the steps cross the screen. */
+.process-bar { height: 10px; background: var(--mist); overflow: hidden; }
+.process-bar > i { display: block; height: 100%; background: var(--flame); transform-origin: left; transform: scaleX(clamp(0, calc(var(--p, 0) * 2.4 - 0.3), 1)); }
+/* A picture that drifts a little against the scroll. */
+.drift { transform: translateY(calc((0.5 - var(--p, 0.5)) * 44px)); will-change: transform; }
+
+/* A question opens smoothly where the browser can do it. */
+@supports (interpolate-size: allow-keywords) {
+  :root { interpolate-size: allow-keywords; }
+  details::details-content { height: 0; overflow: clip; transition: height 340ms var(--ease-out), content-visibility 340ms allow-discrete; }
+  details[open]::details-content { height: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lift, .field, .row-tone { transition: none; }
+  .lift:hover { transform: none; }
+  .drift { transform: none; }
+  .process-bar > i { transform: none; }
+}
+
+/* ==========================================================================
+   Identity pass, 2026-11-23. Andrew: "we need some uniquer designs. all the square boxes and font screams
+   vibecoded." Both now come from his own logo, which is wide and leans forward:
+     type    Archivo, set wide (the logo's letters are extended), instead of a tight compact grotesk
+     shape   one forward lean, used for the seams between fields, pictures, buttons and tiles, instead of squares
+   The rules below override the first pass above; DESIGN.md has the reasoning.
+   ========================================================================== */
+:root {
+  --wide: 122%;                       /* display width, on Archivo's width axis */
+  --lean: clamp(1.5rem, 5.5vw, 5.5rem); /* how far a full-width seam rises across the page */
+  --cut: 0.62em;                      /* the same lean on a small shape (a button, a chip) */
+  --step-display: clamp(2.5rem, 7.4vw, 7.25rem);
+}
+body { font-stretch: 100%; }
+.t-display, .t-head, .hero-title, .page-hero-title, .typed-input, .typed-mirror, .spread-line, .tile-figure, .wk-name, .ho-title,
+main.on-paper :is(h1, h2, h3, h4) { font-stretch: var(--wide); }
+.t-display { font-weight: 800; line-height: 0.94; letter-spacing: -0.03em; }
+.t-head { font-weight: 800; line-height: 1; letter-spacing: -0.025em; }
+.hero-title { font-size: clamp(3rem, 9.4vw, 9.25rem); line-height: 0.9; letter-spacing: -0.03em; }
+.hero-title .line-split > span::after { clip-path: inset(50% 0 0 0); }
+.page-hero-title.is-short { font-size: clamp(1.9rem, 7.4vw, 7.25rem); line-height: 0.96; }
+.typed-input, .typed-mirror { font-size: clamp(2rem, 6vw, 5.75rem); letter-spacing: -0.03em; }
+.spread-line { font-size: clamp(2rem, 7.2vw, 7rem); letter-spacing: -0.03em; }
+.tile-figure { font-size: clamp(3rem, 7vw, 6.5rem); line-height: 0.86; }
+@media (max-width: 760px) {
+  /* A phone has no room for the full width: the face stays wide, less so, and headings step down to hold two lines. */
+  :root { --wide: 108%; }
+  .t-head, .wk-name { font-size: clamp(1.5rem, 6.9vw, 1.75rem); }
+  .hero-title { font-size: 11.6vw; }
+  .typed-input, .typed-mirror { font-size: 7.4vw; }
+  .spread-line { font-size: 8vw; }
+}
+
+/* ---------- the lean: one forward slant, taken from the logo, in place of squares ---------- */
+/* Small shapes. A clipped shape cannot show an outline, so focus inverts it instead. */
+.btn, .chip, .lean { clip-path: polygon(var(--cut) 0, 100% 0, calc(100% - var(--cut)) 100%, 0 100%); }
+.btn { padding-inline: 1.9rem; }
+.chip { padding-inline: 1.3rem; }
+.lean { padding-inline: 1.5rem; white-space: nowrap; }
+.btn:focus-visible, .chip:focus-visible, .lean:focus-visible { outline: none; background: var(--ink); color: var(--paper); }
+.btn-ink:focus-visible { background: var(--paper); color: var(--ink); }
+
+/* Seams. A page header ends on the lean; stacked chapters interlock on it. */
+.page-hero { clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--lean)), 0 100%); padding-bottom: calc(var(--lean) + clamp(2rem, 4vw, 3.5rem)); }
+.lean-stack > * { margin-top: calc(-1 * var(--lean)); clip-path: polygon(0 var(--lean), 100% 0, 100% calc(100% - var(--lean)), 0 100%); }
+.lean-stack > :first-child { margin-top: 0; clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--lean)), 0 100%); }
+.lean-stack > :last-child { clip-path: polygon(0 var(--lean), 100% 0, 100% 100%, 0 100%); }
+.lean-stack > .ch { padding-top: calc(var(--lean) + clamp(3.5rem, 7vw, 7rem)); padding-bottom: calc(var(--lean) + clamp(3.5rem, 7vw, 7rem)); }
+.lean-stack > #solden { padding-block: var(--lean); }
+.hero-support { bottom: calc(var(--lean) + 1.5rem); }
+/* A band or a closing chapter on a paper page leans too; the paper shows in the wedges. */
+.svc:nth-of-type(even), .wk-row:nth-child(even), .lean-both { clip-path: polygon(0 var(--lean), 100% 0, 100% calc(100% - var(--lean)), 0 100%); padding-top: calc(var(--lean) + clamp(3rem, 6vw, 5.5rem)); padding-bottom: calc(var(--lean) + clamp(3rem, 6vw, 5.5rem)); }
+.lean-top { clip-path: polygon(0 var(--lean), 100% 0, 100% 100%, 0 100%); padding-top: calc(var(--lean) + clamp(3.5rem, 7vw, 6.5rem)) !important; }
+
+/* Pictures lean with everything else. */
+.typed-shot, .wk-shot, .lean-pic { clip-path: polygon(6% 0, 100% 0, 94% 100%, 0 100%); }
+.wk-media a { overflow: visible; }
+
+/* The mosaic: leaning tiles, one angle whatever their height. */
+.tile { --tcut: 2.1rem; clip-path: polygon(var(--tcut) 0, 100% 0, calc(100% - var(--tcut)) 100%, 0 100%); padding-inline: calc(var(--tcut) + 1.1rem); }
+.tile-6x5 { --tcut: 3.5rem; }
+.tile-3x2 { --tcut: 1.4rem; }
+.tile-pic { padding: 0; }
+@media (max-width: 760px) { .tile, .tile-6x5, .tile-3x2 { --tcut: 1rem; } }
+
+/* No boxes. What used to sit in a grey rectangle stands on the page, under a small leaning mark. */
+.panel { background: transparent; padding: 0; }
+.slab { background: transparent; }
+.grid > .slab::before, .slab.is-marked::before { content: ''; display: block; width: 2.6rem; height: 0.55rem; margin-bottom: 1rem; background: var(--flame); clip-path: polygon(0.38rem 0, 100% 0, calc(100% - 0.38rem) 100%, 0 100%); }
+.on-flame .slab::before, .ch-flame .slab::before { background: var(--ink); }
+
+/* A belief on About: one word, set as large as its column allows. */
+.belief { font-weight: 800; font-stretch: var(--wide); font-size: clamp(2.1rem, 4.9vw, 4.6rem); line-height: 1; letter-spacing: -0.03em; }
+
+/* The footer closes on the real logo, in its own navy. */
+.foot-logo { display: block; width: min(100%, 23rem); height: 10.5rem; object-fit: none; object-position: 44% 50%; margin-left: -4.6rem; }
+@media (max-width: 760px) { .foot-logo { margin-left: -5.4rem; } }
+/* Solden is its own product in its own colours; its headline keeps the normal width. */
+#solden h2 { font-stretch: 100%; }
+/* The hero's words stay flame above the seam (inner-page heading rules must not repaint them). */
+.hero .hero-title { color: var(--flame); }

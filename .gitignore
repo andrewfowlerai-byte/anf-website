@@ -31,3 +31,4 @@ dist-ssr
 # Onboarding dev mock: a client template copied from ../anf-crm for local testing.
 # It holds client-specific questions, so it never goes into this public repo.
 src/lib/onboarding/dev/local/
+.taste-skill/

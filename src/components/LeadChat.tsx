@@ -56,6 +56,32 @@ export function LeadChat() {
     return () => clearTimeout(t)
   }, [open])
 
+  // The teaser is an opener for the first screen. Once the visitor scrolls on, it tucks away (the Ask ANF button
+  // stays), so it never sits on top of a heading further down the page.
+  useEffect(() => {
+    if (!teaser) return
+    const onScroll = () => { if (window.scrollY > window.innerHeight * 0.6) setTeaser(false) }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [teaser])
+
+  // The teaser stands down while a section marked data-quiet-chat is on screen (the home page's request form):
+  // a bubble asking what they want must not sit on top of the field where they are typing exactly that.
+  const [quiet, setQuiet] = useState(false)
+  useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined') return
+    const zones = Array.from(document.querySelectorAll('[data-quiet-chat]'))
+    if (!zones.length) return
+    const seen = new Set<Element>()
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) { if (e.isIntersecting) seen.add(e.target); else seen.delete(e.target) }
+      setQuiet(seen.size > 0)
+    }, { threshold: 0.15 })
+    zones.forEach((z) => io.observe(z))
+    // Leaving the page takes the quiet with it.
+    return () => { io.disconnect(); setQuiet(false) }
+  }, [location.pathname])
+
   useEffect(() => {
     const el = scroller.current
     if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
@@ -100,20 +126,19 @@ export function LeadChat() {
   return (
     <>
       {/* Proactive teaser bubble */}
-      {!open && teaser && (
-        <div className="anf-pop fixed bottom-[84px] right-5 z-50">
+      {!open && teaser && !quiet && (
+        <div className="anf-pop fixed bottom-[84px] right-5 z-50 hidden lg:block">
           <div className="relative max-w-[260px]">
             <button
               onClick={openChat}
-              className="flex items-start gap-2.5 rounded-2xl rounded-br-md border border-white/10 bg-midnight-900 px-3.5 py-3 text-left shadow-2xl shadow-black/40 transition-colors hover:border-flame-500/40"
+              className="block bg-midnight-950 px-4 py-3 pr-9 text-left text-sm font-semibold leading-snug text-silver-100 transition-colors hover:bg-midnight-800"
             >
-              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-gradient-to-br from-flame-500 to-flame-700 text-[11px] font-bold text-white">AI</span>
-              <span className="text-[13.5px] leading-snug text-silver-300">{opener}</span>
+              {opener}
             </button>
             <button
               onClick={dismissTeaser}
               aria-label="Dismiss"
-              className="absolute -right-1.5 -top-1.5 grid h-5 w-5 place-items-center rounded-full border border-white/10 bg-midnight-700 text-silver-400 transition-colors hover:text-silver-100"
+              className="absolute right-1 top-1 grid h-7 w-7 place-items-center text-silver-300 transition-colors hover:text-silver-100"
             >
               <X className="h-3 w-3" />
             </button>
@@ -125,10 +150,11 @@ export function LeadChat() {
         <button
           onClick={openChat}
           aria-label="Chat with ANF"
-          className={`fixed bottom-5 right-5 z-50 inline-flex items-center gap-2 rounded-full bg-flame-500 pl-4 pr-5 py-3 text-white shadow-flame-glow transition-colors hover:bg-flame-600 ${teaser ? 'anf-pulse' : ''}`}
+          title="Ask ANF"
+          className="lean fixed bottom-5 right-5 z-50 inline-flex h-12 w-16 items-center justify-center bg-midnight-950 text-silver-100 transition-colors hover:bg-midnight-800 active:translate-y-px"
         >
           <MessageCircle className="h-5 w-5" />
-          <span className="hidden text-sm font-medium sm:inline">Ask ANF</span>
+          <span className="sr-only">Ask ANF</span>
         </button>
       )}
 
