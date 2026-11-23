@@ -1,4 +1,4 @@
-import { SoldenFeature } from '../components/SoldenFeature'
+import { SoldenStrip } from '../components/SoldenFeature'
 import { TypedBuilds } from '../components/home/TypedBuilds'
 import { WorkMosaic } from '../components/home/WorkMosaic'
 import { Story } from '../components/home/Story'
@@ -34,7 +34,7 @@ export function Home() {
         </p>
       </section>
 
-      <SoldenFeature />
+      <SoldenStrip />
       <TypedBuilds />
       <WorkMosaic />
       <Story />

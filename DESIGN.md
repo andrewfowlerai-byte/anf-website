@@ -63,6 +63,11 @@ lines or fewer at every width. Left-aligned, except the hero.
   three facts beside it. (First tried as two justified columns with highlighted words. Andrew did not like it. Do
   not bring highlighted words or justified type back.)
 - The footer closes on the real logo, in the logo's own navy.
+- Solden on the home page is one short band under the hero ("Our most recent project:" ending on Solden's own
+  wordmark, a sentence, the store badges), under half a screen. (It was a full chapter with the video. Andrew: "I
+  dont think I actually want solden to take up anywhere near as much home page.") The full section is on About.
+- The typed headline carries nine trades to try, each landing on a different build, and names up to three other
+  builds that fit ("Also built for this"). The six on-site demos count as builds there and come last in a tie.
 
 ## Signature moves
 

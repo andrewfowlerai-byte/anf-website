@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { SITE_DEMOS } from '../lib/demos'
 import { Link, useSearchParams } from 'react-router-dom'
 import { PageHero } from '../components/PageHero'
 import { currentImage, listShowcaseProjects, type ShowcaseProject } from '../lib/showcase'
@@ -55,56 +56,8 @@ const FALLBACK: Project[] = [
  * and the only real distinction, whether you can click through it here or it
  * opens somewhere else, is carried on the card instead of in the navigation.
  */
-const DEMOS: Project[] = [
-  {
-    name: 'Real estate agents',
-    category: 'Interactive demo',
-    summary: 'A CRM shaped around how an agent actually works: lead pipeline, speed to lead, listings through to closing. Click straight in.',
-    tags: ['Real Estate', 'CRM', 'Interactive'],
-    link: '/demos/real-estate', linkLabel: 'Open the demo', kind: 'demo',
-    image: '/showcase/demo-real-estate.jpg',
-  },
-  {
-    name: 'Home and service pros',
-    category: 'Interactive demo',
-    summary: 'For trades, cleaners and landscapers. Jobs and quotes, scheduling, invoices and reviews, in the order a working day happens.',
-    tags: ['Home Services', 'CRM', 'Interactive'],
-    link: '/demos/home-services', linkLabel: 'Open the demo', kind: 'demo',
-    image: '/showcase/demo-home-services.jpg',
-  },
-  {
-    name: 'Coaches and consultants',
-    category: 'Interactive demo',
-    summary: 'Built for one to one and group programs. Client roster, session notes, packages and payments.',
-    tags: ['Coaching', 'CRM', 'Interactive'],
-    link: '/demos/coaches', linkLabel: 'Open the demo', kind: 'demo',
-    image: '/showcase/demo-coaches.jpg',
-  },
-  {
-    name: 'Fitness and wellness',
-    category: 'Interactive demo',
-    summary: 'Trainers, studios and clinics. Members, classes and the retention problem that decides whether a studio survives.',
-    tags: ['Wellness', 'CRM', 'Interactive'],
-    link: '/demos/fitness', linkLabel: 'Open the demo', kind: 'demo',
-    image: '/showcase/demo-fitness.jpg',
-  },
-  {
-    name: 'Parents and family',
-    category: 'Interactive demo',
-    summary: 'A family HQ rather than a CRM. Kids\u2019 schedules, meals and errands, appointments, all in one place.',
-    tags: ['Family', 'Interactive'],
-    link: '/demos/family', linkLabel: 'Open the demo', kind: 'demo',
-    image: '/showcase/demo-family.jpg',
-  },
-  {
-    name: 'Creators and solopreneurs',
-    category: 'Interactive demo',
-    summary: 'When content is the business. Brand deals, a content calendar, and posting that does not depend on remembering.',
-    tags: ['Creator', 'Interactive'],
-    link: '/demos/creators', linkLabel: 'Open the demo', kind: 'demo',
-    image: '/showcase/demo-creators.jpg',
-  },
-]
+// The list itself lives in lib/demos.ts: the home page's typed headline answers with these too.
+const DEMOS: Project[] = SITE_DEMOS.map((d) => ({ ...d, category: 'Interactive demo', linkLabel: 'Open the demo', kind: 'demo' as const }))
 
 /**
  * Filters, matched loosely against category and tags.

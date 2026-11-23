@@ -26,14 +26,69 @@ const INSIDE = [
   { term: 'Friends', line: 'Share only what you choose. Kudos, comments, crews and weekly boards.' },
 ]
 
-export function SoldenFeature() {
-  const video = useRef<HTMLVideoElement>(null)
+/** The header's Solden link points at #solden; a client-side navigation does not scroll by itself. */
+function useSoldenHash() {
   const { hash } = useLocation()
-
-  // The header's Solden link points here (/#solden); a client-side navigation does not scroll by itself.
   useEffect(() => {
     if (hash === '#solden') document.getElementById('solden')?.scrollIntoView({ block: 'start' })
   }, [hash])
+}
+
+const BADGE = 'inline-flex leading-none rounded-[10px] transition-transform hover:-translate-y-px active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F2B544]'
+
+/**
+ * Solden on the home page: one short band (Andrew, 2026-11-23: "I dont think I actually want solden to take up
+ * anywhere near as much home page as it is now ... maybe we could add 'most recent project'"). It names Solden as
+ * the most recent project, says what it is in a sentence, and carries the two store badges. The whole section, with
+ * what is inside the app and the video, is on About.
+ */
+export function SoldenStrip() {
+  useSoldenHash()
+  return (
+    <section id="solden" aria-labelledby="solden-title" className="solden-strip scroll-mt-16">
+      <div className="ch-grid items-center gap-y-8">
+        <div className="col-span-12 md:col-span-8 min-w-0">
+          <h2 id="solden-title" className="solden-strip-title">
+            <span>Our most recent project:</span>
+            <a href={SITE_URL} aria-label="Solden, at solden.app" className="inline-flex">
+              <img src="/solden/solden-wordmark.svg" alt="Solden" width={789} height={150} />
+            </a>
+          </h2>
+          <p className="mt-4 max-w-[64ch]">
+            Our own health and wellness app, now on the App Store and Google Play. Workouts, runs, meals, sleep and
+            friends in one place, with a built-in AI coach that knows your week.
+          </p>
+          <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-3">
+            <a href={APP_STORE_URL} className={BADGE}>
+              <img src="/solden/app-store.svg" width={168} height={56} alt="Download Solden on the App Store" className="h-12 w-auto" />
+            </a>
+            <a href={PLAY_STORE_URL} className={BADGE}>
+              <img src="/solden/google-play.png" width={215} height={83} alt="Get Solden on Google Play" className="h-[71px] w-auto -my-[11px]" />
+            </a>
+            <a href={SITE_URL} className="text-[#F2B544] hover:text-[#F7CB72] font-semibold underline-offset-4 hover:underline">
+              See it at solden.app <span aria-hidden>→</span>
+            </a>
+          </div>
+        </div>
+        <div className="hidden md:block md:col-span-4 min-w-0">
+          <img
+            src="/solden/meet-solden-poster.webp"
+            alt="Solden on a phone: a run, a meal and a ride in one feed"
+            width={720}
+            height={1280}
+            loading="lazy"
+            decoding="async"
+            className="lean-pic block w-full aspect-[2/1] object-cover object-[50%_42%]"
+          />
+        </div>
+      </div>
+    </section>
+  )
+}
+
+export function SoldenFeature() {
+  const video = useRef<HTMLVideoElement>(null)
+  useSoldenHash()
 
   useEffect(() => {
     const v = video.current

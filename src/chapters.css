@@ -368,6 +368,7 @@ main.on-paper :is(h1, h2, h3, h4) { font-stretch: var(--wide); }
 .lean-stack > :last-child { clip-path: polygon(0 var(--lean), 100% 0, 100% 100%, 0 100%); }
 .lean-stack > .ch { padding-top: calc(var(--lean) + clamp(3.5rem, 7vw, 7rem)); padding-bottom: calc(var(--lean) + clamp(3.5rem, 7vw, 7rem)); }
 .lean-stack > #solden { padding-block: var(--lean); }
+.lean-stack > #solden.solden-strip { padding-block: calc(var(--lean) + clamp(0.5rem, 1.2vw, 1.25rem)); }
 .hero-support { bottom: calc(var(--lean) + 1.5rem); }
 /* A band or a closing chapter on a paper page leans too; the paper shows in the wedges. */
 .svc:nth-of-type(even), .wk-row:nth-child(even), .lean-both { clip-path: polygon(0 var(--lean), 100% 0, 100% calc(100% - var(--lean)), 0 100%); padding-top: calc(var(--lean) + clamp(3rem, 6vw, 5.5rem)); padding-bottom: calc(var(--lean) + clamp(3rem, 6vw, 5.5rem)); }
@@ -397,6 +398,14 @@ main.on-paper :is(h1, h2, h3, h4) { font-stretch: var(--wide); }
 .foot-logo { display: block; width: min(100%, 23rem); height: 10.5rem; object-fit: none; object-position: 44% 50%; margin-left: -4.6rem; }
 @media (max-width: 760px) { .foot-logo { margin-left: -5.4rem; } }
 /* Solden is its own product in its own colours; its headline keeps the normal width. */
-#solden h2 { font-stretch: 100%; }
+#solden:not(.solden-strip) h2 { font-stretch: 100%; }
+
+/* Solden on the home page: one short band in Solden's night, not a full chapter. The heading is ANF speaking, and
+   ends on Solden's own wordmark. The typed section's "also built" picks are plain text buttons. */
+.solden-strip { background: var(--night); color: #F2F5F3; padding: clamp(2.5rem, 5vw, 4rem) var(--edge); }
+.solden-strip-title { display: flex; flex-wrap: wrap; align-items: center; column-gap: 0.4em; row-gap: 0.3em; margin: 0; font-weight: 800; font-size: clamp(1.4rem, 2.6vw, 2.4rem); line-height: 1; letter-spacing: -0.025em; color: #F2F5F3; }
+.solden-strip-title img { display: block; height: 0.86em; width: auto; }
+.typed-also-pick { padding: 0; border: 0; background: none; color: inherit; font: inherit; font-weight: 600; text-align: left; cursor: pointer; }
+@media (max-width: 760px) { .solden-strip-title { font-size: clamp(1.25rem, 5.6vw, 1.5rem); } }
 /* The hero's words stay flame above the seam (inner-page heading rules must not repaint them). */
 .hero .hero-title { color: var(--flame); }
