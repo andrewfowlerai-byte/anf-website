@@ -22,7 +22,7 @@ import { RequestStart } from '../components/home/RequestStart'
  */
 export function Home() {
   return (
-    <>
+    <div className="lean-stack">
       <section className="hero" aria-labelledby="hero-title">
         {/* The seam cuts through the middle of the second line: flame above it, ink below, as if under water. */}
         <h1 id="hero-title" className="hero-title">
@@ -40,6 +40,6 @@ export function Home() {
       <Story />
       <QuoteSpread />
       <RequestStart />
-    </>
+    </div>
   )
 }

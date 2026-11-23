@@ -22,7 +22,7 @@ const NAV: { to: string; label: string; end?: boolean }[] = [
 ]
 
 const link = 'text-base font-semibold text-silver-100 underline-offset-[6px] decoration-2 decoration-flame-500 hover:underline'
-const action = 'inline-flex items-center justify-center bg-flame-500 px-4 text-base font-semibold text-midnight-950 transition-colors hover:bg-flame-400 active:translate-y-px'
+const action = 'lean inline-flex items-center justify-center bg-flame-500 text-base font-semibold text-midnight-950 transition-colors hover:bg-flame-400 active:translate-y-px'
 
 export function Header() {
   const [open, setOpen] = useState(false)
@@ -57,10 +57,11 @@ export function Header() {
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
-            className="lg:hidden inline-flex h-11 w-11 items-center justify-center bg-silver-100 text-midnight-950"
+            className="lg:hidden inline-flex h-11 w-11 items-center justify-center text-silver-100"
           >
-            <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
-              {open ? <path d="M6 6l12 12M18 6L6 18" /> : <><path d="M4 7h16" /><path d="M4 12h16" /><path d="M4 17h16" /></>}
+            {/* No box: three bars stepped along the site's lean. */}
+            <svg viewBox="0 0 24 24" className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="butt">
+              {open ? <path d="M6 6l12 12M18 6L6 18" /> : <><path d="M7.5 7h14" /><path d="M5 12h14" /><path d="M2.5 17h14" /></>}
             </svg>
           </button>
         </div>

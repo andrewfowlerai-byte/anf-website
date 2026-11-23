@@ -41,7 +41,7 @@ export function Invest() {
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {traction.map((t) => (
-            <div key={t.label} className="p-6 bg-silver-200">
+            <div key={t.label} className="slab">
               <p className="t-head font-extrabold tracking-[-0.03em] text-flame-700">{t.value}</p>
               <p className="font-medium mt-2">{t.label}</p>
               <p className="text-[13px] mt-1 leading-relaxed">{t.note}</p>
@@ -65,7 +65,7 @@ export function Invest() {
         </div>
         <div className="grid md:grid-cols-3 gap-6">
           {roadmap.map((r) => (
-            <div key={r.title} className="p-7 bg-silver-200">
+            <div key={r.title} className="slab">
               <h3 className="t-lead font-extrabold tracking-[-0.03em] mb-2">{r.title}</h3>
               <p className="leading-relaxed">{r.body}</p>
             </div>
@@ -74,7 +74,7 @@ export function Invest() {
       </section>
 
       <section className="max-w-3xl px-[var(--edge)] py-8 md:py-12">
-        <div className="p-7 md:p-9 bg-silver-200">
+        <div className="md:p-9 slab">
           <p className="t-lead leading-relaxed">
             We are raising <span>[$X]</span> to <span>[use of funds, for example accelerate the automation platform, sales, and onboarding]</span>.
           </p>
@@ -91,7 +91,7 @@ export function Invest() {
           </p>
         </div>
         <div className="grid md:grid-cols-2 gap-6">
-          <div className="p-7 md:p-8 bg-silver-200">
+          <div className="slab">
             <h3 className="t-lead font-extrabold tracking-[-0.03em] mb-3">Earn on the introduction</h3>
             <p className="leading-relaxed mb-4">
               Introduce a business that becomes a client, and you earn a one-time reward when they sign. Paid once, simple and clean.
@@ -101,7 +101,7 @@ export function Invest() {
             </p>
             <p className="mt-3">Best for people who want a straightforward finder's reward.</p>
           </div>
-          <div className="p-7 md:p-8 bg-silver-200">
+          <div className="slab">
             <h3 className="t-lead font-extrabold tracking-[-0.03em] mb-3">Earn on the relationship</h3>
             <p className="leading-relaxed mb-4">
               Introduce a business that becomes a client, and earn an ongoing share of what they keep paying us. Your upside grows as they do.

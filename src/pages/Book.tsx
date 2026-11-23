@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { submitRequest } from '../lib/leads'
 import { PageHero } from '../components/PageHero'
 import { useLocalDraft } from '../hooks/useLocalDraft'
+import { useMotion } from '../hooks/useMotion'
 import { BEST_TIMES, EMPTY_DRAFT, REQUEST_DRAFT_KEY, type RequestDraft } from '../lib/requestDraft'
 
 // Request a call. There is no scheduler on this page (Cal.com came off the
@@ -28,9 +29,10 @@ export function Book() {
     })
     return () => cancelAnimationFrame(frame)
   }, [hash, key])
+  const motion = useMotion()
 
   return (
-    <>
+    <div ref={motion} data-motion>
       <PageHero
         title="Let's talk."
         subtitle="Leave your name, your number and a line about what you need. Andrew reads every request and calls you back within one business day. No pitch, no pressure."
@@ -43,9 +45,10 @@ export function Book() {
         </div>
 
         <div className="col-span-12 lg:col-span-5 lg:col-start-1 lg:row-start-1 min-w-0">
-          <h2 className="t-head">What happens next</h2>
+          <h2 data-reveal className="t-head">What happens next</h2>
+          <div data-reveal="draw" className="mt-6 h-2.5 bg-flame-500" aria-hidden="true" />
           {/* A real ordered list: the order is the information. */}
-          <ol className="mt-8 grid gap-7 list-decimal pl-[1.4em] t-lead marker:font-extrabold">
+          <ol data-stagger style={{ ['--step' as string]: '150ms' }} className="mt-8 grid gap-7 list-decimal pl-[1.4em] t-lead marker:font-extrabold">
             {[
               { t: 'Request a call', b: 'Your name, your number and a few lines about what you need. Two minutes, tops.' },
               { t: 'Andrew calls you', b: 'Within one business day, at the time you pick. About 30 minutes: your goals, what you have now, and where you are stuck. A conversation, not a pitch.' },
@@ -59,7 +62,7 @@ export function Book() {
           </ol>
         </div>
       </section>
-    </>
+    </div>
   )
 }
 
@@ -113,6 +116,8 @@ function RequestCallForm() {
   return (
     <form
       onSubmit={handleSubmit}
+      data-stagger
+      style={{ ['--step' as string]: '70ms' }}
       className="panel grid gap-5"
     >
       <h2 className="t-head">Request a call</h2>

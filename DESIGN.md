@@ -38,9 +38,11 @@ skill, seed 1925015714; reprint with `node ~/.claude/skills/design-taste-fronten
 
 Neighbouring fields differ in lightness as well as hue. No tints, no gradients, no shadows, no glows.
 
-## Type: Schibsted Grotesk, one family
+## Type: Archivo, one family, set wide
 
-Display 800, tracking -0.04em, leading 0.88. Text 400, functional text 600. Five steps and no others:
+The logo's letters are wide and lean forward, so the display type is Archivo on its width axis (`--wide`, 122% on a
+wide screen, 108% on a phone). Body text stays at normal width. (First set in Schibsted Grotesk, tight and compact.
+Andrew: "the font screams vibecoded.") Display 800, tracking -0.03em, leading 0.94. Text 400, functional text 600. Five steps and no others:
 `--step-small`, `--step-body`, `--step-lead`, `--step-head`, `--step-display` (in `src/index.css`). Headlines are two
 lines or fewer at every width. Left-aligned, except the hero.
 
@@ -48,14 +50,19 @@ lines or fewer at every width. Left-aligned, except the hero.
 
 - Margins: `--edge` on every section. One 12-column grid.
 - A chapter is at least 90svh. One thing per chapter.
-- Square corners everywhere. One button shape: a flat flame rectangle with ink text (`.btn`, `BookCallButton`).
+- **The lean.** One forward slant, taken from the logo, replaces the square: buttons, chips and the chat button are
+  parallelograms (`.btn`, `.chip`, `.lean`); pictures and mosaic tiles lean (`.lean-pic`); every seam between
+  two fields rises across the page (`--lean`; `.lean-stack` on the home page, `.lean-top` / `.lean-both` on a
+  band, the slanted foot of `PageHero`). No rounded corners and no plain rectangles for anything decorative.
+- **No boxes.** (Andrew: "all the square boxes".) What used to sit in a grey rectangle stands on the page under a
+  small leaning flame mark (`.slab`). Form fields are the one outlined rectangle left.
 - The header is a plain bar in the logo's own navy (#07102B), so the chrome mark sits in it with no box. On a wide
   screen the logo takes the centre of the bar; on a phone it leads from the left. (First tried as a navy block
   flush in the top left corner of a paper bar. Andrew: "it feels out of place.")
 - The founder section is his portrait set into the first lines of two plain paragraphs, like a drop capital, with
   three facts beside it. (First tried as two justified columns with highlighted words. Andrew did not like it. Do
   not bring highlighted words or justified type back.)
-- The footer closes on the name, built from three blocks.
+- The footer closes on the real logo, in the logo's own navy.
 
 ## Signature moves
 
@@ -78,18 +85,25 @@ One loud move: the hero's lines rise from behind their baselines. Elsewhere text
 pictures and filled tiles are uncovered from their top edge, and every control answers a press or hover. All of it
 stands down for reduced motion.
 
+A page can author its own motion with `hooks/useMotion.ts` (Services, About and Book do): put the returned ref and
+`data-motion` on the page root, then mark elements `data-reveal` (rises), `data-reveal="wipe"` (a picture is
+uncovered and settles), `data-reveal="draw"` (a bar draws), `data-stagger` (children arrive in turn, `--step` sets
+the gap) or `data-progress` (`--p` runs 0 to 1 across the screen). Every `PageHero` title arrives word by word.
+Never put `data-reveal` on an element that is fully clipped: it never counts as on screen.
+
 ## Inner pages
 
 Every page inside the site shell stands on paper with ink text (`main.on-paper`, set in `Layout`). Its header is
 `PageHero`: one flame field with the title set large and left, sized by its length, with no label above it. Body
-sections sit on the page margin (`px-[var(--edge)]`), left-aligned. The one "card" is a filled panel a tone from the
-paper (`.panel`, or `bg-silver-200`). Form fields are `.field` (white, a 2px ink outline). A page can drop in a full
+sections sit on the page margin (`px-[var(--edge)]`), left-aligned. There are no cards: a group is a `.slab`. Form fields are `.field` (white, a 2px ink outline). A page can drop in a full
 chapter (`.ch .ch-flame` and so on) for its one big thing, usually its close.
 
 - Services: the shared header, a real price table, each service line a band alternating paper and mist.
 - Work: one build per band with its real screen large (`.wk-row`). The six interactive demos have real
   screenshots in `public/showcase/demo-*.jpg`. No drawn browser windows, numbers or badges.
 - Book: the form beside "What happens next" as a real ordered list.
+- About: the founder's portrait beside his story, the mission on mist, the four beliefs as large flame words on
+  midnight, then Solden (`SoldenFeature`, ANF's own app; it replaced Everlee here on 2026-11-23).
 - Handouts: white sheets that still print one to a page.
 - The chat: a small square button. Its teaser shows on the first screen of wide screens only and tucks away on
   scroll, so it never sits on a heading.

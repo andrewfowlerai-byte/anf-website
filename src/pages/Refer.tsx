@@ -104,7 +104,7 @@ export function Refer() {
         subtitle="If you know a business drowning in manual work, a dated website, or leads slipping through the cracks, send them our way. If it turns into a project, there is a referral fee for you, under a short agreement Andrew will send. They get treated well either way."
       />
       <section className="max-w-2xl px-[var(--edge)] pb-20">
-        <form onSubmit={onSubmit} className="space-y-5 bg-silver-200 p-6 md:p-8">
+        <form onSubmit={onSubmit} className="space-y-5 slab">
           <input
             type="text"
             value={hp}

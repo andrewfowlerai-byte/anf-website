@@ -151,7 +151,7 @@ export function LeadChat() {
           onClick={openChat}
           aria-label="Chat with ANF"
           title="Ask ANF"
-          className="fixed bottom-5 right-5 z-50 inline-flex h-12 w-12 items-center justify-center bg-midnight-950 text-silver-100 transition-colors hover:bg-midnight-800 active:translate-y-px"
+          className="lean fixed bottom-5 right-5 z-50 inline-flex h-12 w-16 items-center justify-center bg-midnight-950 text-silver-100 transition-colors hover:bg-midnight-800 active:translate-y-px"
         >
           <MessageCircle className="h-5 w-5" />
           <span className="sr-only">Ask ANF</span>

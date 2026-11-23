@@ -113,7 +113,7 @@ export function FreeClass() {
               </li>
             ))}
           </ul>
-          <div className="mt-8 bg-silver-200 p-5">
+          <div className="mt-8 slab">
             <p className="leading-relaxed">
               Built for people who run something: business owners, real estate agents, service pros, and the folks who
               keep an office running. If you have felt behind on AI, this is the session that gets you comfortable
@@ -123,7 +123,7 @@ export function FreeClass() {
         </div>
 
         <div>
-          <form onSubmit={onSubmit} className="space-y-5 bg-silver-200 p-6 md:p-8">
+          <form onSubmit={onSubmit} className="space-y-5 slab">
             <p className="t-lead font-extrabold tracking-[-0.03em]">Save your spot</p>
             <input type="text" value={hp} onChange={(e) => setHp(e.target.value)} className="hidden" tabIndex={-1} autoComplete="off" aria-hidden />
 

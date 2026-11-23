@@ -125,7 +125,7 @@ export function Audit() {
           subtitle="The full copy is in your inbox. Reply to that email with any question and Andrew will answer it plainly, no pitch attached."
         />
         <section className="max-w-2xl px-[var(--edge)] pb-20 space-y-6">
-          <div className="bg-silver-200 p-6 md:p-8 space-y-6">
+          <div className="slab space-y-6">
             <div className="grid sm:grid-cols-2 gap-5">
               <ScoreBar label="Website need" score={results.webNeedScore} />
               <ScoreBar label="Lead system need" score={results.systemNeedScore} />
@@ -190,7 +190,7 @@ export function Audit() {
         subtitle="Free, with no obligation. Enter your website and get an instant, specific read: where your site and lead flow are costing you, and the highest-leverage fixes. Results on screen and in your inbox. No pitch attached."
       />
       <section className="max-w-2xl px-[var(--edge)] pb-20">
-      <form onSubmit={onSubmit} className="space-y-5 bg-silver-200 p-6 md:p-8">
+      <form onSubmit={onSubmit} className="space-y-5 slab">
         <input
           type="text"
           value={hp}

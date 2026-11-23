@@ -139,7 +139,7 @@ export function Reviews() {
         </div>
         <form
           onSubmit={onSubmit}
-          className="space-y-5 bg-silver-200 p-6 md:p-8"
+          className="space-y-5 slab"
         >
           <input
             type="text"

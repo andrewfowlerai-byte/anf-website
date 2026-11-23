@@ -40,7 +40,7 @@ export function Answers() {
             <Link
               key={a.slug}
               to={`/answers/${a.slug}`}
-              className="group bg-silver-200 p-6 transition-colors"
+              className="group slab"
             >
               <p className="text-[13px] text-flame-700 mb-3">{a.audience}</p>
               <h2 className="t-lead font-extrabold tracking-[-0.03em] leading-snug group-hover: transition-colors">
@@ -54,7 +54,7 @@ export function Answers() {
           ))}
         </div>
 
-        <div className="mt-14 bg-silver-200 p-8">
+        <div className="mt-14 slab">
           <h2 className="t-lead font-extrabold tracking-[-0.03em]">Not the question you had?</h2>
           <p className="mt-3 max-w-xl leading-relaxed">
             Send it over. If it is worth answering properly it probably belongs on this page, and you will get

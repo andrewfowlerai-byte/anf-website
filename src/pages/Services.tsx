@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { PageHero } from '../components/PageHero'
+import { useMotion } from '../hooks/useMotion'
 import { useEffect, useState } from 'react'
 import { BookCallButton } from '../components/BookCallButton'
 import { JsonLd } from '../components/JsonLd'
@@ -215,29 +216,30 @@ export function Services() {
     pricingSection('corporate_formats', FALLBACK_CORPORATE_FORMATS).then((v) => { if (!cancelled) setCorporateFormats(v) })
     return () => { cancelled = true }
   }, [])
+  const motion = useMotion()
 
   return (
-    <>
+    <div ref={motion} data-motion>
       <PageHero
         title="Everything we do, priced in the open"
         subtitle="A complete menu of services and engagement options. Each is a starting point we shape around your business, not a box you squeeze into. And it is priced in the open: where pricing varies you see the range, where it is fixed you see the number. These are starting points rather than quotes, because every project is different. You get a firm price in writing before any work begins."
       />
 
       <section className="px-[var(--edge)] py-12">
-        <h2 className="t-head mb-5">At a glance</h2>
-        <p className="max-w-2xl mb-6">Every number here is a starting point. The final build is shaped around your business, your workflow, and your goals.</p>
+        <h2 data-reveal className="t-head mb-5">At a glance</h2>
+        <p data-reveal className="max-w-2xl mb-6">Every number here is a starting point. The final build is shaped around your business, your workflow, and your goals.</p>
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-midnight-100">
+            <thead className="bg-midnight-950 text-white">
               <tr>
                 <th className="px-4 py-3 font-extrabold tracking-[-0.03em] font-medium">Service Line</th>
                 <th className="px-4 py-3 font-extrabold tracking-[-0.03em] font-medium hidden sm:table-cell">Format</th>
                 <th className="px-4 py-3 font-extrabold tracking-[-0.03em] font-medium text-right">Starting</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody data-stagger style={{ ['--step' as string]: '55ms' }}>
               {overview.map((row, i) => (
-                <tr key={row.service} className={i % 2 === 0 ? 'bg-silver-200' : ''}>
+                <tr key={row.service} className={`row-tone ${i % 2 === 0 ? 'bg-silver-200' : ''}`}>
                   <td className="px-4 py-3">
                     <a href={`#${row.anchor}`} className="hover:underline transition-colors">{row.service}</a>
                   </td>
@@ -256,9 +258,9 @@ export function Services() {
         title="Website Development"
         blurb="Modern, mobile-first websites built for performance and conversion. ANF Consulting designs and develops websites that match your brand, load fast, rank well, and turn visitors into leads. This is the website on its own. A Simple site is $500 to build and $50 a month to host and keep current. Larger sites are a one-time build, priced by how big and how custom they need to be, and yours when they ship. If you also want a CRM, a client portal, or automation running behind it, start with the platforms below instead."
       >
-        <div className="grid md:grid-cols-3 gap-4">
+        <div data-stagger className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-10">
           {websiteTiers.map((t) => (
-            <div key={t.name} className="p-6 bg-silver-200 transition-colors flex flex-col">
+            <div key={t.name} className="slab lift flex flex-col">
               <h4 className="font-extrabold tracking-[-0.03em] t-lead mb-1">{t.name}</h4>
               <p className="t-lead font-extrabold tracking-[-0.03em] text-flame-700 mb-3">{t.price}</p>
               <p className="text-[13px] text-midnight-500 mb-2">Ideal for</p>
@@ -279,9 +281,9 @@ export function Services() {
         title="Done-for-you platforms"
         blurb="Most businesses do not want to buy pieces. These are complete platforms: a website, a CRM, and the tools to run them, built as one system that is yours. Each is a starting point we tailor to you. The difference from a standalone website is what sits behind it. Everything runs on one system, so the CRM, the client portal, and the AI assistant can be turned on as you grow instead of paying to rebuild later. Hosting, support, and ongoing iteration are included monthly rather than bolted on."
       >
-        <div className="grid md:grid-cols-3 gap-4">
+        <div data-stagger className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-10">
           {platformTiers.map((t) => (
-            <div key={t.name} className="p-6 bg-silver-200 transition-colors flex flex-col">
+            <div key={t.name} className="slab lift flex flex-col">
               <h4 className="font-extrabold tracking-[-0.03em] t-lead mb-1">{t.name}</h4>
               <p className="t-lead font-extrabold tracking-[-0.03em] text-flame-700 mb-3">{t.price}</p>
               <p className="text-[13px] text-midnight-500 mb-2">Best for</p>
@@ -305,7 +307,7 @@ export function Services() {
         title="Proof-of-Work Marketing System"
         blurb="Turn the work you already do into your best marketing. Every completed job becomes proof: photos, a customer review, and local search pages that bring in the next customer. Built for home services and trades businesses that win on trust and reputation."
       >
-        <div className="p-8 bg-silver-200">
+        <div className="slab">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-6">
             <h4 className="font-extrabold tracking-[-0.03em] t-lead">Proof-of-Work Marketing System</h4>
             <p className="text-right">
@@ -351,9 +353,9 @@ export function Services() {
         title="AI Coaching & Integration"
         blurb="Practical AI training for business owners and teams. Whether you’re trying to understand what AI can actually do for your business, or you’re ready to embed it into your daily workflows, ANF Consulting provides hands-on coaching that translates AI capability into real productivity."
       >
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div data-stagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10">
           {coachingPackages.map((p) => (
-            <div key={p.name} className="p-5 bg-silver-200 transition-colors flex flex-col">
+            <div key={p.name} className="slab lift flex flex-col">
               <h4 className="font-extrabold tracking-[-0.03em] t-lead mb-1">{p.name}</h4>
               <p className="t-lead font-extrabold tracking-[-0.03em] text-flame-700 mb-3">{p.price}</p>
               <p className="leading-relaxed mb-3 flex-1">{p.includes}</p>
@@ -372,9 +374,9 @@ export function Services() {
         title="AI Strategy"
         blurb="Before you spend on tools, understand the landscape. AI Strategy engagements help business owners see what AI can specifically do for their business, with a clear roadmap, not a sales pitch."
       >
-        <div className="grid md:grid-cols-2 gap-4">
+        <div data-stagger className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10">
           {strategyOfferings.map((o) => (
-            <div key={o.name} className="p-6 bg-silver-200 transition-colors flex flex-col">
+            <div key={o.name} className="slab lift flex flex-col">
               <h4 className="font-extrabold tracking-[-0.03em] t-lead mb-1">{o.name}</h4>
               <p className="t-lead font-extrabold tracking-[-0.03em] text-flame-700 mb-3">{o.price}</p>
               <p className="text-[13px] text-midnight-500 mb-2">What’s included</p>
@@ -395,9 +397,9 @@ export function Services() {
         title="AI Implementation"
         blurb="Productized AI deliverables. Each package below is a complete, set-it-and-forget-it build. You know exactly what you’re getting, exactly what it costs, and exactly when it ships."
       >
-        <div className="grid md:grid-cols-3 gap-4 mb-6">
+        <div data-stagger className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-10 mb-6">
           {implementationPackages.map((p) => (
-            <div key={p.name} className="p-6 bg-silver-200 transition-colors flex flex-col">
+            <div key={p.name} className="slab lift flex flex-col">
               <h4 className="font-extrabold tracking-[-0.03em] t-lead mb-1">{p.name}</h4>
               <p className="t-lead font-extrabold tracking-[-0.03em] text-flame-700 mb-3">{p.price}</p>
               <p className="leading-relaxed mb-3 flex-1">{p.body}</p>
@@ -406,9 +408,9 @@ export function Services() {
           ))}
         </div>
         <SubBlock title="Implementation add-ons">
-          <div className="grid sm:grid-cols-2 gap-3">
+          <div data-stagger className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-10">
             {implementationAddons.map((a) => (
-              <div key={a.addon} className="p-4 bg-silver-200">
+              <div key={a.addon} className="slab">
                 <div className="flex justify-between items-baseline gap-3 mb-2">
                   <span className="font-medium">{a.addon}</span>
                   <span className="text-flame-700 whitespace-nowrap">{a.price}</span>
@@ -430,9 +432,9 @@ export function Services() {
           <p className="leading-relaxed mb-4">
             A 3-hour approved Ohio Real Estate CE course covering practical AI applications for residential and commercial agents. Available as open enrollment sessions or as a private booking for brokerages.
           </p>
-          <div className="grid md:grid-cols-2 gap-4">
+          <div data-stagger className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10">
             {ceChannels.map((c) => (
-              <div key={c.channel} className="p-5 bg-silver-200 transition-colors flex flex-col">
+              <div key={c.channel} className="slab lift flex flex-col">
                 <div className="flex justify-between items-baseline mb-2">
                   <h5 className="font-extrabold tracking-[-0.03em]">{c.channel}</h5>
                   <span className="text-flame-700 font-medium">{c.price}</span>
@@ -447,9 +449,9 @@ export function Services() {
           <p className="leading-relaxed mb-4">
             Tailored AI and business training for non-real-estate audiences. Workshops are customized to your team, industry, and use cases. All formats available virtually; in-person available within Northeast Ohio.
           </p>
-          <div className="grid md:grid-cols-3 gap-4">
+          <div data-stagger className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-10">
             {corporateFormats.map((f) => (
-              <div key={f.format} className="p-5 bg-silver-200 transition-colors flex flex-col">
+              <div key={f.format} className="slab lift flex flex-col">
                 <h5 className="font-extrabold tracking-[-0.03em] mb-1">{f.format}</h5>
                 <p className="t-lead font-extrabold tracking-[-0.03em] text-flame-700 mb-3">{f.price}</p>
                 <p className="leading-relaxed">{f.includes}</p>
@@ -461,14 +463,15 @@ export function Services() {
 
       <section className="px-[var(--edge)] py-16 md:py-24">
         <div className="mb-12">
-          <h2 className="t-head">The process</h2>
+          <h2 data-reveal className="t-head">The process</h2>
           <p className="mt-4 max-w-2xl">
             Engaging ANF Consulting is straightforward. Most engagements begin with a no-obligation discovery call to understand fit, scope, and goals.
           </p>
         </div>
-        <div className="grid md:grid-cols-4 gap-4">
+        <div data-progress className="process-bar mb-10" aria-hidden="true"><i /></div>
+        <div data-stagger style={{ ['--step' as string]: '140ms' }} className="grid grid-cols-1 md:grid-cols-4 gap-x-8 gap-y-10">
           {processSteps.map((s) => (
-            <div key={s.step} className="p-6 bg-silver-200 transition-colors">
+            <div key={s.step} className="slab">
               <p className="font-extrabold tracking-[-0.03em] t-head text-flame-700 mb-3">{s.step}</p>
               <h4 className="font-extrabold tracking-[-0.03em] mb-2">{s.title}</h4>
               <p className="leading-relaxed">{s.body}</p>
@@ -479,9 +482,9 @@ export function Services() {
 
       <section className="max-w-3xl px-[var(--edge)] py-16 md:py-20">
         <div className="mb-10">
-          <h2 className="t-head">Clear, predictable, transparent</h2>
+          <h2 data-reveal className="t-head">Clear, predictable, transparent</h2>
         </div>
-        <ul className="grid gap-3 list-disc pl-[1.2em] marker:text-flame-500">
+        <ul data-stagger className="grid gap-3 list-disc pl-[1.2em] marker:text-flame-500">
           {paymentTerms.map((term) => (
             <li key={term}>{term}</li>
           ))}
@@ -490,7 +493,7 @@ export function Services() {
 
       <section className="max-w-3xl px-[var(--edge)] py-16 md:py-20">
         <div className="mb-10">
-          <h2 className="t-head">Common questions</h2>
+          <h2 data-reveal className="t-head">Common questions</h2>
         </div>
         <JsonLd
           data={{
@@ -503,7 +506,7 @@ export function Services() {
             })),
           }}
         />
-        <div>
+        <div data-stagger style={{ ['--step' as string]: '60ms' }}>
           {faqs.map((item) => (
             <details key={item.q} className="group py-5">
               <summary className="flex justify-between items-start cursor-pointer list-none gap-4 marker:hidden [&::-webkit-details-marker]:hidden">
@@ -526,15 +529,15 @@ export function Services() {
         </p>
       </section>
 
-      <section className="ch ch-flame" style={{ minHeight: 0 }}>
-        <h2 className="t-display">Ready to start?</h2>
+      <section className="ch ch-flame lean-top" style={{ minHeight: 0 }}>
+        <h2 data-reveal className="t-display">Ready to start?</h2>
         <p className="t-lead mt-6 mb-8 max-w-2xl">
           It starts with a short request: what you&rsquo;re trying to do, in your own words. We read it, then set up a free 30-minute call. No pitch, no pressure.
         </p>
         <Link to="/book" className="btn btn-ink">Send a request</Link>
         <p className="mt-10 text-[13px]">Pricing effective May 2026. Subject to change.</p>
       </section>
-    </>
+    </div>
   )
 }
 
@@ -551,8 +554,8 @@ function ServiceSection({ id, title, blurb, children }: ServiceSectionProps) {
   return (
     <section id={id} className="svc px-[var(--edge)] py-16 md:py-24 scroll-mt-20">
       <div className="mb-8 md:mb-10 max-w-3xl">
-        <h2 className="t-head mb-5">{title}</h2>
-        <p className="leading-relaxed">{blurb}</p>
+        <h2 data-reveal className="t-head mb-5">{title}</h2>
+        <p data-reveal className="leading-relaxed">{blurb}</p>
       </div>
       {children}
     </section>

@@ -58,7 +58,7 @@ export function Testimonials({
         {reviews.map((r, i) => (
           <figure
             key={i}
-            className="flex flex-col bg-silver-200 p-6"
+            className="flex flex-col slab"
           >
             {typeof r.rating === 'number' && r.rating > 0 && <Stars n={r.rating} />}
             <blockquote className="mt-3 flex-1 leading-relaxed">

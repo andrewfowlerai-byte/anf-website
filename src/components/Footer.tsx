@@ -28,9 +28,9 @@ export function Footer() {
   return (
     // Redesigned 2026-11-23 (DESIGN.md): the page closes on the name, built from blocks in the brand's colours.
     // Every link the old footer carried is still here (class attendees are told to find theirs on the site).
-    <footer className="bg-midnight-950 text-silver-100 px-[var(--edge)] pt-[clamp(3.5rem,7vw,6rem)] pb-8">
-      <Link to="/" aria-label="ANF Consulting home" className="block">
-        <p className="mark" aria-hidden="true"><span>A</span><span>N</span><span>F</span></p>
+    <footer className="bg-[#07102B] text-silver-100 px-[var(--edge)] pt-[clamp(3.5rem,7vw,6rem)] pb-8">
+      <Link to="/" aria-label="ANF Consulting home" className="block overflow-hidden">
+        <img className="foot-logo" src="/anf-logo.png" alt="ANF Consulting" width={512} height={512} loading="lazy" decoding="async" />
       </Link>
       <p className="mt-5 text-[length:var(--step-lead)] font-extrabold tracking-tight text-silver-100">Clarity. Integration. Automation.</p>
 

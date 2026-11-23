@@ -108,7 +108,7 @@ export function Events({ focusCode }: { focusCode?: string } = {}) {
 
       {/* Private code unlock */}
       <section className="max-w-2xl px-[var(--edge)] pb-24">
-        <div className="bg-silver-200 p-6 md:p-8">
+        <div className="slab">
           <div className="flex items-center gap-2 mb-2">
             <Lock className="w-4 h-4 text-flame-700" />
           </div>
@@ -339,7 +339,7 @@ function EventCard({ event, highlight = false, code, autoOpen = false }: { event
         )}
 
         {nativeRsvp && rsvpOpen && !rsvpDone && (
-          <form onSubmit={submitRsvp} className="mt-4 space-y-2 bg-silver-200 p-4">
+          <form onSubmit={submitRsvp} className="mt-4 space-y-2 slab">
             <input
               type="text"
               tabIndex={-1}

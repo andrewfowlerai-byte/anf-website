@@ -1,5 +1,7 @@
-import { BookCallButton } from '../components/BookCallButton'
+import { Link } from 'react-router-dom'
 import { PageHero } from '../components/PageHero'
+import { SoldenFeature } from '../components/SoldenFeature'
+import { useMotion } from '../hooks/useMotion'
 
 const values = [
   {
@@ -20,82 +22,89 @@ const values = [
   },
 ]
 
+/**
+ * About. Rebuilt 2026-11-23 (DESIGN.md): the same words, set as chapters instead of stacked boxes, with its own
+ * motion (hooks/useMotion.ts). The portrait is uncovered and settles; paragraphs arrive in turn; the four beliefs
+ * stand as large words on the dark field, with no boxes around them. Solden, ANF's own app, takes the place Everlee
+ * had (Andrew, 2026-11-23).
+ */
 export function About() {
+  const motion = useMotion()
   return (
-    <>
+    <div ref={motion} data-motion>
       <PageHero
         title="Built around your business."
         subtitle="Steady guidance through change. Simple systems that hold up. One partner, one roadmap, one team."
       />
 
-      <section className="px-[var(--edge)] py-16 md:py-20">
-        <h2 className="t-head font-extrabold tracking-[-0.03em] mb-12">Andrew Fowler</h2>
-        <div className="grid md:grid-cols-[auto_1fr] gap-10 md:gap-12 items-start">
-          <div className="md:w-72 md:mx-0">
+      {/* The founder: portrait and name on the left, his story beside it. */}
+      <section className="ch-grid px-[var(--edge)] py-[clamp(3.5rem,7vw,6.5rem)] gap-y-10">
+        <div className="col-span-12 md:col-span-5 min-w-0">
+          <div data-reveal="wipe" className="lean-pic">
             <img
               src="/founder.webp"
               alt="Andrew Fowler, founder of ANF Consulting"
               width={1536}
               height={1024}
-              loading="lazy"
               decoding="async"
-              className="w-full"
+              className="block w-full aspect-[4/5] object-cover object-[42%_30%]"
             />
           </div>
-          <div className="space-y-5 leading-relaxed">
-            <p>
-              ANF Consulting was founded by Andrew Fowler, a systems-minded professional with years of experience working directly with modern tools and emerging technology. Andrew built this company after seeing how quickly the landscape was changing and how unprepared many professionals felt as new tools became part of everyday work.
+          <h2 data-reveal className="t-head mt-8">Andrew Fowler</h2>
+        </div>
+        <div data-stagger className="col-span-12 md:col-span-6 md:col-start-7 min-w-0 grid gap-5 content-start" style={{ ['--step' as string]: '110ms' }}>
+          <p className="t-lead">
+            ANF Consulting was founded by Andrew Fowler, a systems-minded professional with years of experience working directly with modern tools and emerging technology. Andrew built this company after seeing how quickly the landscape was changing and how unprepared many professionals felt as new tools became part of everyday work.
+          </p>
+          <p>
+            His background includes real estate, communication, and workflow design, but his strongest experience comes from years spent learning how these new tools actually behave in real situations. That hands-on work became the foundation for the education and consulting we provide today.
+          </p>
+          <p>
+            Andrew brings a practical and steady approach to every project. He focuses on understanding how people think, how they work, and where they feel stuck. This perspective shapes the way ANF Consulting creates systems that feel natural, simple, and easy to maintain.
+          </p>
+          <p>
+            As the founder, Andrew leads with clarity, integrity, and a commitment to helping people move through change with confidence. His work reflects a belief that modern tools should support human strengths, not replace them, and that every person deserves systems that make their work feel lighter and more intentional.
+          </p>
+        </div>
+      </section>
+
+      {/* The mission, on mist. */}
+      <section className="on-mist lean-both px-[var(--edge)]">
+        <div className="ch-grid gap-y-8">
+          <h2 data-reveal className="t-head col-span-12 md:col-span-5">What we exist to do</h2>
+          <div data-stagger className="col-span-12 md:col-span-6 md:col-start-7 grid gap-5" style={{ ['--step' as string]: '110ms' }}>
+            <p className="t-lead">
+              ANF Consulting exists to help people navigate a world where modern technology is no longer optional. The tools around us are changing quickly and they are becoming a permanent part of how work gets done. We believe this shift should feel like an opening, not a burden.
             </p>
             <p>
-              His background includes real estate, communication, and workflow design, but his strongest experience comes from years spent learning how these new tools actually behave in real situations. That hands-on work became the foundation for the education and consulting we provide today.
+              Our mission is to guide professionals and small businesses through this transition with clarity, structure, and confidence. We help people understand how to use new tools in a way that protects their voice, strengthens their message, and supports the work they already do well.
             </p>
             <p>
-              Andrew brings a practical and steady approach to every project. He focuses on understanding how people think, how they work, and where they feel stuck. This perspective shapes the way ANF Consulting creates systems that feel natural, simple, and easy to maintain.
-            </p>
-            <p>
-              As the founder, Andrew leads with clarity, integrity, and a commitment to helping people move through change with confidence. His work reflects a belief that modern tools should support human strengths, not replace them, and that every person deserves systems that make their work feel lighter and more intentional.
+              We focus on simple systems, clear communication, and routines that make everyday work easier. Our purpose is to help people move forward with confidence as the world continues to evolve.
             </p>
           </div>
         </div>
       </section>
 
-      <section className="max-w-3xl px-[var(--edge)] py-16 md:py-20">
-        <div className="mb-10">
-          <h2 className="t-head font-extrabold tracking-[-0.03em]">What we exist to do</h2>
-        </div>
-        <div className="space-y-5 t-lead leading-relaxed pl-6 md:pl-8">
-          <p>
-            ANF Consulting exists to help people navigate a world where modern technology is no longer optional. The tools around us are changing quickly and they are becoming a permanent part of how work gets done. We believe this shift should feel empowering rather than overwhelming.
-          </p>
-          <p>
-            Our mission is to guide professionals and small businesses through this transition with clarity, structure, and confidence. We help people understand how to use new tools in a way that protects their voice, strengthens their message, and supports the work they already do well.
-          </p>
-          <p>
-            We focus on simple systems, clear communication, and routines that make everyday work easier. Our purpose is to help people move forward with confidence as the world continues to evolve.
-          </p>
-        </div>
-      </section>
-
-      <section className="px-[var(--edge)] py-16 md:py-20">
-        <div className="mb-12">
-          <h2 className="t-head font-extrabold tracking-[-0.03em]">What we believe</h2>
-        </div>
-        <div className="grid md:grid-cols-2 gap-6">
+      {/* What we believe: four words set large on the dark field. No boxes. */}
+      <section className="on-midnight lean-both px-[var(--edge)]" style={{ marginTop: 'calc(-1 * var(--lean))' }}>
+        <h2 data-reveal className="t-head">What we believe</h2>
+        <div data-reveal="draw" className="mt-6 h-2.5 bg-flame-500" aria-hidden="true" />
+        <div data-stagger className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-x-[clamp(2rem,6vw,6rem)] gap-y-12" style={{ ['--step' as string]: '130ms' }}>
           {values.map((v) => (
-            <div key={v.title} className="p-7 bg-silver-200 transition-colors">
-              <h3 className="t-lead font-extrabold tracking-[-0.03em] text-flame-700 mb-3">{v.title}</h3>
-              <p className="leading-relaxed">{v.body}</p>
+            <div key={v.title}>
+              <h3 className="belief text-flame-500">{v.title}</h3>
+              <p className="mt-4 max-w-[46ch]">{v.body}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="max-w-3xl px-[var(--edge)] py-16 md:py-20">
-        <div className="mb-10">
-          <h2 className="t-head font-extrabold tracking-[-0.03em]">How ANF came to be</h2>
-        </div>
-        <div className="space-y-5 t-lead leading-relaxed">
-          <p>
+      {/* The story. */}
+      <section className="ch-grid px-[var(--edge)] py-[clamp(3.5rem,7vw,6.5rem)] gap-y-8">
+        <h2 data-reveal className="t-head col-span-12 md:col-span-5">How ANF came to be</h2>
+        <div data-stagger className="col-span-12 md:col-span-6 md:col-start-7 grid gap-5" style={{ ['--step' as string]: '110ms' }}>
+          <p className="t-lead">
             ANF Consulting began inside the real estate world, where clear communication and strong systems are essential. Early in his real estate career, our founder, Andrew Fowler, saw how quickly modern tools were becoming part of everyday work. He realized that professionals who learned to use these tools with clarity and intention would have a real advantage, while those who avoided them would eventually fall behind.
           </p>
           <p>
@@ -110,51 +119,16 @@ export function About() {
         </div>
       </section>
 
-      <section className="px-[var(--edge)] py-16 md:py-20">
-        <div className="bg-silver-200 overflow-hidden">
-          <div className="grid md:grid-cols-2 gap-0 items-stretch">
-            <div className="p-8 md:p-12 flex flex-col justify-center">
-              <h2 className="t-head font-extrabold tracking-[-0.03em] mb-3 leading-tight">
-                Everlee
-              </h2>
-              <p className="t-lead leading-relaxed mb-4">
-                A daily content and consistency app for real estate agents and small business owners.
-              </p>
-              <p className="leading-relaxed mb-6">
-                Everlee generates social media posts, blog content, and AI images tailored to your business, tracks your posting streak to keep you accountable, and stores all your media in one library. The idea is simple. Show up every day, let Everlee handle the content, build momentum over time.
-              </p>
-              <a
-                href="https://useeverlee.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-flame-500 hover:bg-flame-400 font-medium px-6 py-3 transition-all self-start"
-              >
-                Try Everlee
-                <span aria-hidden>↗</span>
-              </a>
-            </div>
-            <div className="bg-silver-200 p-6 md:p-8 flex items-center justify-center">
-              <img
-                src="/everlee-home.webp"
-                alt="Everlee app showing daily content, streak tracking, and posting checklist"
-                width={1320}
-                height={2871}
-                loading="lazy"
-                decoding="async"
-                className="w-full max-w-[280px] md:max-w-xs"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Solden, ANF's own app, in its own colours (the same section the home page carries). */}
+      <SoldenFeature />
 
-      <section className="max-w-4xl px-[var(--edge)] py-16 md:py-24">
-        <h2 className="t-head font-extrabold tracking-[-0.03em] mb-4">Work with us</h2>
-        <p className="t-lead mb-8 max-w-2xl">
+      <section className="ch ch-flame" style={{ minHeight: 0 }}>
+        <h2 data-reveal className="t-display">Work with us</h2>
+        <p data-reveal className="t-lead mt-6 mb-8 max-w-2xl">
           Tell us what you're trying to build. Andrew reads every request and gets back to you within one business day. No pitch, no pressure.
         </p>
-        <BookCallButton size="lg" />
+        <Link to="/book" className="btn btn-ink">Send a request</Link>
       </section>
-    </>
+    </div>
   )
 }

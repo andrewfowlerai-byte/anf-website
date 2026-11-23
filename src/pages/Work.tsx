@@ -266,7 +266,7 @@ export function Work() {
         )}
       </section>
 
-      <section className="ch ch-flame" style={{ minHeight: 0 }}>
+      <section className="ch ch-flame lean-top" style={{ minHeight: 0 }}>
         <h2 className="t-head" style={{ maxWidth: '22ch' }}>Have something you’d like built or grown?</h2>
         <p className="t-lead mt-6 mb-8 max-w-2xl">
           Whether it is a website, a custom CRM, an AI workflow, or a system to tie it all

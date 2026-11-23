@@ -19,7 +19,7 @@
 .ch-mist { background: var(--mist); color: var(--ink); }
 .ch-ink { background: var(--ink); color: var(--paper); }
 .ch h1, .ch h2, .ch h3, .ch h4 { color: inherit; }
-.ch a { color: inherit; }
+.ch a:not(.btn) { color: inherit; }
 .ch-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(0.75rem, 1.6vw, 1.5rem); }
 
 /* A plain text link: weight and a thick underline in the field's own ink. */
@@ -156,7 +156,7 @@ select.field { appearance: auto; }
 @keyframes enter-rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    main.on-paper > :not(.ch):not(.hero) :is(h2, h3, h4, p, li, img, table, blockquote, details, form, .panel, .bg-silver-200, .wk-shot) {
+    main.on-paper > :not(.ch):not(.hero):not([data-motion]):not(.lean-stack) :is(h2, h3, h4, p, li, img, table, blockquote, details, form, .panel, .bg-silver-200, .wk-shot) {
       animation: enter-rise linear both;
       animation-timeline: view();
       animation-range: entry 0% entry 38%;
@@ -248,4 +248,155 @@ main.on-paper > :not(.ch):not(.hero):not(.page-hero) p { max-width: 72ch; }
   main.on-paper > .page-hero + * form > :nth-child(n+5) { animation-delay: 580ms; }
 }
 /* The first block under a page header starts a clear step below it. */
-main.on-paper > .page-hero + :not(.ch):not(.wk-filters) { padding-top: clamp(2.5rem, 5vw, 4.5rem); }
+main.on-paper .page-hero + :not(.ch):not(.wk-filters) { padding-top: clamp(2.5rem, 5vw, 4.5rem); }
+
+/* ---------- the motion layer (hooks/useMotion.ts) ----------
+   A page that sets data-motion on its root authors its own entrances; the general scroll rise stands down inside it. */
+main.on-paper { --cover: var(--paper); }
+.ch-mist, .on-mist, .svc:nth-of-type(even) { --cover: var(--mist); }
+.ch-flame, .on-flame { --cover: var(--flame); }
+.ch-ink, .on-ink { --cover: var(--ink); }
+
+@media screen and (prefers-reduced-motion: no-preference) {
+  /* One element rises. */
+  [data-motion] [data-reveal]:not([data-reveal='wipe']):not([data-reveal='draw']) { transition: opacity 800ms var(--ease-out), transform 800ms var(--ease-out); }
+  [data-motion] [data-reveal]:not([data-reveal='wipe']):not([data-reveal='draw']):not([data-in]) { opacity: 0; transform: translateY(26px); }
+
+  /* A picture is uncovered from its top edge and settles from a slight zoom. The picture itself is never clipped
+     or hidden (a lazy image a browser counts as off screen never loads): a cover in the field's colour slides off. */
+  [data-motion] [data-reveal='wipe'] { position: relative; overflow: hidden; }
+  [data-motion] [data-reveal='wipe']::after { content: ''; position: absolute; inset: -1px; background: var(--cover, var(--paper)); transform-origin: bottom; transition: transform 1000ms var(--ease-out); pointer-events: none; }
+  [data-motion] [data-reveal='wipe'][data-in]::after { transform: scaleY(0); }
+  [data-motion] [data-reveal='wipe'] img { transform: scale(1.09); transition: transform 1800ms var(--ease-out); }
+  [data-motion] [data-reveal='wipe'][data-in] img { transform: none; }
+
+  /* A filled bar draws from left to right. */
+  [data-motion] [data-reveal='draw'] { transform-origin: left; transform: scaleX(0); transition: transform 1100ms var(--ease-out); }
+  [data-motion] [data-reveal='draw'][data-in] { transform: none; }
+
+  /* Children arrive one after another. The entrance is an animation that lets go when it ends, so a hover or a
+     press on the same element answers at once. */
+  [data-motion] [data-stagger]:not([data-in]) > * { opacity: 0; }
+  [data-motion] [data-stagger][data-in] > * { animation: enter-rise 700ms var(--ease-out) backwards; animation-delay: calc(var(--step, 80ms) * var(--i, 0)); }
+  [data-motion] [data-stagger='wipe'][data-in] > * { animation-name: wipe-in; animation-duration: 800ms; }
+  [data-stagger] > :nth-child(1) { --i: 0; } [data-stagger] > :nth-child(2) { --i: 1; } [data-stagger] > :nth-child(3) { --i: 2; }
+  [data-stagger] > :nth-child(4) { --i: 3; } [data-stagger] > :nth-child(5) { --i: 4; } [data-stagger] > :nth-child(6) { --i: 5; }
+  [data-stagger] > :nth-child(7) { --i: 6; } [data-stagger] > :nth-child(8) { --i: 7; } [data-stagger] > :nth-child(9) { --i: 8; }
+  [data-stagger] > :nth-child(10) { --i: 9; } [data-stagger] > :nth-child(11) { --i: 10; } [data-stagger] > :nth-child(n+12) { --i: 11; }
+
+  /* A page title arrives word by word, each from behind its own baseline. */
+  .page-hero-title.has-words { animation: none; }
+  .page-hero-title .word { display: inline-block; overflow: hidden; vertical-align: top; padding-block: 0.12em; margin-block: -0.12em; }
+  .page-hero-title .word > span { display: inline-block; animation: hero-rise 850ms var(--ease-out) both; animation-delay: calc(var(--w, 0) * 55ms); }
+}
+@keyframes wipe-in { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+
+/* What a pointer or a press gets back. */
+.lift { transition: transform 220ms var(--ease-out), background-color 220ms var(--ease-out), color 220ms var(--ease-out); }
+.lift:hover { transform: translateY(-5px); }
+.lift-flame:hover { background: var(--flame); color: var(--ink); }
+.field { transition: outline-offset 160ms var(--ease-out), background-color 160ms var(--ease-out); }
+.row-tone { transition: background-color 180ms var(--ease-out); }
+.row-tone:hover { background: var(--mist); }
+
+/* The process bar on Services fills as the steps cross the screen. */
+.process-bar { height: 10px; background: var(--mist); overflow: hidden; }
+.process-bar > i { display: block; height: 100%; background: var(--flame); transform-origin: left; transform: scaleX(clamp(0, calc(var(--p, 0) * 2.4 - 0.3), 1)); }
+/* A picture that drifts a little against the scroll. */
+.drift { transform: translateY(calc((0.5 - var(--p, 0.5)) * 44px)); will-change: transform; }
+
+/* A question opens smoothly where the browser can do it. */
+@supports (interpolate-size: allow-keywords) {
+  :root { interpolate-size: allow-keywords; }
+  details::details-content { height: 0; overflow: clip; transition: height 340ms var(--ease-out), content-visibility 340ms allow-discrete; }
+  details[open]::details-content { height: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lift, .field, .row-tone { transition: none; }
+  .lift:hover { transform: none; }
+  .drift { transform: none; }
+  .process-bar > i { transform: none; }
+}
+
+/* ==========================================================================
+   Identity pass, 2026-11-23. Andrew: "we need some uniquer designs. all the square boxes and font screams
+   vibecoded." Both now come from his own logo, which is wide and leans forward:
+     type    Archivo, set wide (the logo's letters are extended), instead of a tight compact grotesk
+     shape   one forward lean, used for the seams between fields, pictures, buttons and tiles, instead of squares
+   The rules below override the first pass above; DESIGN.md has the reasoning.
+   ========================================================================== */
+:root {
+  --wide: 122%;                       /* display width, on Archivo's width axis */
+  --lean: clamp(1.5rem, 5.5vw, 5.5rem); /* how far a full-width seam rises across the page */
+  --cut: 0.62em;                      /* the same lean on a small shape (a button, a chip) */
+  --step-display: clamp(2.5rem, 7.4vw, 7.25rem);
+}
+body { font-stretch: 100%; }
+.t-display, .t-head, .hero-title, .page-hero-title, .typed-input, .typed-mirror, .spread-line, .tile-figure, .wk-name, .ho-title,
+main.on-paper :is(h1, h2, h3, h4) { font-stretch: var(--wide); }
+.t-display { font-weight: 800; line-height: 0.94; letter-spacing: -0.03em; }
+.t-head { font-weight: 800; line-height: 1; letter-spacing: -0.025em; }
+.hero-title { font-size: clamp(3rem, 9.4vw, 9.25rem); line-height: 0.9; letter-spacing: -0.03em; }
+.hero-title .line-split > span::after { clip-path: inset(50% 0 0 0); }
+.page-hero-title.is-short { font-size: clamp(1.9rem, 7.4vw, 7.25rem); line-height: 0.96; }
+.typed-input, .typed-mirror { font-size: clamp(2rem, 6vw, 5.75rem); letter-spacing: -0.03em; }
+.spread-line { font-size: clamp(2rem, 7.2vw, 7rem); letter-spacing: -0.03em; }
+.tile-figure { font-size: clamp(3rem, 7vw, 6.5rem); line-height: 0.86; }
+@media (max-width: 760px) {
+  /* A phone has no room for the full width: the face stays wide, less so, and headings step down to hold two lines. */
+  :root { --wide: 108%; }
+  .t-head, .wk-name { font-size: clamp(1.5rem, 6.9vw, 1.75rem); }
+  .hero-title { font-size: 11.6vw; }
+  .typed-input, .typed-mirror { font-size: 7.4vw; }
+  .spread-line { font-size: 8vw; }
+}
+
+/* ---------- the lean: one forward slant, taken from the logo, in place of squares ---------- */
+/* Small shapes. A clipped shape cannot show an outline, so focus inverts it instead. */
+.btn, .chip, .lean { clip-path: polygon(var(--cut) 0, 100% 0, calc(100% - var(--cut)) 100%, 0 100%); }
+.btn { padding-inline: 1.9rem; }
+.chip { padding-inline: 1.3rem; }
+.lean { padding-inline: 1.5rem; white-space: nowrap; }
+.btn:focus-visible, .chip:focus-visible, .lean:focus-visible { outline: none; background: var(--ink); color: var(--paper); }
+.btn-ink:focus-visible { background: var(--paper); color: var(--ink); }
+
+/* Seams. A page header ends on the lean; stacked chapters interlock on it. */
+.page-hero { clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--lean)), 0 100%); padding-bottom: calc(var(--lean) + clamp(2rem, 4vw, 3.5rem)); }
+.lean-stack > * { margin-top: calc(-1 * var(--lean)); clip-path: polygon(0 var(--lean), 100% 0, 100% calc(100% - var(--lean)), 0 100%); }
+.lean-stack > :first-child { margin-top: 0; clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--lean)), 0 100%); }
+.lean-stack > :last-child { clip-path: polygon(0 var(--lean), 100% 0, 100% 100%, 0 100%); }
+.lean-stack > .ch { padding-top: calc(var(--lean) + clamp(3.5rem, 7vw, 7rem)); padding-bottom: calc(var(--lean) + clamp(3.5rem, 7vw, 7rem)); }
+.lean-stack > #solden { padding-block: var(--lean); }
+.hero-support { bottom: calc(var(--lean) + 1.5rem); }
+/* A band or a closing chapter on a paper page leans too; the paper shows in the wedges. */
+.svc:nth-of-type(even), .wk-row:nth-child(even), .lean-both { clip-path: polygon(0 var(--lean), 100% 0, 100% calc(100% - var(--lean)), 0 100%); padding-top: calc(var(--lean) + clamp(3rem, 6vw, 5.5rem)); padding-bottom: calc(var(--lean) + clamp(3rem, 6vw, 5.5rem)); }
+.lean-top { clip-path: polygon(0 var(--lean), 100% 0, 100% 100%, 0 100%); padding-top: calc(var(--lean) + clamp(3.5rem, 7vw, 6.5rem)) !important; }
+
+/* Pictures lean with everything else. */
+.typed-shot, .wk-shot, .lean-pic { clip-path: polygon(6% 0, 100% 0, 94% 100%, 0 100%); }
+.wk-media a { overflow: visible; }
+
+/* The mosaic: leaning tiles, one angle whatever their height. */
+.tile { --tcut: 2.1rem; clip-path: polygon(var(--tcut) 0, 100% 0, calc(100% - var(--tcut)) 100%, 0 100%); padding-inline: calc(var(--tcut) + 1.1rem); }
+.tile-6x5 { --tcut: 3.5rem; }
+.tile-3x2 { --tcut: 1.4rem; }
+.tile-pic { padding: 0; }
+@media (max-width: 760px) { .tile, .tile-6x5, .tile-3x2 { --tcut: 1rem; } }
+
+/* No boxes. What used to sit in a grey rectangle stands on the page, under a small leaning mark. */
+.panel { background: transparent; padding: 0; }
+.slab { background: transparent; }
+.grid > .slab::before, .slab.is-marked::before { content: ''; display: block; width: 2.6rem; height: 0.55rem; margin-bottom: 1rem; background: var(--flame); clip-path: polygon(0.38rem 0, 100% 0, calc(100% - 0.38rem) 100%, 0 100%); }
+.on-flame .slab::before, .ch-flame .slab::before { background: var(--ink); }
+
+/* A belief on About: one word, set as large as its column allows. */
+.belief { font-weight: 800; font-stretch: var(--wide); font-size: clamp(2.1rem, 4.9vw, 4.6rem); line-height: 1; letter-spacing: -0.03em; }
+
+/* The footer closes on the real logo, in its own navy. */
+.foot-logo { display: block; width: min(100%, 23rem); height: 10.5rem; object-fit: none; object-position: 44% 50%; margin-left: -4.6rem; }
+@media (max-width: 760px) { .foot-logo { margin-left: -5.4rem; } }
+/* Solden is its own product in its own colours; its headline keeps the normal width. */
+#solden h2 { font-stretch: 100%; }
+/* The hero's words stay flame above the seam (inner-page heading rules must not repaint them). */
+.hero .hero-title { color: var(--flame); }

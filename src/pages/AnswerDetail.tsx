@@ -104,7 +104,7 @@ function AnswerBody({ slug }: { slug: string }) {
           </div>
         </section>
 
-        <div className="mt-14 bg-silver-200 p-8">
+        <div className="mt-14 slab">
           <h2 className="t-lead font-extrabold tracking-[-0.03em]">Want this looked at for your business?</h2>
           <p className="mt-3 max-w-xl leading-relaxed">
             Send a request with what you are running now and what is not working. You will get a straight answer,
@@ -129,7 +129,7 @@ function AnswerBody({ slug }: { slug: string }) {
                 <Link
                   key={r!.slug}
                   to={`/answers/${r!.slug}`}
-                  className="bg-silver-200 p-5 transition-colors"
+                  className="slab"
                 >
                   <p className="font-medium leading-snug">{r!.question}</p>
                 </Link>

@@ -19,7 +19,7 @@ export function BookCallButton({ size = 'md', className = '', label = 'Send a re
     <Link
       to="/book"
       // The one button shape on the site (2026-11-23 redesign): a flat flame rectangle with ink text. No glow.
-      className={`inline-flex items-center justify-center bg-flame-500 hover:bg-flame-400 active:translate-y-px text-midnight-950 font-semibold transition-colors ${sizeStyles[size]} ${className}`}
+      className={`lean inline-flex items-center justify-center bg-flame-500 hover:bg-flame-400 active:translate-y-px text-midnight-950 font-semibold transition-colors ${sizeStyles[size]} ${className}`}
     >
       {label}
     </Link>

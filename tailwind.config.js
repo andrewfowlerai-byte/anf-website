@@ -33,8 +33,8 @@ export default {
         },
       },
       fontFamily: {
-        display: ['"Schibsted Grotesk"', 'system-ui', 'sans-serif'],
-        sans: ['"Schibsted Grotesk"', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Archivo', 'system-ui', 'sans-serif'],
+        sans: ['Archivo', 'system-ui', '-apple-system', 'sans-serif'],
       },
       backgroundImage: {
         'midnight-radial':
