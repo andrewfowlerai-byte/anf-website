@@ -16,7 +16,7 @@ export interface ShowcaseProject {
 }
 
 /** Published projects for the /work page, in display order. RLS keeps drafts out. */
-export async function listShowcaseProjects(): Promise<ShowcaseProject[]> {
+async function loadShowcaseProjects(): Promise<ShowcaseProject[]> {
   // select('*') (not an explicit column list) so the page keeps working if the
   // access_code / access_note columns are not migrated in yet: missing columns
   // just come back undefined instead of erroring the whole query.
@@ -31,4 +31,14 @@ export async function listShowcaseProjects(): Promise<ShowcaseProject[]> {
     return []
   }
   return (data ?? []) as ShowcaseProject[]
+}
+
+/**
+ * One read per visit, shared by everything that shows the builds (the home page asks from two sections, /work from
+ * a third). An empty or failed read is not kept, so the next ask tries again.
+ */
+let inFlight: Promise<ShowcaseProject[]> | null = null
+export function listShowcaseProjects(): Promise<ShowcaseProject[]> {
+  inFlight ??= loadShowcaseProjects().then((rows) => { if (!rows.length) inFlight = null; return rows })
+  return inFlight
 }

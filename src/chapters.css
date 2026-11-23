@@ -1,0 +1,157 @@
+/*
+ * The home page's chapters (2026-11-23 redesign, DESIGN.md). Every section is one flat field of a brand colour, floor
+ * to ceiling, butted against the next with no gap and no line. One typeface, five type steps, square corners.
+ * Plain CSS on purpose: the waterline hero, the mosaic and the spread need real geometry, not utility soup.
+ */
+
+/* ---------- type ---------- */
+.t-display { font-weight: 800; font-size: var(--step-display); line-height: 0.88; letter-spacing: -0.04em; margin: 0; }
+.t-head { font-weight: 800; font-size: var(--step-head); line-height: 0.95; letter-spacing: -0.04em; margin: 0; }
+.t-lead { font-size: var(--step-lead); line-height: 1.3; letter-spacing: -0.01em; margin: 0; }
+.t-body { font-size: var(--step-body); line-height: 1.45; margin: 0; }
+.t-small { font-size: var(--step-small); line-height: 1.4; font-weight: 600; margin: 0; }
+
+/* ---------- a chapter ---------- */
+.ch { position: relative; min-height: 90svh; padding: clamp(4.5rem, 9vw, 9rem) var(--edge); }
+.ch-paper { background: var(--paper); color: var(--ink); --cover: var(--paper); }
+.ch-flame { background: var(--flame); color: var(--ink); }
+.ch-midnight { background: var(--midnight); color: var(--paper); --cover: var(--midnight); }
+.ch-mist { background: var(--mist); color: var(--ink); }
+.ch-ink { background: var(--ink); color: var(--paper); }
+.ch h1, .ch h2, .ch h3, .ch h4 { color: inherit; }
+.ch a { color: inherit; }
+.ch-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(0.75rem, 1.6vw, 1.5rem); }
+
+/* A plain text link: weight and a thick underline in the field's own ink. */
+.link { font-weight: 600; text-decoration: underline; text-decoration-thickness: 0.12em; text-underline-offset: 0.22em; transition: text-underline-offset 180ms var(--ease-out); }
+.link:hover { text-underline-offset: 0.38em; }
+
+/* The one button shape on the site: a flat flame rectangle, ink text. */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.85rem 1.35rem; background: var(--flame); color: var(--ink); font-weight: 600; font-size: var(--step-body); line-height: 1.1; border: 0; border-radius: 0; cursor: pointer; transition: transform 160ms var(--ease-out), background-color 160ms var(--ease-out); }
+.btn:hover { background: #F89259; transform: translateY(-2px); }
+.btn:active { transform: translateY(1px); }
+.btn-ink { background: var(--ink); color: var(--paper); }
+.btn-ink:hover { background: var(--midnight); }
+
+/* ---------- hero: the waterline ---------- */
+.hero { --seam: 50%; position: relative; height: calc(100svh - 4.5rem); min-height: 34rem; overflow: hidden; background: var(--flame); }
+.hero::before { content: ''; position: absolute; inset: 0 0 auto 0; height: var(--seam); background: var(--paper); }
+.hero-title { position: absolute; left: 0; right: 0; top: var(--seam); margin: 0; transform: translateY(-1.32em); font-weight: 800; font-size: var(--step-display); line-height: 0.88; letter-spacing: -0.04em; text-transform: uppercase; text-align: center; white-space: nowrap; }
+/* The words are flame above the seam. The second line carries its own lower half again in ink (one element, so
+   nothing lies on top of the headline): below the seam the letters read as if under water. */
+.hero-title { color: var(--flame); }
+.hero-title .line-split > span { position: relative; }
+.hero-title .line-split > span::after { content: attr(data-text); position: absolute; inset: 0; color: var(--ink); clip-path: inset(50% 0 0 0); }
+.hero-title .line { display: block; overflow: hidden; }
+.hero-title .line > span { display: block; animation: hero-rise 900ms var(--ease-out) both; }
+.hero-title .line + .line > span { animation-delay: 110ms; }
+@keyframes hero-rise { from { transform: translateY(105%); } to { transform: none; } }
+.hero-support { position: absolute; left: 50%; bottom: 2.5rem; width: min(44ch, calc(100% - 2 * var(--edge))); transform: translateX(-50%); margin: 0; text-align: center; color: var(--ink); font-size: var(--step-lead); line-height: 1.3; animation: hero-fade 700ms var(--ease-out) 620ms both; }
+@keyframes hero-fade { from { opacity: 0; transform: translate(-50%, 14px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+/* ---------- the headline you can type ---------- */
+.typed { position: relative; }
+.typed-input { display: block; width: 100%; height: 1.12em; padding: 0; border: 0; background: transparent; color: var(--ink); font: inherit; font-weight: 800; font-size: var(--step-display); line-height: 1; letter-spacing: -0.04em; }
+.typed-input::placeholder { color: var(--mist); }
+/* A block caret after the words while the field is not in use; the browser's own takes over on focus. */
+.typed-mirror { position: absolute; inset: 0 auto auto 0; height: 1.12em; max-width: 100%; overflow: hidden; white-space: pre; pointer-events: none; color: transparent; font-weight: 800; font-size: var(--step-display); line-height: 1; letter-spacing: -0.04em; }
+.typed-mirror i { display: inline-block; width: 0.08em; height: 0.78em; margin-left: 0.06em; background: var(--flame); animation: caret 1.1s steps(1) infinite; }
+.typed-input:focus ~ .typed-mirror { display: none; }
+@keyframes caret { 50% { opacity: 0; } }
+.typed-shot { display: block; width: 100%; height: auto; background: var(--mist); }
+.typed-none { display: grid; place-items: end start; aspect-ratio: 16 / 10; padding: 1.5rem; background: var(--midnight); color: var(--paper); }
+.chip { padding: 0.55rem 0.9rem; background: var(--mist); color: var(--ink); font-weight: 600; font-size: var(--step-body); border: 0; border-radius: 0; cursor: pointer; transition: background-color 160ms var(--ease-out), transform 160ms var(--ease-out); }
+.chip:hover { background: var(--flame); transform: translateY(-2px); }
+.chip[aria-pressed='true'] { background: var(--ink); color: var(--paper); }
+
+/* ---------- the mosaic of unlike tiles ---------- */
+.mosaic { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-auto-rows: 6rem; gap: 8px; }
+.tile { position: relative; overflow: hidden; padding: 1.5rem; }
+.tile-6x5 { grid-column: span 6; grid-row: span 5; }
+.tile-6x3 { grid-column: span 6; grid-row: span 3; }
+.tile-3x3 { grid-column: span 3; grid-row: span 3; }
+.tile-3x2 { grid-column: span 3; grid-row: span 2; }
+.tile-pic { padding: 0; }
+.tile-pic img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.tile-ink { background: var(--ink); color: var(--paper); }
+.tile-paper { background: var(--paper); color: var(--ink); }
+.tile-flame { background: var(--flame); color: var(--ink); }
+.tile-mist { background: var(--mist); color: var(--ink); }
+.tile-deep { background: #1A2B4A; color: var(--paper); }
+.tile-figure { font-weight: 800; font-size: var(--step-display); line-height: 0.82; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+a.tile { display: block; transition: transform 200ms var(--ease-out); }
+a.tile:hover { transform: translateY(-4px); }
+
+/* ---------- the founder: a portrait set into the first lines, like a drop capital ---------- */
+.founder { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(0.75rem, 1.6vw, 1.5rem); }
+.founder-facts { grid-column: 1 / span 2; display: grid; align-content: start; gap: 0.9rem; font-size: var(--step-small); font-weight: 600; line-height: 1.35; }
+.founder-facts p { margin: 0; }
+.founder-text { grid-column: 3 / span 10; font-size: var(--step-statement); line-height: 1.2; letter-spacing: -0.02em; color: var(--ink); }
+.founder-text p { margin: 0; }
+.founder-text > * + * { margin-top: 1.2em; }
+.founder-text strong { font-weight: 800; }
+.founder-portrait { float: left; width: 3.6em; height: 3.6em; margin: 0.06em 0.5em 0 0; object-fit: cover; object-position: 46% 26%; }
+
+/* ---------- one quotation, spread edge to edge ---------- */
+.spread { margin: 0; }
+.spread-line { display: flex; justify-content: space-between; gap: 0.25em; margin: 0; font-weight: 800; font-size: var(--step-display); line-height: 0.92; letter-spacing: -0.04em; }
+.spread-line + .spread-line { margin-top: 0.34em; }
+.spread-by { display: flex; justify-content: space-between; gap: 1rem; margin-top: clamp(2.5rem, 5vw, 4.5rem); font-size: var(--step-body); }
+
+/* ---------- the first step, already open ---------- */
+.start { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(0.75rem, 1.6vw, 1.5rem); align-items: end; min-height: calc(90svh - 2 * clamp(4.5rem, 9vw, 9rem)); }
+.start-words { grid-column: 1 / span 6; }
+.start-form { grid-column: 8 / span 5; align-self: center; padding: 1.75rem; background: var(--paper); color: var(--ink); }
+.field { display: block; width: 100%; padding: 0.75rem 0.85rem; background: #fff; color: var(--ink); border: 2px solid var(--ink); border-radius: 0; font: inherit; font-size: var(--step-body); line-height: 1.4; }
+.field::placeholder { color: #5C6478; }
+.seg { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin: 0; padding: 0; border: 0; }
+.seg label { display: block; }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg span { display: block; padding: 0.6rem 0.25rem; background: var(--mist); color: var(--ink); text-align: center; font-weight: 600; font-size: var(--step-small); cursor: pointer; transition: background-color 160ms var(--ease-out); }
+.seg input:checked + span { background: var(--ink); color: var(--paper); }
+.seg input:focus-visible + span { outline: 2px solid var(--flame); outline-offset: 2px; }
+
+/* ---------- the mark, built large ---------- */
+.mark { display: flex; align-items: flex-end; gap: 4px; height: 34svh; min-height: 11rem; max-height: 22rem; margin: 0; }
+.mark span { flex: 1; display: grid; place-items: center; overflow: hidden; color: var(--ink); font-weight: 800; font-size: min(27svh, 24vw, 17rem); line-height: 1; letter-spacing: -0.04em; }
+.mark span:nth-child(1) { height: 100%; background: var(--flame); }
+.mark span:nth-child(2) { height: 72%; background: var(--paper); }
+.mark span:nth-child(3) { height: 86%; background: var(--mist); }
+
+/* ---------- entrances: text rises, pictures and tiles wipe in ---------- */
+/* A cover in the field's own colour slides off the picture from the top edge down. The picture itself is never
+   clipped or hidden: a browser will not load a lazy image it counts as off screen, and a clipped one counts. */
+.wipe { position: relative; }
+.wipe::after { content: ''; position: absolute; inset: -1px; background: var(--cover, var(--ink)); transform-origin: bottom; transition: transform 900ms var(--ease-out); transition-delay: inherit; pointer-events: none; }
+.wipe.is-in::after { transform: scaleY(0); }
+
+/* ---------- the phone is its own composition ---------- */
+@media (max-width: 760px) {
+  .hero { --seam: 46%; min-height: 30rem; }
+  .hero-title { font-size: 14.5vw; }
+  .hero-support { left: var(--edge); bottom: 1.5rem; width: calc(100% - 2 * var(--edge) - 4.5rem); transform: none; text-align: left; font-size: 1.0625rem; animation-name: hero-fade-left; }
+  @keyframes hero-fade-left { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  .typed-input, .typed-mirror { font-size: 11vw; }
+  .mosaic { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: auto; gap: 6px; }
+  .tile { padding: 1.15rem; }
+  .tile-6x5, .tile-6x3, .tile-3x3, .tile-3x2 { grid-column: span 2; grid-row: auto; }
+  .tile-pic { aspect-ratio: 4 / 3; }
+  .tile-half { grid-column: span 1; aspect-ratio: 1; }
+  .founder { display: flex; flex-direction: column-reverse; gap: 2rem; }
+  .founder-text { font-size: 1.375rem; line-height: 1.25; }
+  .founder-portrait { width: 5em; height: 5em; }
+  .founder-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; }
+  .spread-line { font-size: 9.5vw; }
+  .spread-by { flex-direction: column; gap: 0.25rem; }
+  .start { display: block; min-height: 0; }
+  .start-form { margin-top: 2.5rem; padding: 1.25rem; }
+  .seg { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mark { height: 22svh; min-height: 8rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-title .line > span, .hero-support { animation: none; }
+  .typed-mirror i { animation: none; }
+  .wipe::after { display: none; }
+  .btn, .chip, a.tile, .link { transition: none; }
+}

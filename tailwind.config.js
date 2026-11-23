@@ -33,8 +33,8 @@ export default {
         },
       },
       fontFamily: {
-        display: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['"Schibsted Grotesk"', 'system-ui', 'sans-serif'],
+        sans: ['"Schibsted Grotesk"', 'system-ui', '-apple-system', 'sans-serif'],
       },
       backgroundImage: {
         'midnight-radial':

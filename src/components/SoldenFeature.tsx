@@ -62,7 +62,7 @@ export function SoldenFeature() {
           <a href={SITE_URL} aria-label="Solden at solden.app" className="inline-block">
             <img src="/solden/solden-wordmark.svg" alt="Solden" width={789} height={150} className="h-8 md:h-10 w-auto" />
           </a>
-          <h2 id="solden-title" className="mt-8 font-display font-medium text-4xl sm:text-5xl md:text-6xl leading-[1.02] tracking-tight [text-wrap:balance]">
+          <h2 id="solden-title" className="mt-8 font-display font-extrabold text-[1.75rem] sm:text-5xl md:text-[3.25rem] leading-[0.98] tracking-[-0.04em] text-[#F2F5F3] [text-wrap:balance]">
             Everything health and wellness, in one app.
           </h2>
           <p className="mt-6 max-w-xl text-lg md:text-xl leading-relaxed">

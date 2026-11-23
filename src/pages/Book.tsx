@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { submitRequest } from '../lib/leads'
 import { PageHero } from '../components/PageHero'
 import { useLocalDraft } from '../hooks/useLocalDraft'
+import { BEST_TIMES, EMPTY_DRAFT, REQUEST_DRAFT_KEY, type RequestDraft } from '../lib/requestDraft'
 
 // Request a call. There is no scheduler on this page (Cal.com came off the
 // site on 2026-10-14): a visitor leaves their name, number and what they need,
@@ -11,24 +12,8 @@ import { useLocalDraft } from '../hooks/useLocalDraft'
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
 
-interface RequestDraft {
-  name: string
-  business: string
-  email: string
-  phone: string
-  bestTime: string
-  message: string
-}
-
-const EMPTY_DRAFT: RequestDraft = { name: '', business: '', email: '', phone: '', bestTime: '', message: '' }
-
-/** The best-time choices. "" is "Any time", which sends no preference. */
-const BEST_TIMES = [
-  { value: '', label: 'Any time' },
-  { value: 'Mornings', label: 'Mornings' },
-  { value: 'Afternoons', label: 'Afternoons' },
-  { value: 'Evenings', label: 'Evenings' },
-]
+// The draft's shape and key live in lib/requestDraft.ts: the home page's closing section starts the same draft, so
+// what a visitor types there is waiting in this form.
 
 export function Book() {
   // Old links and the header point at /book#request (and older ones at
@@ -80,7 +65,7 @@ function RequestCallForm() {
   const [state, setState] = useState<FormState>('idle')
   const [errorMsg, setErrorMsg] = useState('')
   // Typed input survives a tab switch or a reload (house rule: forms persist).
-  const [draft, setDraft, clearDraft] = useLocalDraft<RequestDraft>('book.requestCall', EMPTY_DRAFT)
+  const [draft, setDraft, clearDraft] = useLocalDraft<RequestDraft>(REQUEST_DRAFT_KEY, EMPTY_DRAFT)
   // What the thank-you shows after the draft is cleared.
   const [sent, setSent] = useState<{ firstName: string; phone: string; bestTime: string } | null>(null)
 

@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchSiteContent } from '../lib/siteContent'
 
+/** A footer link: a word in the footer's ink that underlines on hover. */
+const foot = 'text-silver-100 underline-offset-4 decoration-2 hover:underline hover:text-flame-400'
+
 const FALLBACK_EMAIL = 'admin@anfconsult.com'
 const FALLBACK_PHONE_DISPLAY = '(573) 276-9756'
 const FALLBACK_PHONE_TEL = '+15732769756'
@@ -23,55 +26,49 @@ export function Footer() {
   }, [])
 
   return (
-    <footer className="border-t border-midnight-700/40 mt-16">
-      <div className="max-w-6xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10">
-        <div>
-          <Link to="/" className="inline-flex items-center" aria-label="ANF Consulting home">
-            <img src="/anf-wordmark.webp" alt="ANF Consulting" className="h-10 w-auto" />
-          </Link>
-          <p className="mt-4 text-sm text-silver-500 leading-relaxed">
-            Clarity. Integration. Automation.<br />
-            One partner, one roadmap, one team.
-          </p>
-        </div>
+    // Redesigned 2026-11-23 (DESIGN.md): the page closes on the name, built from blocks in the brand's colours.
+    // Every link the old footer carried is still here (class attendees are told to find theirs on the site).
+    <footer className="bg-midnight-950 text-silver-100 px-[var(--edge)] pt-[clamp(3.5rem,7vw,6rem)] pb-8">
+      <Link to="/" aria-label="ANF Consulting home" className="block">
+        <p className="mark" aria-hidden="true"><span>A</span><span>N</span><span>F</span></p>
+      </Link>
+      <p className="mt-5 text-[length:var(--step-lead)] font-extrabold tracking-tight text-silver-100">Clarity. Integration. Automation.</p>
 
-        <div>
-          <h3 className="text-sm font-medium text-silver-100 mb-3 font-display tracking-wide">Get in touch</h3>
-          <ul className="space-y-2 text-sm">
-            <li><a href={`mailto:${email}`} className="text-silver-300 hover:text-flame-400">{email}</a></li>
-            <li><a href={`tel:${phoneTel}`} className="text-silver-300 hover:text-flame-400">{phoneDisplay}</a></li>
-          </ul>
-        </div>
+      <nav aria-label="Footer" className="mt-14 grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-12 text-base leading-relaxed">
+        <ul className="md:col-span-3 lg:col-span-2 space-y-2">
+          <li><Link to="/work" className={foot}>Our work</Link></li>
+          <li><Link to="/work?show=demo" className={foot}>Live demos</Link></li>
+          <li><Link to="/reviews" className={foot}>Reviews</Link></li>
+          <li><Link to="/answers" className={foot}>Answers</Link></li>
+        </ul>
+        <ul className="md:col-span-3 lg:col-span-2 space-y-2">
+          <li><Link to="/services" className={foot}>Services</Link></li>
+          <li><Link to="/audit" className={foot}>Free website audit</Link></li>
+          <li><Link to="/start" className={foot}>Start a project</Link></li>
+          <li><Link to="/book" className={foot}>Send a request</Link></li>
+        </ul>
+        <ul className="md:col-span-3 lg:col-span-2 space-y-2">
+          <li><Link to="/free-class" className={foot}>Free AI class</Link></li>
+          <li><Link to="/events" className={foot}>Events and classes</Link></li>
+          <li><Link to="/handouts" className={foot}>Class handouts</Link></li>
+        </ul>
+        <ul className="md:col-span-3 lg:col-span-2 space-y-2">
+          <li><Link to="/about" className={foot}>About</Link></li>
+          <li><Link to="/refer" className={foot}>Refer a business</Link></li>
+          <li><a href="https://crm.anfconsult.com/portal" className={foot}>Client login</a></li>
+        </ul>
+        <ul className="col-span-2 md:col-span-12 lg:col-span-4 min-w-0 space-y-2 lg:text-right break-words">
+          <li><a href={`mailto:${email}`} className={`${foot} text-[length:var(--step-lead)] font-extrabold tracking-tight`}>{email}</a></li>
+          <li><a href={`tel:${phoneTel}`} className={`${foot} text-[length:var(--step-lead)] font-extrabold tracking-tight`}>{phoneDisplay}</a></li>
+        </ul>
+      </nav>
 
-        <div>
-          <h3 className="text-sm font-medium text-silver-100 mb-3 font-display tracking-wide">Site</h3>
-          <ul className="space-y-2 text-sm">
-            <li><Link to="/start" className="text-silver-300 hover:text-flame-400">Start a project</Link></li>
-            <li><Link to="/services" className="text-silver-300 hover:text-flame-400">Services</Link></li>
-            <li><Link to="/work" className="text-silver-300 hover:text-flame-400">Our work</Link></li>
-            <li><Link to="/answers" className="text-silver-300 hover:text-flame-400">Answers</Link></li>
-            <li><Link to="/work?show=demo" className="text-silver-300 hover:text-flame-400">Live demos</Link></li>
-            <li><Link to="/reviews" className="text-silver-300 hover:text-flame-400">Reviews</Link></li>
-            <li><Link to="/about" className="text-silver-300 hover:text-flame-400">About</Link></li>
-            <li><Link to="/book" className="text-silver-300 hover:text-flame-400">Send a request</Link></li>
-            <li><Link to="/audit" className="text-silver-300 hover:text-flame-400">Free website audit</Link></li>
-            <li><Link to="/refer" className="text-silver-300 hover:text-flame-400">Refer a business</Link></li>
-            {/* Class attendees are told to find these on the site, so they need a
-                link they can actually click rather than a URL to retype. */}
-            <li><Link to="/free-class" className="text-silver-300 hover:text-flame-400">Free AI class</Link></li>
-            <li><Link to="/events" className="text-silver-300 hover:text-flame-400">Events and classes</Link></li>
-            <li><Link to="/handouts" className="text-silver-300 hover:text-flame-400">Class handouts</Link></li>
-            <li><a href="https://crm.anfconsult.com/portal" className="text-silver-300 hover:text-flame-400">Client login</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div className="max-w-6xl mx-auto px-6 pb-8 pt-6 border-t border-midnight-700/30 flex flex-col md:flex-row justify-between gap-3 text-xs text-silver-500">
-        <span>© {new Date().getFullYear()} ANF Consulting LLC. All rights reserved.</span>
-        <span className="flex items-center gap-4">
-          <Link to="/privacy" className="hover:text-flame-400">Privacy Policy</Link>
-          <Link to="/terms" className="hover:text-flame-400">Terms</Link>
-          <span>Invoicing via Stripe.</span>
+      <div className="mt-14 flex flex-col gap-4 md:flex-row md:items-center md:justify-between text-[13px] text-silver-300">
+        <span>© {new Date().getFullYear()} ANF Consulting LLC. All rights reserved. Invoicing via Stripe.</span>
+        <span className="flex items-center gap-5">
+          <Link to="/privacy" className={foot}>Privacy Policy</Link>
+          <Link to="/terms" className={foot}>Terms</Link>
+          <Link to="/book" className="inline-flex h-10 items-center bg-flame-500 px-4 font-semibold text-midnight-950 transition-colors hover:bg-flame-400">Send a request</Link>
         </span>
       </div>
     </footer>

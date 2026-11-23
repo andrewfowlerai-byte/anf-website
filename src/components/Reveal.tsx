@@ -5,7 +5,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
  * place the first time it enters the viewport. Stagger siblings with `delay`.
  * Honors prefers-reduced-motion via the CSS in index.css.
  */
-export function Reveal({ children, delay = 0, className = '' }: { children: ReactNode; delay?: number; className?: string }) {
+export function Reveal({ children, delay = 0, className = '', kind = 'rise' }: { children: ReactNode; delay?: number; className?: string; /** 'rise' for text; 'wipe' uncovers a picture or a filled tile from its top edge (chapters.css). */ kind?: 'rise' | 'wipe' }) {
   const ref = useRef<HTMLDivElement>(null)
   const [shown, setShown] = useState(false)
   useEffect(() => {
@@ -22,7 +22,7 @@ export function Reveal({ children, delay = 0, className = '' }: { children: Reac
     return () => obs.disconnect()
   }, [])
   return (
-    <div ref={ref} className={`reveal ${shown ? 'is-in' : ''} ${className}`} style={delay ? { transitionDelay: `${delay}ms` } : undefined}>
+    <div ref={ref} className={`${kind === 'wipe' ? 'wipe' : 'reveal'} ${shown ? 'is-in' : ''} ${className}`} style={delay ? { transitionDelay: `${delay}ms` } : undefined}>
       {children}
     </div>
   )
