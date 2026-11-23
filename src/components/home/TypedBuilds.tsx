@@ -20,7 +20,7 @@ import { Reveal } from '../Reveal'
  * still a CRM row and still on /work.
  */
 const BROKERAGE: Build = {
-  title: 'Whole-Brokerage System',
+  title: 'Brokerage System',
   category: 'Brokerage System',
   tags: ['Real Estate', 'Brokerage', 'Office', 'Recruiting', 'Commissions', 'Compliance'],
   image_url: '/showcase/brokerage-system.jpg',
